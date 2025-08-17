@@ -1,0 +1,18 @@
+{
+  "name": "pdf-metadata-project",
+  "version": "1.0.0",
+  "description": "PDF metadata extraction web app built with Node.js and Express. Extracts titles, file sizes, PDF versions, and handles dates robustly. Features download links and professional UI with progressive disclosure. Great for learning metadata extraction and REST API development.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["pdf", "metadata", "extraction", "nodejs", "express", "web-app"],
+  "author": "Lucy Sonberg",
+  "license": "UNLICENSED",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.2",
+    "pdf-parse-fork": "^1.2.0"
+  }
+}

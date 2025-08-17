@@ -1,0 +1,65 @@
+body {
+  font-family: Verdana;
+}
+
+main {
+  width: 700px;
+  margin: 0 auto;
+}
+
+article {
+  margin-bottom: 40px;
+}
+
+h1 {
+  color: red;
+  font-size: 40px;
+}
+
+p {
+  color: rgb(35, 85, 18);
+  font-weight: bold;
+}
+
+img {
+  width: 50%;
+}
+
+table {
+  width: 100%;
+}
+
+tr:nth-child(odd) {
+  background-color: #eee;
+}
+
+td:nth-child(2) {
+  text-align: right
+}
+
+.download-section {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.download-link {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.download-link:hover {
+  background-color: #0056b3;
+}
+
+h3 {
+  color: #333;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
