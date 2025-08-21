@@ -113,10 +113,10 @@ Detta projekt har förberett mig för:
 
 ### **9. AVANCERAD METADATA-EXTRAKTION (PRIORITET 2)**
 - [x] Extrahera text-sammanfattning (första 200 tecken)
-- [ ] Automatisk nyckelord-extraktion
-- [ ] Språkdetektering
-- [ ] Automatisk kategorisering (rapport, artikel, etc.)
-- [ ] Förbättrad författare-extraktion
+- [x] Automatisk nyckelord-extraktion
+- [x] Språkdetektering
+- [x] Automatisk kategorisering (rapport, artikel, etc.)
+- [x] Förbättrad författare-extraktion
 
 ### **10. MULTI-FILTYP STÖD (PRIORITET 3)**
 - [ ] Lägg till stöd för JPG-bilder (EXIF-data)

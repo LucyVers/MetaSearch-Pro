@@ -162,6 +162,39 @@ async function performSearch(searchTerm) {
             </tr>
           `);
         }
+
+        // Show keywords if available (NEW FEATURE - STEP 2)
+        if (pdf.metadata.keywords && pdf.metadata.keywords.length > 0) {
+          const keywordTags = pdf.metadata.keywords.map(keyword => 
+            `<span class="keyword-tag">${keyword}</span>`
+          ).join(' ');
+          tableRows.push(`
+            <tr>
+              <td>Keywords:</td>
+              <td>${keywordTags}</td>
+            </tr>
+          `);
+        }
+
+        // Show language if available (NEW FEATURE - STEP 3)
+        if (pdf.metadata.language && pdf.metadata.language !== 'Unknown') {
+          tableRows.push(`
+            <tr>
+              <td>Language:</td>
+              <td><span class="language-badge">${pdf.metadata.language}</span></td>
+            </tr>
+          `);
+        }
+
+        // Show category if available (NEW FEATURE - STEP 4)
+        if (pdf.metadata.category && pdf.metadata.category !== 'Unknown') {
+          tableRows.push(`
+            <tr>
+              <td>Category:</td>
+              <td><span class="category-badge">${pdf.metadata.category}</span></td>
+            </tr>
+          `);
+        }
         
         // add content to the article
         article.innerHTML = `
@@ -296,6 +329,39 @@ for (let pdf of metadata) {
       <tr>
         <td>Summary:</td>
         <td>${pdf.metadata.textSummary}</td>
+      </tr>
+    `);
+  }
+
+  // Show keywords if available (NEW FEATURE - STEP 2)
+  if (pdf.metadata.keywords && pdf.metadata.keywords.length > 0) {
+    const keywordTags = pdf.metadata.keywords.map(keyword => 
+      `<span class="keyword-tag">${keyword}</span>`
+    ).join(' ');
+    tableRows.push(`
+      <tr>
+        <td>Keywords:</td>
+        <td>${keywordTags}</td>
+      </tr>
+    `);
+  }
+
+  // Show language if available (NEW FEATURE - STEP 3)
+  if (pdf.metadata.language && pdf.metadata.language !== 'Unknown') {
+    tableRows.push(`
+      <tr>
+        <td>Language:</td>
+        <td><span class="language-badge">${pdf.metadata.language}</span></td>
+      </tr>
+    `);
+  }
+
+  // Show category if available (NEW FEATURE - STEP 4)
+  if (pdf.metadata.category && pdf.metadata.category !== 'Unknown') {
+    tableRows.push(`
+      <tr>
+        <td>Category:</td>
+        <td><span class="category-badge">${pdf.metadata.category}</span></td>
       </tr>
     `);
   }

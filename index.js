@@ -114,6 +114,189 @@ function extractDateFromFilename(filename) {
   return null;
 }
 
+// ADVANCED METADATA EXTRACTION - STEP 2: KEYWORD EXTRACTION
+function extractKeywords(text) {
+  if (!text || text.trim().length === 0) {
+    return [];
+  }
+
+  // Common words to filter out (stop words)
+  const stopWords = new Set([
+    'och', 'eller', 'i', 'på', 'av', 'till', 'för', 'med', 'som', 'den', 'det', 'de', 'ett', 'en', 'är', 'var', 'kan', 'ska', 'vill', 'måste', 'får',
+    'the', 'and', 'or', 'in', 'on', 'at', 'to', 'for', 'with', 'as', 'is', 'are', 'was', 'were', 'can', 'will', 'would', 'should', 'must', 'may',
+    'a', 'an', 'of', 'by', 'from', 'into', 'during', 'including', 'until', 'against', 'among', 'throughout', 'despite', 'towards', 'upon',
+    'this', 'that', 'these', 'those', 'it', 'its', 'they', 'them', 'their', 'we', 'us', 'our', 'you', 'your', 'he', 'him', 'his', 'she', 'her', 'hers'
+  ]);
+
+  // Clean and split text into words
+  const words = text
+    .toLowerCase()
+    .replace(/[^\w\såäö]/g, ' ') // Remove special characters, keep Swedish letters
+    .split(/\s+/)
+    .filter(word => 
+      word.length > 2 && // Only words longer than 2 characters
+      !stopWords.has(word) && // Not a stop word
+      !/^\d+$/.test(word) // Not just numbers
+    );
+
+  // Count word frequency
+  const wordCount = {};
+  words.forEach(word => {
+    wordCount[word] = (wordCount[word] || 0) + 1;
+  });
+
+  // Sort by frequency and get top 8 keywords
+  const keywords = Object.entries(wordCount)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 8)
+    .map(([word]) => word);
+
+  return keywords;
+}
+
+// ADVANCED METADATA EXTRACTION - STEP 3: LANGUAGE DETECTION
+function detectLanguage(text) {
+  if (!text || text.trim().length === 0) {
+    return 'Unknown';
+  }
+
+  // Common Swedish words and characters
+  const swedishWords = ['och', 'eller', 'i', 'på', 'av', 'till', 'för', 'med', 'som', 'den', 'det', 'de', 'ett', 'en', 'är', 'var', 'kan', 'ska', 'vill', 'måste', 'får', 'jag', 'du', 'han', 'hon', 'vi', 'ni', 'de', 'min', 'din', 'hans', 'hennes', 'vår', 'er', 'deras'];
+  const swedishChars = ['å', 'ä', 'ö', 'Å', 'Ä', 'Ö'];
+  
+  // Common English words
+  const englishWords = ['the', 'and', 'or', 'in', 'on', 'at', 'to', 'for', 'with', 'as', 'is', 'are', 'was', 'were', 'can', 'will', 'would', 'should', 'must', 'may', 'a', 'an', 'of', 'by', 'from', 'this', 'that', 'these', 'those', 'it', 'its', 'they', 'them', 'their', 'we', 'us', 'our', 'you', 'your', 'he', 'him', 'his', 'she', 'her', 'hers'];
+  
+  // Count Swedish and English indicators
+  const textLower = text.toLowerCase();
+  let swedishScore = 0;
+  let englishScore = 0;
+  
+  // Check for Swedish characters
+  swedishChars.forEach(char => {
+    if (text.includes(char)) {
+      swedishScore += 3; // Swedish characters are strong indicators
+    }
+  });
+  
+  // Check for Swedish words
+  swedishWords.forEach(word => {
+    const regex = new RegExp(`\\b${word}\\b`, 'g');
+    const matches = textLower.match(regex);
+    if (matches) {
+      swedishScore += matches.length;
+    }
+  });
+  
+  // Check for English words
+  englishWords.forEach(word => {
+    const regex = new RegExp(`\\b${word}\\b`, 'g');
+    const matches = textLower.match(regex);
+    if (matches) {
+      englishScore += matches.length;
+    }
+  });
+  
+  // Determine language based on scores
+  if (swedishScore > englishScore && swedishScore > 2) {
+    return 'Swedish';
+  } else if (englishScore > swedishScore && englishScore > 2) {
+    return 'English';
+  } else if (swedishScore === englishScore && swedishScore > 0) {
+    return 'Mixed';
+  } else {
+    return 'Unknown';
+  }
+}
+
+// ADVANCED METADATA EXTRACTION - STEP 4: AUTOMATIC CATEGORIZATION
+function categorizeDocument(text, title, keywords) {
+  if (!text && !title) {
+    return 'Unknown';
+  }
+
+  const content = (text + ' ' + title).toLowerCase();
+  const keywordString = keywords.join(' ').toLowerCase();
+
+  // Define category patterns
+  const categories = {
+    'Report': {
+      patterns: ['report', 'study', 'analysis', 'investigation', 'assessment', 'evaluation', 'review'],
+      keywords: ['research', 'data', 'findings', 'conclusion', 'methodology', 'results']
+    },
+    'Article': {
+      patterns: ['article', 'paper', 'publication', 'journal', 'academic', 'scientific'],
+      keywords: ['abstract', 'introduction', 'references', 'doi', 'peer-reviewed']
+    },
+    'Legal': {
+      patterns: ['legal', 'court', 'judgment', 'decision', 'case', 'law', 'attorney', 'prosecutor'],
+      keywords: ['defendant', 'plaintiff', 'indictment', 'conviction', 'appeal', 'statute']
+    },
+    'Government': {
+      patterns: ['government', 'federal', 'state', 'department', 'agency', 'official', 'public'],
+      keywords: ['policy', 'regulation', 'compliance', 'tax', 'irs', 'dept', 'administration']
+    },
+    'News': {
+      patterns: ['news', 'press', 'release', 'announcement', 'media', 'publicity'],
+      keywords: ['immediate', 'announce', 'public', 'statement', 'official']
+    },
+    'Technical': {
+      patterns: ['technical', 'manual', 'guide', 'instruction', 'specification', 'protocol'],
+      keywords: ['procedure', 'step', 'instruction', 'manual', 'guide', 'how-to']
+    },
+    'Financial': {
+      patterns: ['financial', 'economic', 'business', 'commercial', 'market', 'investment'],
+      keywords: ['revenue', 'profit', 'loss', 'income', 'expense', 'budget', 'financial']
+    },
+    'Medical': {
+      patterns: ['medical', 'health', 'clinical', 'patient', 'treatment', 'diagnosis'],
+      keywords: ['health', 'medical', 'patient', 'treatment', 'clinical', 'diagnosis']
+    }
+  };
+
+  // Score each category
+  const scores = {};
+  
+  Object.keys(categories).forEach(category => {
+    let score = 0;
+    const cat = categories[category];
+    
+    // Check patterns in content
+    cat.patterns.forEach(pattern => {
+      const regex = new RegExp(pattern, 'gi');
+      const matches = content.match(regex);
+      if (matches) {
+        score += matches.length * 2; // Patterns are worth more
+      }
+    });
+    
+    // Check keywords
+    cat.keywords.forEach(keyword => {
+      const regex = new RegExp(keyword, 'gi');
+      const matches = content.match(regex);
+      if (matches) {
+        score += matches.length;
+      }
+    });
+    
+    scores[category] = score;
+  });
+
+  // Find the category with highest score
+  let bestCategory = 'Unknown';
+  let bestScore = 0;
+  
+  Object.keys(scores).forEach(category => {
+    if (scores[category] > bestScore) {
+      bestScore = scores[category];
+      bestCategory = category;
+    }
+  });
+
+  // Only return a category if we have a meaningful score
+  return bestScore >= 2 ? bestCategory : 'Unknown';
+}
+
 // Create a REST route for getting the metadata
 app.get('/api/metadata', async (_request, response) => {
 
@@ -226,6 +409,18 @@ app.get('/api/metadata', async (_request, response) => {
       }
     }
     
+    // ADVANCED METADATA EXTRACTION - STEP 2: KEYWORD EXTRACTION
+    let keywords = [];
+    if (data.text && data.text.trim().length > 0) {
+      keywords = extractKeywords(data.text);
+    }
+    
+    // ADVANCED METADATA EXTRACTION - STEP 3: LANGUAGE DETECTION
+    let language = detectLanguage(data.text);
+    
+    // ADVANCED METADATA EXTRACTION - STEP 4: AUTOMATIC CATEGORIZATION
+    let category = categorizeDocument(data.text, data.info.Title, keywords);
+    
     // Create enhanced metadata with all new fields
     let enhancedMetadata = {
       ...data,
@@ -236,7 +431,10 @@ app.get('/api/metadata', async (_request, response) => {
       pdfVersion: pdfVersion,
       createdDate: createdDate,
       modifiedDate: modifiedDate,
-      textSummary: textSummary // Add the new text summary
+      textSummary: textSummary, // Add the new text summary
+      keywords: keywords, // Add the new keywords
+      language: language, // Add the new language
+      category: category // Add the new category
     };
     
     // Add the filename and the enhanced metadata to our meta data list
@@ -388,6 +586,18 @@ app.get('/api/search', async (request, response) => {
       }
     }
     
+    // ADVANCED METADATA EXTRACTION - STEP 2: KEYWORD EXTRACTION (same as /api/metadata)
+    let keywords = [];
+    if (data.text && data.text.trim().length > 0) {
+      keywords = extractKeywords(data.text);
+    }
+    
+    // ADVANCED METADATA EXTRACTION - STEP 3: LANGUAGE DETECTION (same as /api/metadata)
+    let language = detectLanguage(data.text);
+    
+    // ADVANCED METADATA EXTRACTION - STEP 4: AUTOMATIC CATEGORIZATION (same as /api/metadata)
+    let category = categorizeDocument(data.text, data.info.Title, keywords);
+    
     // Create enhanced metadata with all new fields (same as /api/metadata)
     let enhancedMetadata = {
       ...data,
@@ -398,16 +608,19 @@ app.get('/api/search', async (request, response) => {
       pdfVersion: pdfVersion,
       createdDate: createdDate,
       modifiedDate: modifiedDate,
-      textSummary: textSummary // Add the new text summary
+      textSummary: textSummary, // Add the new text summary
+      keywords: keywords, // Add the new keywords
+      language: language, // Add the new language
+      category: category // Add the new category
     };
     
                     // FUZZY SEARCH LOGIC: Use Fuse.js for better matching
                 const searchData = [
-                  { title: extractedTitle, author: enhancedAuthor || '', content: data.text || '' }
+                  { title: extractedTitle, author: enhancedAuthor || '', content: data.text || '', keywords: keywords.join(' '), language: language, category: category }
                 ];
                 
                 const fuseOptions = {
-                  keys: ['title', 'author', 'content'],
+                  keys: ['title', 'author', 'content', 'keywords', 'language', 'category'],
                   threshold: 0.4, // Lower = more strict, Higher = more fuzzy
                   includeScore: true,
                   ignoreLocation: true,
