@@ -11,7 +11,7 @@
   <!-- Tell all mobile browsers not to scale down the content -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- The title to show in the browser tab -->
-  <title>My webpage</title>
+  <title>PDF Metadata Viewer</title>
   <!-- Tell the web browser to load our css file -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -19,6 +19,13 @@
 <!-- The visible content of the web page starts here the body-->
 
 <body>
+  <!-- Search container for PDF metadata -->
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Sök i PDF-titlar..." class="search-input">
+    <div id="searchResults" class="search-results"></div>
+    <div id="searchHistory" class="search-history"></div>
+  </div>
+  
   <main></main>
   <script type="module" src="main.js"></script>
 </body>

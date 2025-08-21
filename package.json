@@ -6,13 +6,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["pdf", "metadata", "extraction", "nodejs", "express", "web-app"],
+  "keywords": [
+    "pdf",
+    "metadata",
+    "extraction",
+    "nodejs",
+    "express",
+    "web-app"
+  ],
   "author": "Lucy Sonberg",
   "license": "UNLICENSED",
   "private": true,
   "type": "module",
   "dependencies": {
     "express": "^4.19.2",
+    "fuse.js": "^7.1.0",
     "pdf-parse-fork": "^1.2.0"
   }
 }

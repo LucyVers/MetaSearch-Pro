@@ -93,15 +93,26 @@ Detta projekt har förberett mig för:
 ## 🚀 NÄSTA NIVÅ - AVANCERADE FUNKTIONER
 
 ### **8. SÖKFUNKTION (PRIORITET 1)**
-- [ ] Implementera sökfält i frontend
-- [ ] Sök i titlar, författare, innehåll
-- [ ] Filtrera efter filstorlek, datum, PDF-version
-- [ ] Visar sökresultat i realtid
-- [ ] Spara sökhistorik
-- [ ] Sortering av resultat (datum, storlek, namn)
+- [x] **STEG 1: Enkel sökning i titlar**
+  - [x] Backend: Skapa `/api/search` endpoint
+  - [x] Implementera grundläggande sökning i PDF-titlar
+  - [x] Testa med curl för att verifiera funktionalitet
+  - [x] Frontend: Lägg till sökfält
+  - [x] Visa sökresultat i realtid
+
+- [ ] **STEG 2: Utöka sökning (när steg 1 fungerar)**
+  - [x] Lägg till sökning i författare
+  - [x] Lägg till sökning i innehåll
+  - [x] Lägg till grundläggande filtrering (storlek, datum)
+
+- [ ] **STEG 3: Avancerade sökfunktioner (när steg 2 fungerar)**
+  - [x] Implementera fuzzy matching
+  - [x] Lägg till sortering av resultat
+  - [x] Implementera sökhistorik
+  - [x] Förbättra användargränssnitt
 
 ### **9. AVANCERAD METADATA-EXTRAKTION (PRIORITET 2)**
-- [ ] Extrahera text-sammanfattning (första 200 tecken)
+- [x] Extrahera text-sammanfattning (första 200 tecken)
 - [ ] Automatisk nyckelord-extraktion
 - [ ] Språkdetektering
 - [ ] Automatisk kategorisering (rapport, artikel, etc.)
