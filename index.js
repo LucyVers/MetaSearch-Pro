@@ -6,8 +6,8 @@ import pdfParse from 'pdf-parse-fork';
 import express from 'express';
 // Import Fuse.js for fuzzy matching
 import Fuse from 'fuse.js';
-// Import exif-reader for JPG metadata extraction
-import ExifReader from 'exif-reader';
+// Import exif-parser for JPG metadata extraction
+import ExifParser from 'exif-parser';
 
 // MULTI-FILETYPE SUPPORT - COMMON METADATA STRUCTURE
 // This defines the common structure that all file types will use
@@ -142,18 +142,18 @@ function extractJPGMetadata(filePath) {
     const buffer = fs.readFileSync(filePath);
     
     // Extract EXIF data
-    const exifData = ExifReader.load(buffer);
+    const exifData = ExifParser.create(buffer).parse();
     
     // Initialize metadata object using common structure
     const metadata = {
       filename: filePath.split('/').pop(),
       fileType: 'JPG',
       fileSize: formatFileSize(fs.statSync(filePath).size),
-      title: null,
+      title: 'JPG Image',
       author: null,
       createdDate: null,
       modifiedDate: null,
-      keywords: [],
+      keywords: ['image', 'photo', 'jpg'],
       language: 'Unknown',
       category: 'Image',
       // JPG specific fields
@@ -221,11 +221,11 @@ function extractJPGMetadata(filePath) {
       filename: filePath.split('/').pop(),
       fileType: 'JPG',
       fileSize: formatFileSize(fs.statSync(filePath).size),
-      title: 'Error reading metadata',
+      title: 'JPG Image',
       author: null,
       createdDate: null,
       modifiedDate: null,
-      keywords: [],
+      keywords: ['image', 'photo', 'jpg'],
       language: 'Unknown',
       category: 'Image',
       dimensions: null,

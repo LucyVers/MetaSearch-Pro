@@ -19,7 +19,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "exif-reader": "^2.0.2",
+    "exif-parser": "^0.1.12",
     "express": "^4.19.2",
     "fuse.js": "^7.1.0",
     "pdf-parse-fork": "^1.2.0"
