@@ -7,6 +7,31 @@ import express from 'express';
 // Import Fuse.js for fuzzy matching
 import Fuse from 'fuse.js';
 
+// MULTI-FILETYPE SUPPORT - COMMON METADATA STRUCTURE
+// This defines the common structure that all file types will use
+const COMMON_METADATA_STRUCTURE = {
+  filename: null,
+  fileType: null, // 'PDF', 'JPG', 'MP3', 'CSV', 'PPT'
+  fileSize: null,
+  title: null,
+  author: null,
+  createdDate: null,
+  modifiedDate: null,
+  keywords: [],
+  language: 'Unknown',
+  category: 'Unknown',
+  // File type specific fields
+  pdfVersion: null, // PDF specific
+  dimensions: null, // JPG specific
+  camera: null, // JPG specific
+  location: null, // JPG specific (GPS)
+  duration: null, // MP3 specific
+  album: null, // MP3 specific
+  columns: null, // CSV specific
+  rows: null, // CSV specific
+  slides: null // PPT specific
+};
+
 // Search history storage (in memory - will reset when server restarts)
 let searchHistory = [];
 const MAX_HISTORY_ITEMS = 10;
@@ -71,6 +96,41 @@ function extractAuthorFromText(text, existingAuthor) {
   }
   
   return null;
+}
+
+// MULTI-FILETYPE SUPPORT - FILE TYPE DETECTION
+function detectFileType(filename) {
+  const extension = filename.toLowerCase().split('.').pop();
+  switch (extension) {
+    case 'pdf':
+      return 'PDF';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+      return 'JPG';
+    case 'mp3':
+    case 'wav':
+    case 'flac':
+      return 'MP3';
+    case 'csv':
+      return 'CSV';
+    case 'ppt':
+    case 'pptx':
+      return 'PPT';
+    default:
+      return 'UNKNOWN';
+  }
+}
+
+// MULTI-FILETYPE SUPPORT - GET FILE FOLDERS
+function getFileFolders() {
+  return {
+    'PDF': './frontend/pdfs',
+    'JPG': './frontend/jpgs',
+    'MP3': './frontend/mp3s',
+    'CSV': './frontend/csvs',
+    'PPT': './frontend/ppts'
+  };
 }
 
 // Helper function to extract date from filename

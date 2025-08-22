@@ -6,6 +6,38 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-08-22 - Multi-filtyp huvudlogik implementerad
+
+**Vad jag gjorde:**
+- ✅ **Implementerade gemensam metadata-struktur** - Enhetligt format för alla filtyper
+- ✅ **Skapade filtypsdetektering** - Automatisk identifiering av PDF, JPG, MP3, CSV, PPT
+- ✅ **Implementerade mapphantering** - Struktur för alla filtyper (pdfs, jpgs, mp3s, csvs, ppts)
+- ✅ **Förberedde för branches** - Main har nu grundlogik för alla filtyper
+
+**Tekniska detaljer:**
+- **COMMON_METADATA_STRUCTURE**: Definierar alla fält som alla filtyper ska ha
+- **detectFileType()**: Funktion som identifierar filtyp baserat på filändelse
+- **getFileFolders()**: Funktion som returnerar mappar för varje filtyp
+- **Förberedelse för branches**: Main har nu grundlogik för alla filtyper
+
+**Struktur för framtida filtyper:**
+- **PDF**: pdfVersion, textSummary
+- **JPG**: dimensions, camera, location (GPS)
+- **MP3**: duration, album, artist
+- **CSV**: columns, rows, dataTypes
+- **PPT**: slides, presenter, theme
+
+**Resultat:**
+- Main har nu solid grund för multi-filtyp stöd
+- Alla filtyper kommer att använda samma metadata-struktur
+- Systemet kan identifiera filtyper automatiskt
+- Förberedelse för branches är klar
+
+**Nästa steg:**
+- Skapa branches för varje filtyp
+- Implementera specifik metadata-extraktion för varje typ
+- Integrera med befintlig sökfunktion
+
 ### 2025-08-21 - SLUTFÖRDE AUTOMATISK KATEGORISERING (STEG 4) - ALLA AVANCERADE METADATA-FUNKTIONER KLARA! 🎉
 
 **VAD VI GJORDE IDAG:**
@@ -778,3 +810,5 @@ Reglerna inkluderar:
 - Komplett avancerad metadata-extraktion
 - Alla PDF:er ska ha rik metadata
 - Förberedelse för nästa fas: Git branches
+
+

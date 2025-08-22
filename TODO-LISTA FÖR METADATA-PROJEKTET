@@ -119,9 +119,13 @@ Detta projekt har förberett mig för:
 - [x] Förbättrad författare-extraktion
 
 ### **10. MULTI-FILTYP STÖD (PRIORITET 3)**
+- [x] **HUVUDLOGIK I MAIN** - Gemensam metadata-struktur ✅
+- [x] **HUVUDLOGIK I MAIN** - Filtypsdetektering ✅
+- [x] **HUVUDLOGIK I MAIN** - Mapphantering för alla filtyper ✅
 - [ ] Lägg till stöd för JPG-bilder (EXIF-data)
 - [ ] Lägg till stöd för MP3-filer (ID3-taggar)
 - [ ] Lägg till stöd för CSV-filer (kolumner, rader)
+- [ ] Lägg till stöd för PPT-filer (presentationer)
 - [ ] Enhetlig sökning över alla filtyper
 - [ ] Filtyp-specifik metadata-visning
 
