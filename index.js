@@ -6,8 +6,10 @@ import pdfParse from 'pdf-parse-fork';
 import express from 'express';
 // Import Fuse.js for fuzzy matching
 import Fuse from 'fuse.js';
-// Import exif-parser for JPG metadata extraction
-import ExifParser from 'exif-parser';
+// Import exif-reader for JPG metadata extraction
+const ExifReader = require('exif-reader');
+// Import music-metadata for MP3 metadata extraction
+import { parseFile } from 'music-metadata';
 
 // MULTI-FILETYPE SUPPORT - COMMON METADATA STRUCTURE
 // This defines the common structure that all file types will use
@@ -142,7 +144,7 @@ function extractJPGMetadata(filePath) {
     const buffer = fs.readFileSync(filePath);
     
     // Extract EXIF data
-    const exifData = ExifParser.create(buffer).parse();
+    const exifData = ExifReader.load(buffer);
     
     // Initialize metadata object using common structure
     const metadata = {
@@ -231,6 +233,55 @@ function extractJPGMetadata(filePath) {
       dimensions: null,
       camera: null,
       location: null
+    };
+  }
+}
+
+// MP3 METADATA EXTRACTION FUNCTION
+async function extractMP3Metadata(filePath) {
+  try {
+    // Parse MP3 file metadata - use the correct async API
+    const metadata = await parseFile(filePath);
+    
+    // Initialize metadata object using common structure
+    const mp3Metadata = {
+      filename: filePath.split('/').pop(),
+      fileType: 'MP3',
+      fileSize: formatFileSize(fs.statSync(filePath).size),
+      title: metadata.common.title || 'Unknown Title',
+      author: metadata.common.artist || null,
+      createdDate: null,
+      modifiedDate: null,
+      keywords: ['music', 'audio', 'mp3'],
+      language: 'Unknown',
+      category: 'Music',
+      // MP3 specific fields
+      duration: metadata.format.duration ? Math.round(metadata.format.duration) : null,
+      album: metadata.common.album || null,
+      artist: metadata.common.artist || null,
+      year: metadata.common.year || null,
+      genre: metadata.common.genre ? metadata.common.genre[0] : null
+    };
+
+    return mp3Metadata;
+  } catch (error) {
+    console.error(`Error extracting MP3 metadata from ${filePath}:`, error);
+    return {
+      filename: filePath.split('/').pop(),
+      fileType: 'MP3',
+      fileSize: formatFileSize(fs.statSync(filePath).size),
+      title: 'MP3 Audio File',
+      author: null,
+      createdDate: null,
+      modifiedDate: null,
+      keywords: ['music', 'audio', 'mp3'],
+      language: 'Unknown',
+      category: 'Music',
+      duration: null,
+      album: null,
+      artist: null,
+      year: null,
+      genre: null
     };
   }
 }
@@ -387,7 +438,7 @@ function categorizeDocument(text, title, keywords) {
   }
 
   const content = (text + ' ' + title).toLowerCase();
-  const keywordString = keywords.join(' ').toLowerCase();
+  const keywordString = (keywords && Array.isArray(keywords) ? keywords.join(' ') : '').toLowerCase();
 
   // Define category patterns
   const categories = {
@@ -626,6 +677,20 @@ app.get('/api/metadata', async (_request, response) => {
     console.error('Error processing JPG files:', error);
   }
 
+  // PROCESS MP3 FILES
+  try {
+    let mp3Files = fs
+      .readdirSync('./frontend/mp3s')
+      .filter(x => x.toLowerCase().endsWith('.mp3') || x.toLowerCase().endsWith('.wav') || x.toLowerCase().endsWith('.flac'));
+
+    for (let file of mp3Files) {
+      let mp3Metadata = await extractMP3Metadata('./frontend/mp3s/' + file);
+      metadataList.push({ file, metadata: mp3Metadata });
+    }
+  } catch (error) {
+    console.error('Error processing MP3 files:', error);
+  }
+
   // Send the meta data as a response to the request
   // (to our web browser)
   response.json(metadataList);
@@ -662,169 +727,174 @@ app.get('/api/search', async (request, response) => {
   // Convert search query to lowercase for case-insensitive search
   searchQuery = searchQuery.toLowerCase().trim();
   
-  // Read all files in pdfs (same logic as /api/metadata)
-  let files = fs
-    // Read all files in the folder pdfs
-    .readdirSync('./frontend/pdfs')
-    // Only keep files that ends with .pdf in my list
-    .filter(x => x.endsWith('.pdf'));
+  // Get ALL metadata from all file types
+  let allMetadata = [];
+  
+  // PROCESS PDF FILES
+  try {
+    let pdfFiles = fs
+      .readdirSync('./frontend/pdfs')
+      .filter(x => x.toLowerCase().endsWith('.pdf'));
 
+    for (let file of pdfFiles) {
+      let data = await pdfParse(fs.readFileSync('./frontend/pdfs/' + file));
+      
+      // Extract title from text if PDF title is missing
+      let extractedTitle = data.info.Title;
+      if (!extractedTitle || extractedTitle.trim() === '') {
+        let firstLine = data.text.split('\n')[0];
+        extractedTitle = firstLine.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
+        if (extractedTitle.length < 10) {
+          let firstSentence = data.text.split('.')[0];
+          extractedTitle = firstSentence.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
+        }
+      }
+      
+      let enhancedAuthor = extractAuthorFromText(data.text, data.info.Author);
+      let createdDate = parsePDFDate(data.info.CreationDate);
+      let modifiedDate = parsePDFDate(data.info.ModDate);
+      
+      if (!createdDate) {
+        createdDate = extractDateFromFilename(file);
+      }
+      
+      let filePath = './frontend/pdfs/' + file;
+      let fileStats = fs.statSync(filePath);
+      let fileSizeInBytes = fileStats.size;
+      let fileSizeInKB = Math.round(fileSizeInBytes / 1024);
+      let fileSizeInMB = Math.round(fileSizeInBytes / (1024 * 1024) * 100) / 100;
+      
+      let formattedFileSize;
+      if (fileSizeInMB >= 1) {
+        formattedFileSize = fileSizeInMB + ' MB';
+      } else {
+        formattedFileSize = fileSizeInKB + ' KB';
+      }
+      
+      let pdfVersion = data.info.PDFFormatVersion || 'Unknown';
+      
+      // Text summary
+      let textSummary = '';
+      if (data.text && data.text.trim().length > 0) {
+        let cleanText = data.text
+          .replace(/\s+/g, ' ')
+          .replace(/\n+/g, ' ')
+          .trim();
+        
+        if (cleanText.length > 10) {
+          textSummary = cleanText.substring(0, 200) + (cleanText.length > 200 ? '...' : '');
+        }
+      }
+      
+      // Keywords extraction
+      let keywords = extractKeywords(data.text);
+      
+      // Language detection
+      let language = detectLanguage(data.text);
+      
+      // Category detection
+      let category = categorizeDocument(data.text, data.info.Subject, data.info.Keywords);
+      
+      let pdfMetadata = {
+        filename: file,
+        fileType: 'PDF',
+        fileSize: formattedFileSize,
+        fileSizeBytes: fileSizeInBytes,
+        title: extractedTitle,
+        author: enhancedAuthor,
+        createdDate: createdDate,
+        modifiedDate: modifiedDate,
+        keywords: keywords,
+        language: language,
+        category: category,
+        numpages: data.numpages,
+        numrender: data.numrender,
+        info: data.info,
+        metadata: data.metadata,
+        text: data.text,
+        version: data.version,
+        extractedTitle: extractedTitle,
+        enhancedAuthor: enhancedAuthor,
+        fileSize: formattedFileSize,
+        fileSizeBytes: fileSizeInBytes,
+        pdfVersion: pdfVersion,
+        createdDate: createdDate,
+        modifiedDate: modifiedDate,
+        textSummary: textSummary,
+        keywords: keywords,
+        language: language,
+        category: category
+      };
+      
+      allMetadata.push({ file, metadata: pdfMetadata });
+    }
+  } catch (error) {
+    console.error('Error processing PDF files for search:', error);
+  }
+  
+  // PROCESS JPG FILES
+  try {
+    let jpgFiles = fs
+      .readdirSync('./frontend/jpgs')
+      .filter(x => x.toLowerCase().endsWith('.jpg') || x.toLowerCase().endsWith('.jpeg') || x.toLowerCase().endsWith('.png'));
+
+    for (let file of jpgFiles) {
+      let jpgMetadata = extractJPGMetadata('./frontend/jpgs/' + file);
+      allMetadata.push({ file, metadata: jpgMetadata });
+    }
+  } catch (error) {
+    console.error('Error processing JPG files for search:', error);
+  }
+  
+  // PROCESS MP3 FILES
+  try {
+    let mp3Files = fs
+      .readdirSync('./frontend/mp3s')
+      .filter(x => x.toLowerCase().endsWith('.mp3') || x.toLowerCase().endsWith('.wav') || x.toLowerCase().endsWith('.flac'));
+
+    for (let file of mp3Files) {
+      let mp3Metadata = await extractMP3Metadata('./frontend/mp3s/' + file);
+      allMetadata.push({ file, metadata: mp3Metadata });
+    }
+  } catch (error) {
+    console.error('Error processing MP3 files for search:', error);
+  }
+  
   // Create a new array for search results
   let searchResults = [];
 
-  // Loop through the files
-  for (let file of files) {
-    // Get the meta data from PDF file
-    let data = await pdfParse(fs.readFileSync('./frontend/pdfs/' + file));
+  // Loop through ALL metadata and search in all file types
+  for (let item of allMetadata) {
+    let file = item.file;
+    let metadata = item.metadata;
     
-    // OPTION A: Extract title from text if PDF title is missing (same as /api/metadata)
-    let extractedTitle = data.info.Title;
-    if (!extractedTitle || extractedTitle.trim() === '') {
-      // Take first line of text as title
-      let firstLine = data.text.split('\n')[0];
-      // Clean up extra whitespace and special characters
-      extractedTitle = firstLine.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
-      // If first line is too short, take first sentence
-      if (extractedTitle.length < 10) {
-        let firstSentence = data.text.split('.')[0];
-        extractedTitle = firstSentence.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
-      }
-    }
+    // SIMPLE SEARCH LOGIC: Check if search query matches any field
+    const searchQueryLower = searchQuery.toLowerCase();
+    const title = (metadata.title || metadata.extractedTitle || '').toLowerCase();
+    const author = (metadata.author || metadata.enhancedAuthor || '').toLowerCase();
+    const content = (metadata.text || metadata.textSummary || '').toLowerCase();
+    const keywords = (metadata.keywords || []).join(' ').toLowerCase();
+    const language = (metadata.language || '').toLowerCase();
+    const category = (metadata.category || '').toLowerCase();
+    const fileType = (metadata.fileType || '').toLowerCase();
     
-    // ENHANCED AUTHOR EXTRACTION (same as /api/metadata)
-    let enhancedAuthor = extractAuthorFromText(data.text, data.info.Author);
+    const matchesSearch = title.includes(searchQueryLower) || 
+                         author.includes(searchQueryLower) || 
+                         content.includes(searchQueryLower) || 
+                         keywords.includes(searchQueryLower) || 
+                         language.includes(searchQueryLower) || 
+                         category.includes(searchQueryLower) || 
+                         fileType.includes(searchQueryLower);
     
-    // ENHANCED DATE EXTRACTION (same as /api/metadata)
-    let createdDate = parsePDFDate(data.info.CreationDate);
-    let modifiedDate = parsePDFDate(data.info.ModDate);
+    // FILTER LOGIC: Check file size and date filters
+    const fileSizeInKB = metadata.fileSizeBytes ? Math.round(metadata.fileSizeBytes / 1024) : 0;
+    const matchesSizeFilter = fileSizeInKB >= minSize && fileSizeInKB <= maxSize;
     
-    // Try to extract date from filename if no date found
-    if (!createdDate) {
-      createdDate = extractDateFromFilename(file);
-    }
+    const matchesDateFilter = !minDate || !maxDate || (metadata.createdDate && metadata.createdDate >= minDate && metadata.createdDate <= maxDate);
     
-    // OPTION B: Add file size (same as /api/metadata)
-    let filePath = './frontend/pdfs/' + file;
-    let fileStats = fs.statSync(filePath);
-    let fileSizeInBytes = fileStats.size;
-    let fileSizeInKB = Math.round(fileSizeInBytes / 1024);
-    let fileSizeInMB = Math.round(fileSizeInBytes / (1024 * 1024) * 100) / 100;
-    
-    // Format file size
-    let formattedFileSize;
-    if (fileSizeInMB >= 1) {
-      formattedFileSize = fileSizeInMB + ' MB';
-    } else {
-      formattedFileSize = fileSizeInKB + ' KB';
-    }
-    
-    // OPTION C: Add PDF version (same as /api/metadata)
-    let pdfVersion = data.info.PDFFormatVersion || 'Unknown';
-    
-    // ADVANCED METADATA EXTRACTION - STEP 1: TEXT SUMMARY (same as /api/metadata)
-    let textSummary = '';
-    if (data.text && data.text.trim().length > 0) {
-      // Clean the text: remove extra whitespace, newlines, and special characters
-      let cleanText = data.text
-        .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-        .replace(/\n+/g, ' ') // Replace newlines with spaces
-        .trim();
-      
-      // Only create summary if we have meaningful text (more than 10 characters)
-      if (cleanText.length > 10) {
-        // Extract first 200 characters as summary
-        textSummary = cleanText.substring(0, 200);
-        
-        // Add ellipsis if text was truncated
-        if (cleanText.length > 200) {
-          textSummary += '...';
-        }
-      } else if (cleanText.length > 0) {
-        // For very short text, use it as is
-        textSummary = cleanText;
-      }
-      // If cleanText is empty or very short, textSummary remains empty
-    }
-    
-    // If no text summary was created, try to create one from available metadata
-    if (!textSummary || textSummary.trim() === '') {
-      let fallbackSummary = '';
-      
-      // Try to create summary from title and author
-      if (data.info.Title && data.info.Title.trim() !== '') {
-        fallbackSummary = data.info.Title.trim();
-      }
-      
-      if (data.info.Author && data.info.Author.trim() !== '') {
-        if (fallbackSummary) {
-          fallbackSummary += ' - ';
-        }
-        fallbackSummary += data.info.Author.trim();
-      }
-      
-      // If we have a fallback summary, use it
-      if (fallbackSummary && fallbackSummary.length > 0) {
-        textSummary = fallbackSummary.substring(0, 200);
-        if (fallbackSummary.length > 200) {
-          textSummary += '...';
-        }
-      }
-    }
-    
-    // ADVANCED METADATA EXTRACTION - STEP 2: KEYWORD EXTRACTION (same as /api/metadata)
-    let keywords = [];
-    if (data.text && data.text.trim().length > 0) {
-      keywords = extractKeywords(data.text);
-    }
-    
-    // ADVANCED METADATA EXTRACTION - STEP 3: LANGUAGE DETECTION (same as /api/metadata)
-    let language = detectLanguage(data.text);
-    
-    // ADVANCED METADATA EXTRACTION - STEP 4: AUTOMATIC CATEGORIZATION (same as /api/metadata)
-    let category = categorizeDocument(data.text, data.info.Title, keywords);
-    
-    // Create enhanced metadata with all new fields (same as /api/metadata)
-    let enhancedMetadata = {
-      ...data,
-      extractedTitle: extractedTitle,
-      enhancedAuthor: enhancedAuthor,
-      fileSize: formattedFileSize,
-      fileSizeBytes: fileSizeInBytes,
-      pdfVersion: pdfVersion,
-      createdDate: createdDate,
-      modifiedDate: modifiedDate,
-      textSummary: textSummary, // Add the new text summary
-      keywords: keywords, // Add the new keywords
-      language: language, // Add the new language
-      category: category // Add the new category
-    };
-    
-                    // FUZZY SEARCH LOGIC: Use Fuse.js for better matching
-                const searchData = [
-                  { title: extractedTitle, author: enhancedAuthor || '', content: data.text || '', keywords: keywords.join(' '), language: language, category: category }
-                ];
-                
-                const fuseOptions = {
-                  keys: ['title', 'author', 'content', 'keywords', 'language', 'category'],
-                  threshold: 0.4, // Lower = more strict, Higher = more fuzzy
-                  includeScore: true,
-                  ignoreLocation: true,
-                  useExtendedSearch: false
-                };
-                
-                const fuse = new Fuse(searchData, fuseOptions);
-                const fuzzyResults = fuse.search(searchQuery);
-                
-                const matchesSearch = fuzzyResults.length > 0 && fuzzyResults[0].score < 0.6;
-                
-                // FILTER LOGIC: Check file size and date filters
-                const matchesSizeFilter = fileSizeInKB >= minSize && fileSizeInKB <= maxSize;
-                
-                const matchesDateFilter = !minDate || !maxDate || (createdDate && createdDate >= minDate && createdDate <= maxDate);
-                
-                if (matchesSearch && matchesSizeFilter && matchesDateFilter) {
+    if (matchesSearch && matchesSizeFilter && matchesDateFilter) {
       // Add matching file to search results
-      searchResults.push({ file, metadata: enhancedMetadata });
+      searchResults.push({ file, metadata: metadata });
     }
   }
 

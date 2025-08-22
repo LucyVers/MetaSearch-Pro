@@ -6,6 +6,14 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-08-22 - JPG-stöd förbättrat och oanvänd mapp borttagen! 🎯
+
+**Vad jag gjorde:**
+- ✅ **Tagit bort oanvänd `frontend/images/` mapp** - Följde med från grundprojektet men användes inte
+- ✅ **Lagt till fler EXIF-fält i frontend** - Photo Date, Photographer, Location (GPS)
+- ✅ **Förklarat design-logik** - Sökmotorn visar bara metadata, inte bildmotivet för rent gränssnitt
+- ✅ **"View Image"-knapp** - Låter användaren öppna bilden i full storlek
+
 ### 2025-08-22 - JPG-stöd implementerat och Git-branching process slutförd! 🎉
 
 **Vad vi gjorde:**

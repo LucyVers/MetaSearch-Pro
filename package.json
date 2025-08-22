@@ -20,8 +20,10 @@
   "type": "module",
   "dependencies": {
     "exif-parser": "^0.1.12",
+    "exif-reader": "^2.0.2",
     "express": "^4.19.2",
     "fuse.js": "^7.1.0",
+    "music-metadata": "^11.8.3",
     "pdf-parse-fork": "^1.2.0"
   }
 }
