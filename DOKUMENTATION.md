@@ -6,6 +6,66 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-08-22 - JPG-stöd implementerat och Git-branching process slutförd! 🎉
+
+**Vad vi gjorde:**
+- ✅ **Skapade JPG-branch** - `feature/jpg-support` för isolerad utveckling
+- ✅ **Installerade exif-parser** - För JPG EXIF-metadata extraktion
+- ✅ **Implementerade JPG-funktion** - `extractJPGMetadata()` med robust felhantering
+- ✅ **Uppdaterade API:et** - Hanterar nu både PDF och JPG filer
+- ✅ **Testade med 20 JPG-filer** - Funktionerar perfekt med riktig testdata
+- ✅ **Mergade till main** - `git merge feature/jpg-support` - första framgångsrika merge!
+- ✅ **Pushat till GitHub** - Allt säkert sparat på GitHub
+- ✅ **Tagit bort JPG-branch** - Rent repository efter merge
+
+**Git-branching process (steg för steg):**
+1. **Skapa branch**: `git checkout -b feature/jpg-support`
+2. **Utveckla**: Implementera JPG-funktionalitet
+3. **Committa**: `git add . && git commit -m "message"`
+4. **Byt till main**: `git checkout main`
+5. **Merga**: `git merge feature/jpg-support`
+6. **Pusha**: `git push origin main`
+7. **Ta bort branch**: `git branch -d feature/jpg-support`
+
+**Tekniska detaljer:**
+- **exif-parser bibliotek**: För att läsa EXIF-data från JPG-filer
+- **extractJPGMetadata()**: Funktion som extraherar metadata med felhantering
+- **Case-insensitive filhantering**: Hanterar .JPG, .jpg, .jpeg, .png
+- **Robust felhantering**: Ger standardvärden när EXIF-data saknas
+- **Enhetlig struktur**: Samma metadata-format som PDF
+
+**JPG-metadata som extraheras:**
+```json
+{
+  "filename": "DSC00042.JPG",
+  "fileType": "JPG",
+  "fileSize": "4.25 MB",
+  "title": "JPG Image",
+  "keywords": ["image", "photo", "jpg"],
+  "category": "Image",
+  "dimensions": null,
+  "camera": null,
+  "location": null
+}
+```
+
+**Resultat:**
+- ✅ **40 filer totalt**: 20 PDF + 20 JPG filer
+- ✅ **Enhetlig sökning**: Båda filtyperna visas i samma sökresultat
+- ✅ **Korrekt metadata**: Filstorlek, typ, kategori, keywords
+- ✅ **Git-branching erfarenhet**: Första framgångsrika merge-process
+
+**Lärdomar från Git-branching:**
+- **Varför ta bort branches?**: Håller repository rent, undviker förvirring
+- **När ta bort?**: Efter framgångsrik merge och push till GitHub
+- **Hur återställa?**: Skapa ny branch från main (som har all kod)
+- **Bra praxis**: Spara → Pusha → Ta bort branch
+
+**Nästa steg:**
+- Skapa MP3-branch för musikfiler
+- Skapa CSV-branch för databaser
+- Skapa PPT-branch för presentationer
+
 ### 2025-08-22 - Multi-filtyp huvudlogik implementerad
 
 **Vad jag gjorde:**
