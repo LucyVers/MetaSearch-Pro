@@ -6,6 +6,8 @@ import pdfParse from 'pdf-parse-fork';
 import express from 'express';
 // Import Fuse.js for fuzzy matching
 import Fuse from 'fuse.js';
+// Import exif-reader for JPG metadata extraction
+import ExifReader from 'exif-reader';
 
 // MULTI-FILETYPE SUPPORT - COMMON METADATA STRUCTURE
 // This defines the common structure that all file types will use
@@ -131,6 +133,115 @@ function getFileFolders() {
     'CSV': './frontend/csvs',
     'PPT': './frontend/ppts'
   };
+}
+
+// JPG METADATA EXTRACTION FUNCTION
+function extractJPGMetadata(filePath) {
+  try {
+    // Read the JPG file
+    const buffer = fs.readFileSync(filePath);
+    
+    // Extract EXIF data
+    const exifData = ExifReader.load(buffer);
+    
+    // Initialize metadata object using common structure
+    const metadata = {
+      filename: filePath.split('/').pop(),
+      fileType: 'JPG',
+      fileSize: formatFileSize(fs.statSync(filePath).size),
+      title: null,
+      author: null,
+      createdDate: null,
+      modifiedDate: null,
+      keywords: [],
+      language: 'Unknown',
+      category: 'Image',
+      // JPG specific fields
+      dimensions: null,
+      camera: null,
+      location: null
+    };
+    
+    // Extract basic file info
+    if (exifData.Exif) {
+      // Camera information
+      if (exifData.Exif.Make && exifData.Exif.Model) {
+        metadata.camera = `${exifData.Exif.Make} ${exifData.Exif.Model}`;
+      }
+      
+      // Date information
+      if (exifData.Exif.DateTimeOriginal) {
+        metadata.createdDate = new Date(exifData.Exif.DateTimeOriginal);
+      }
+      if (exifData.Exif.DateTime) {
+        metadata.modifiedDate = new Date(exifData.Exif.DateTime);
+      }
+    }
+    
+    // Extract GPS information
+    if (exifData.GPSLatitude && exifData.GPSLongitude) {
+      metadata.location = {
+        latitude: exifData.GPSLatitude,
+        longitude: exifData.GPSLongitude
+      };
+    }
+    
+    // Extract image dimensions
+    if (exifData.ExifImageWidth && exifData.ExifImageLength) {
+      metadata.dimensions = `${exifData.ExifImageWidth} x ${exifData.ExifImageLength}`;
+    }
+    
+    // Extract title/description
+    if (exifData.ImageDescription) {
+      metadata.title = exifData.ImageDescription;
+    }
+    
+    // Extract author/artist
+    if (exifData.Artist) {
+      metadata.author = exifData.Artist;
+    }
+    
+    // Generate keywords from available data
+    const keywordData = [
+      metadata.camera,
+      metadata.title,
+      metadata.author,
+      metadata.dimensions
+    ].filter(Boolean).join(' ');
+    
+    if (keywordData) {
+      metadata.keywords = extractKeywords(keywordData);
+    }
+    
+    return metadata;
+    
+  } catch (error) {
+    console.error(`Error extracting JPG metadata from ${filePath}:`, error);
+    return {
+      filename: filePath.split('/').pop(),
+      fileType: 'JPG',
+      fileSize: formatFileSize(fs.statSync(filePath).size),
+      title: 'Error reading metadata',
+      author: null,
+      createdDate: null,
+      modifiedDate: null,
+      keywords: [],
+      language: 'Unknown',
+      category: 'Image',
+      dimensions: null,
+      camera: null,
+      location: null
+    };
+  }
+}
+
+// Helper function to format file size
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 // Helper function to extract date from filename
@@ -499,6 +610,20 @@ app.get('/api/metadata', async (_request, response) => {
     
     // Add the filename and the enhanced metadata to our meta data list
     metadataList.push({ file, metadata: enhancedMetadata });
+  }
+
+  // PROCESS JPG FILES
+  try {
+    let jpgFiles = fs
+      .readdirSync('./frontend/jpgs')
+      .filter(x => x.toLowerCase().endsWith('.jpg') || x.toLowerCase().endsWith('.jpeg') || x.toLowerCase().endsWith('.png'));
+
+    for (let file of jpgFiles) {
+      let jpgMetadata = extractJPGMetadata('./frontend/jpgs/' + file);
+      metadataList.push({ file, metadata: jpgMetadata });
+    }
+  } catch (error) {
+    console.error('Error processing JPG files:', error);
   }
 
   // Send the meta data as a response to the request

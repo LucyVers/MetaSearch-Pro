@@ -8,6 +8,12 @@ yarn-error.log*
 frontend/pdfs/
 *.pdf
 
+# JPG files and test data
+frontend/jpgs/
+*.jpg
+*.jpeg
+*.png
+
 # Development and personal files
 *.md
 !README.md
