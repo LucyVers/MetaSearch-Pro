@@ -6,8 +6,8 @@ import pdfParse from 'pdf-parse-fork';
 import express from 'express';
 // Import Fuse.js for fuzzy matching
 import Fuse from 'fuse.js';
-// Import exif-reader for JPG metadata extraction
-const ExifReader = require('exif-reader');
+// Import exif-parser for JPG metadata extraction
+import ExifParser from 'exif-parser';
 // Import music-metadata for MP3 metadata extraction
 import { parseFile } from 'music-metadata';
 
@@ -144,7 +144,12 @@ function extractJPGMetadata(filePath) {
     const buffer = fs.readFileSync(filePath);
     
     // Extract EXIF data
-    const exifData = ExifReader.load(buffer);
+    let exifData = null;
+    try {
+      exifData = ExifParser.create(buffer).parse();
+    } catch (exifError) {
+      console.log(`No EXIF data found in ${filePath}:`, exifError.message);
+    }
     
     // Initialize metadata object using common structure
     const metadata = {
@@ -165,42 +170,37 @@ function extractJPGMetadata(filePath) {
     };
     
     // Extract basic file info
-    if (exifData.Exif) {
+    if (exifData && exifData.tags) {
       // Camera information
-      if (exifData.Exif.Make && exifData.Exif.Model) {
-        metadata.camera = `${exifData.Exif.Make} ${exifData.Exif.Model}`;
+      if (exifData.tags.Make && exifData.tags.Model) {
+        metadata.camera = `${exifData.tags.Make} ${exifData.tags.Model}`;
       }
       
       // Date information
-      if (exifData.Exif.DateTimeOriginal) {
-        metadata.createdDate = new Date(exifData.Exif.DateTimeOriginal);
+      if (exifData.tags.DateTimeOriginal) {
+        metadata.createdDate = new Date(exifData.tags.DateTimeOriginal);
       }
-      if (exifData.Exif.DateTime) {
-        metadata.modifiedDate = new Date(exifData.Exif.DateTime);
+      if (exifData.tags.ModifyDate) {
+        metadata.modifiedDate = new Date(exifData.tags.ModifyDate);
       }
-    }
-    
-    // Extract GPS information
-    if (exifData.GPSLatitude && exifData.GPSLongitude) {
-      metadata.location = {
-        latitude: exifData.GPSLatitude,
-        longitude: exifData.GPSLongitude
-      };
-    }
-    
-    // Extract image dimensions
-    if (exifData.ExifImageWidth && exifData.ExifImageLength) {
-      metadata.dimensions = `${exifData.ExifImageWidth} x ${exifData.ExifImageLength}`;
-    }
-    
-    // Extract title/description
-    if (exifData.ImageDescription) {
-      metadata.title = exifData.ImageDescription;
-    }
-    
-    // Extract author/artist
-    if (exifData.Artist) {
-      metadata.author = exifData.Artist;
+      
+      // Extract GPS information
+      if (exifData.tags.GPSLatitude && exifData.tags.GPSLongitude) {
+        metadata.location = {
+          latitude: exifData.tags.GPSLatitude,
+          longitude: exifData.tags.GPSLongitude
+        };
+      }
+      
+      // Extract image dimensions
+      if (exifData.imageSize) {
+        metadata.dimensions = `${exifData.imageSize.width} x ${exifData.imageSize.height}`;
+      }
+      
+      // Extract title/description
+      if (exifData.tags.ImageDescription) {
+        metadata.title = exifData.tags.ImageDescription;
+      }
     }
     
     // Generate keywords from available data

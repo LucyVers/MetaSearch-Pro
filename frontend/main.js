@@ -314,9 +314,20 @@ async function performSearch(searchTerm) {
   }
 }
 
-// Add event listener for search input
+// Add event listener for search input with debounce
+let searchTimeout;
 searchInput.addEventListener('input', function() {
-  performSearch(this.value);
+  clearTimeout(searchTimeout);
+  
+  // Show typing indicator
+  if (this.value.trim() !== '') {
+    searchResults.innerHTML = '<div class="search-loading"><div class="loading"></div>Skriver...</div>';
+    mainContent.style.display = 'none';
+  }
+  
+  searchTimeout = setTimeout(() => {
+    performSearch(this.value);
+  }, 1000); // Wait 1000ms (1 second) after user stops typing
 });
 
 // Load search history when page loads

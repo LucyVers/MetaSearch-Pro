@@ -14,9 +14,34 @@
 - ✅ **Förklarat design-logik** - Sökmotorn visar bara metadata, inte bildmotivet för rent gränssnitt
 - ✅ **"View Image"-knapp** - Låter användaren öppna bilden i full storlek
 
+### 2025-08-25 - Sökning och layout-problem LÖSTA! 🎉
+
+**Problem som löstes:**
+1. **Sökresultat visade bara första bokstaven** ("P" istället för "PDF")
+2. **Sökning triggades för tidigt** vid långsam skrivning
+3. **Långa filnamn trunkerades** i tabeller
+4. **EXIF-data syns inte** för JPG-filer
+
+**Lösningar implementerade:**
+- **Debounce-funktion:** 1000ms fördröjning för sökning
+- **CSS-förbättringar:** Ökad kolumnbredd, text-wrapping, table-layout: fixed
+- **Laddningsindikator:** "Skriver..." med spinnande animation
+- **EXIF-fix:** Korrigerat exif-parser implementation
+
+**Resultat:**
+- ✅ Sökning fungerar perfekt för både snabb och långsam skrivning
+- ✅ Alla filnamn visas korrekt utan trunkering
+- ✅ All EXIF-data visas för JPG-filer (Dimensions, Camera, Photo Date, Location)
+- ✅ Förbättrad användarupplevelse med tydlig feedback
+
+**Tekniska detaljer:**
+- JavaScript: `setTimeout` med 1000ms debounce
+- CSS: `word-wrap: break-word`, `table-layout: fixed`
+- Backend: Korrigerat `exif-parser` implementation
+
 ### 2025-08-22 - JPG-stöd implementerat och Git-branching process slutförd! 🎉
 
-**Vad vi gjorde:**
+**Vad jag gjorde:**
 - ✅ **Skapade JPG-branch** - `feature/jpg-support` för isolerad utveckling
 - ✅ **Installerade exif-parser** - För JPG EXIF-metadata extraktion
 - ✅ **Implementerade JPG-funktion** - `extractJPGMetadata()` med robust felhantering

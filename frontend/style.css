@@ -71,6 +71,28 @@ body {
   display: none;
 }
 
+.search-loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--border-color);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .search-history {
   margin-top: 20px;
   padding: 20px;
@@ -154,6 +176,7 @@ table {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
 }
 
 tr:nth-child(odd) {
@@ -167,17 +190,25 @@ tr:nth-child(even) {
 td {
   padding: 12px 16px;
   border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 td:first-child {
   font-weight: 600;
   color: var(--text-primary);
-  width: 30%;
+  width: 40%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 td:nth-child(2) {
-  text-align: right;
+  text-align: left;
   color: var(--text-secondary);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 60%;
 }
 
 .download-section {
