@@ -9,115 +9,131 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - ✅ Node.js för metadata-extraktion
 - ✅ Node.js för webbserver med REST-API
 - [ ] **MySQL-databas** (molntjänst) för metadata-lagring
-- ✅ Webbaserad frontend (HTML, CSS, JavaScript)
+- ✅ Webbaserat frontend (HTML, CSS, JavaScript)
 - ✅ Git för versionshantering
 
 ### **FILTYPER ENLIGT UPPGIFTEN:**
 - ✅ **Foton** (JPG) - IMPLEMENTERAT
 - ✅ **PDF-filer** - IMPLEMENTERAT  
 - ✅ **Ljudfiler** (MP3) - IMPLEMENTERAT
-- [ ] **PowerPoint-dokument** (PPT/PPTX) - SAKNAS
-- ❌ **CSV-filer** - INTE KRÄVS enligt uppgiften
+- ✅ **PowerPoint-dokument** (PPT) - IMPLEMENTERAT
 
 ### **USER STORIES ATT UPPFYLLA:**
 1. [ ] **Systemägare:** MySQL-databas för metadata-lagring
 2. [ ] **Systemägare:** System för att extrahera metadata från mappar
 3. ✅ **Besökare:** Webbaserat gränssnitt för sökning
-4. [x] **Besökare:** Filtypsfiltrering i sökning ✅ SLUTFÖRT!
+4. ✅ **Besökare:** Filtypsfiltrering i sökning
 5. ✅ **Besökare:** Sökning på filnamn och metadata
 6. [ ] **Besökare:** Avancerad sökning (lika med, större än, etc.)
 7. [ ] **Besökare:** Geografisk sökning (lat/long)
-8. [x] **Besökare/Systemägare:** Testdata för alla filtyper ✅ SLUTFÖRT!
+8. ✅ **Besökare/Systemägare:** Testdata för alla filtyper
 
 ### **BETYGSKRITERIER:**
 - **G:** Fungerande sökmotor
 - **VG:** Fungerande sökmotor + lättanvänd + relevanta sökresultat
 
-## 1. PROJEKTINITIERING
+---
+
+## ✅ **SLUTFÖRDA FUNKTIONER (KRONOLOGISK ORDNING)**
+
+### **1. PROJEKTINITIERING (SLUTFÖRD)**
 - [x] Skapa nytt Node.js-projekt
 - [x] Konfigurera package.json med "type": "module"
 - [x] Installera pdf-parse-fork
 - [x] Installera express
 - [x] Skapa grundläggande projektstruktur
 
-## 2. BACKEND-UTVECKLING
+### **2. BACKEND-UTVECKLING (SLUTFÖRD)**
 - [x] Skapa Express-server
 - [x] Implementera REST API-route för PDF-metadata
 - [x] Använda pdf-parse-fork för metadata-extrahering
 - [x] Hantera filsystem med fs-modulen
-- [x] **FÖRBÄTTRING: Extrahera titel från text (Option A)**
-- [x] **FÖRBÄTTRING: Lägg till filstorlek (Option B)**
-- [x] **FÖRBÄTTRING: Visa PDF-version (Option C)**
-- [x] **FÖRBÄTTRING: Konvertera kommentarer till engelska**
-- [x] **FÖRBÄTTRING: Förbättra datumhantering**
+- [x] Extrahera titel från text
+- [x] Lägg till filstorlek
+- [x] Visa PDF-version
+- [x] Konvertera kommentarer till engelska
+- [x] Förbättra datumhantering
 
-## 3. FRONTEND-UTVECKLING
+### **3. FRONTEND-UTVECKLING (SLUTFÖRD)**
 - [x] Skapa HTML-struktur för metadata-visning
 - [x] Implementera JavaScript för API-anrop
 - [x] Visa PDF-metadata i tabellformat
 - [x] Lägg till nedladdningslänkar för PDF-filer
-- [x] **FÖRBÄTTRING: Visa extraherade titlar**
-- [x] **FÖRBÄTTRING: Visa filstorlek**
-- [x] **FÖRBÄTTRING: Visa PDF-version**
-- [x] **FÖRBÄTTRING: Förbättra datumvisning**
+- [x] Visa extraherade titlar
+- [x] Visa filstorlek
+- [x] Visa PDF-version
+- [x] Förbättra datumvisning
 
-## 4. STYLING OCH UX
+### **4. STYLING OCH UX (SLUTFÖRD)**
 - [x] Skapa CSS för professionell layout
 - [x] Styla nedladdningsknappar med hover-effekt
 - [x] Styla PDF-titlar med ikoner
 - [x] Responsiv design för olika skärmstorlekar
+- [x] Hover-effekter och animationer
+- [x] Filtyp-specifika ikoner
+- [x] Nedladdningslänkar för alla filtyper
 
-## 5. FILHANTERING OCH SÄKERHET
+### **5. FILHANTERING OCH SÄKERHET (SLUTFÖRD)**
 - [x] Skapa frontend/pdfs/ mapp för testdata
 - [x] Uppdatera .gitignore för att ignorera PDF-filer
 - [x] Skapa README.md med instruktioner för testdata
 - [x] Implementera best practices för stora filer
 
-## 6. TESTNING OCH VALIDERING
+### **6. TESTNING OCH VALIDERING (SLUTFÖRD)**
 - [x] Testa backend med curl-kommandon
 - [x] Verifiera att PDF-metadata extraheras korrekt
 - [x] Testa frontend i webbläsare
 - [x] Testa med olika PDF-format och storlekar
 - [x] Verifiera att alla förbättringar fungerar
 
-## 7. DOKUMENTATION
+### **7. DOKUMENTATION (SLUTFÖRD)**
 - [x] Uppdatera DOKUMENTATION.md med alla steg
 - [x] Skapa ordlista för tekniska termer
-- [x] Uppdatera cursor-rules.md med preferenser
 - [x] Dokumentera best practices för Git och filhantering
 
-## 🎯 PRIORITERING - VAD JAG SKA BÖRJA MED
-1. **Backend först** - Logik och API
-2. **Frontend sedan** - Användargränssnitt  
-3. **Testning sist** - Verifiering
+### **8. MULTI-FILTYP STÖD (SLUTFÖRD)**
+- [x] Lägg till stöd för JPG-bilder (EXIF-data)
+- [x] Lägg till stöd för MP3-filer (ID3-taggar)
+- [x] Lägg till stöd för PPT-filer (presentationer, slides)
+- [x] Enhetlig sökning över alla filtyper
+- [x] Filtyp-specifik metadata-visning
 
-## ✅ SLUTRESULTAT - ALLT KLART!
+### **9. SÖKFUNKTION (SLUTFÖRD)**
+- [x] Backend: `/api/search` endpoint
+- [x] Grundläggande sökning i titlar, författare, innehåll
+- [x] Debounce-funktion (1000ms)
+- [x] Laddningsindikator ("Skriver...")
+- [x] Realtid-sökresultat
 
-### **PROJEKT STATUS: FULLSTÄNDIGT SLUTFÖRT**
+### **10. FILTYPSFILTRERING (SLUTFÖRD)**
+- [x] Dropdown för att välja filtyp (PDF, JPG, MP3, PPT)
+- [x] Backend: Filtrera sökresultat per filtyp
+- [x] Frontend: Visa endast vald filtyp
+- [x] Sökning fungerar även utan sökterm (endast filtrering)
 
-**Vad jag har uppnått:**
-- ✅ **Fullständig PDF-metadata extraktion** med alla förbättringar
-- ✅ **Professionell webbapplikation** med nedladdningslänkar
-- ✅ **Robust felhantering** och datumhantering
-- ✅ **Konsekvent kodning** med engelska kommentarer
-- ✅ **Best practices** för filhantering och Git
-- ✅ **Omfattande dokumentation** och ordlista
+### **11. AVANCERAD METADATA-EXTRAKTION (SLUTFÖRD)**
+- [x] Text-sammanfattning (första 200 tecken)
+- [x] Automatisk nyckelord-extraktion
+- [x] Språkdetektering
+- [x] Automatisk kategorisering (rapport, artikel, etc.)
+- [x] Förbättrad författare-extraktion
 
-**Tekniska prestationer:**
-- **20 PDF-filer** testade framgångsrikt
-- **3 förbättringar** implementerade (Options A, B, C)
-- **0 fel** i produktion
-- **100% funktionalitet** uppnådd
+### **12. GIT BRANCHES TRÄNING (SLUTFÖRD)**
+- [x] Skapa test-branch för musikfiler
+- [x] Lära sig branch-hantering säkert
+- [x] Träna merge-konflikter
+- [x] Skapa backup-strategi
+- [x] Dokumentera Git-workflow
 
+---
 
+## 🚀 **AKTUELLA UPPGIFTER (PRIORITERADE)**
 
-## 🚀 UPPGIFTSFOKUSERADE FUNKTIONER
-
-### **8. MYSQL-DATABAS INTEGRATION (KRITISK PRIORITET)**
+### **13. MYSQL-DATABAS INTEGRATION (KRITISK PRIORITET - G-KRITERIUM)**
 - [ ] **STEG 1: Databas-setup**
   - [ ] Skapa MySQL-databas på molntjänst (PlanetScale/AWS/Google Cloud)
   - [ ] Designa databasschema för metadata-lagring
-  - [ ] Skapa tabeller för olika filtyper (PDF, JPG, MP3, CSV, PPT)
+  - [ ] Skapa tabeller för olika filtyper (PDF, JPG, MP3, PPT)
   - [ ] Implementera anslutning från Node.js
 
 - [ ] **STEG 2: Metadata-lagring**
@@ -126,7 +142,19 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [ ] Hantera duplicerade filer
   - [ ] Backup-strategi för databas
 
-### **10. RELEVANSSORTERING (VG-KRITERIUM)**
+### **14. AVANCERAD SÖKFUNKTION (KRITISK PRIORITET - G-KRITERIUM)**
+- [ ] **STEG 1: Sökoperatorer**
+  - [ ] Sökoperatorer (lika med, inte lika med, större än, mindre än)
+  - [ ] Datumintervall-sökning
+  - [ ] Filstorleks-sökning
+  - [ ] Metadata-specifik sökning per filtyp
+
+- [ ] **STEG 2: Geografisk sökning**
+  - [ ] Extrahera GPS-koordinater från EXIF-data
+  - [ ] Implementera lat/long-sökning
+  - [ ] Visa resultat på karta (valfritt)
+
+### **15. RELEVANSSORTERING (VG-KRITERIUM)**
 - [ ] **STEG 1: Grundläggande relevans**
   - [ ] Sortera efter matchande fält
   - [ ] Prioritera exakta matchningar
@@ -137,107 +165,46 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [ ] Sökhistorik-baserad relevans
   - [ ] Användarinteraktion-baserad relevans
 
-### **9. AVANCERAD METADATA-EXTRAKTION (PRIORITET 2)**
-- [x] Extrahera text-sammanfattning (första 200 tecken)
-- [x] Automatisk nyckelord-extraktion
-- [x] Språkdetektering
-- [x] Automatisk kategorisering (rapport, artikel, etc.)
-- [x] Förbättrad författare-extraktion
+### **16. ANVÄNDARUPPLEVELSE (UX) - FRAMTIDA FÖRBÄTTRINGAR**
+- [ ] **Dark/Light mode växling**
+- [ ] **Drag & drop för filuppladdning**
+- [ ] **Export-funktion (JSON, CSV)**
+- [ ] **Förbättrad loading-animation**
+- [ ] **Responsiv design för mobil/tablet**
 
-### **11. MULTI-FILTYP STÖD (UPPGIFTSKRITERIER)**
-- [x] **HUVUDLOGIK I MAIN** - Gemensam metadata-struktur ✅
-- [x] **HUVUDLOGIK I MAIN** - Filtypsdetektering ✅
-- [x] **HUVUDLOGIK I MAIN** - Mapphantering för alla filtyper ✅
-- [x] Lägg till stöd för JPG-bilder (EXIF-data) ✅
-- [x] Lägg till stöd för MP3-filer (ID3-taggar) ✅
-- [x] **Lägg till stöd för PPT-filer** (presentationer, slides) - KRITISKT ✅ SLUTFÖRT!
-- [x] Enhetlig sökning över alla filtyper ✅
-- [x] Filtyp-specifik metadata-visning ✅
+---
 
-### **12. VIKTIGA IMPLEMENTERINGAR VI REDAN HAR (FLYTTADE HIT)**
-- [x] **Avancerad metadata-extraktion**
-  - [x] Text-sammanfattning (första 200 tecken)
-  - [x] Automatisk nyckelord-extraktion
-  - [x] Språkdetektering
-  - [x] Automatisk kategorisering (rapport, artikel, etc.)
-  - [x] Förbättrad författare-extraktion
+## 🎯 **PROJEKT STATUS**
 
-- [x] **Sökfunktion (grundläggande)**
-  - [x] Backend: `/api/search` endpoint
-  - [x] Grundläggande sökning i titlar, författare, innehåll
-  - [x] Debounce-funktion (1000ms)
-  - [x] Laddningsindikator ("Skriver...")
-  - [x] Realtid-sökresultat
+### **VAD JAG HAR UPPNÅTT:**
+- ✅ **Grundläggande metadata-extraktion** för PDF, JPG, MP3, PPT
+- ✅ **Webbbaserat gränssnitt** för sökning och visning
+- ✅ **Enkel sökfunktion** med debounce
+- ✅ **Filtypsfiltrering** med dropdown
+- ✅ **Git-versionshantering** med branching-träning
+- ✅ **Professionell kodstruktur** med best practices
 
-- [x] **Användarupplevelse (UX)**
-  - [x] Responsiv design för olika skärmstorlekar
-  - [x] Professionell CSS-layout
-  - [x] Hover-effekter och animationer
-  - [x] Filtyp-specifika ikoner
-  - [x] Nedladdningslänkar för alla filtyper
+### **VAD JAG BEHÖVER FÖR UPPGIFTEN:**
+- [ ] **MySQL-databas** (molntjänst) - KRITISKT för G-betyg
+- [ ] **Avancerad sökning** (operatorer, geografisk) - KRITISKT för G-betyg
+- [ ] **Relevanssortering** - KRITISKT för VG-betyg
 
-### **11. ANVÄNDARUPPLEVELSE (UX) (PRIORITET 4)**
-- [ ] Dark/Light mode växling
-- [ ] Responsiv design för mobil/tablet
-- [ ] Drag & drop för filuppladdning
-- [ ] Export-funktion (JSON, CSV)
-- [ ] Förbättrad loading-animation
+### **NÄSTA STEG (PRIORITET 1):**
+1. **MySQL-databas integration** - KRITISKT för G-betyg
+2. **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
+3. **Geografisk sökning** - GPS-koordinater för JPG-filer
+4. **Relevanssortering** - Sortera resultat efter relevans
 
-### **12. GIT BRANCHES TRÄNING (PRIORITET 5)**
-- [x] Skapa test-branch för musikfiler ✅ (JPG-branch)
-- [x] Lära sig branch-hantering säkert ✅
-- [x] Träna merge-konflikter ✅ (framgångsrik merge)
-- [x] Skapa backup-strategi ✅ (pusha till GitHub)
-- [x] Dokumentera Git-workflow ✅ (GIT-BRANCHING-GUIDE.md)
+### **VALFRIA FÖRBÄTTRINGAR (efter huvuduppgiften):**
+5. **UX-förbättringar** - Dark mode, drag & drop, export-funktion
 
-## 🎯 UPPGIFTSFOKUSERAD IMPLEMENTERINGSPLAN
+---
 
-**FAS 1: MYSQL-DATABAS (KRITISK - G-KRITERIUM)**
-1. Skapa molndatabas (PlanetScale/AWS/Google Cloud)
-2. Designa databasschema
-3. Implementera Node.js-anslutning
-4. Modifiera API för databas-lagring
-
-**FAS 2: AVANCERAD SÖKFUNKTION (G-KRITERIUM)**
-1. [x] Filtypsfiltrering (dropdown) ✅ SLUTFÖRT!
-   - [x] Dropdown för att välja filtyp (PDF, JPG, MP3, PPT)
-   - [x] Backend: Filtrera sökresultat per filtyp
-   - [x] Frontend: Visa endast vald filtyp
-
-2. Avancerade sökoperatorer
-   - [ ] Sökoperatorer (lika med, inte lika med, större än, mindre än)
-   - [ ] Datumintervall-sökning
-   - [ ] Filstorleks-sökning
-   - [ ] Metadata-specifik sökning per filtyp
-
-3. Geografisk sökning (lat/long)
-   - [ ] Extrahera GPS-koordinater från EXIF-data
-   - [ ] Implementera lat/long-sökning
-   - [ ] Visa resultat på karta (valfritt)
-
-4. [x] Testdata för alla filtyper ✅ SLUTFÖRT!
-
-**FAS 3: RELEVANSSORTERING (VG-KRITERIUM)**
-1. Grundläggande relevans-algoritm
-2. Viktning av metadata-fält
-3. Användarinteraktion-baserad relevans
-4. Sökhistorik-integration
-
-
-
-**FAS 5: TESTNING OCH OPTIMERING**
-1. Testa alla filtyper
-2. Prestanda-optimering
-3. Användbarhetstestning
-4. Slutrapport och dokumentation
-
-## 🚨 AKTUELLA PROBLEM ATT LÖSA
+## 🚨 **LÖSTA PROBLEM (HISTORIK)**
 
 ### **EXIF-VISNINGSPROBLEM FÖR JPG-FILER** ✅ LÖST!
 - [x] **Problem:** EXIF-data (Photo Date, Photographer, Location, Camera) syns inte i frontend
-- [x] **Status:** Backend extraherar data, men frontend visar inte
 - [x] **Lösning:** Kontrollera frontend-logik för JPG-specifik metadata-visning
-- [x] **Test:** Verifiera att `DSC00042.JPG` visar avancerad EXIF-data
 - [x] **Resultat:** All EXIF-data visas korrekt (Dimensions, Camera, Photo Date, Location)
 
 ### **SÖKNINGSPROBLEM** ✅ LÖST!
@@ -252,64 +219,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [x] **Lösning:** Ökad kolumnbredd, text-wrapping, table-layout: fixed
 - [x] **Resultat:** Alla filnamn och metadata visas korrekt
 
-### **TESTDATA FÖR ALLA FILTYPER (UPPGIFTSKRITERIUM)**
-- [x] **PPT-testdata (KRITISKT - enligt uppgiften)** ✅ SLUTFÖRT!
-  - [x] Skapa `frontend/ppts/` mapp
-  - [x] Hitta copyright-fria PPT/PPTX-filer (presentationer, föreläsningar)
-  - [x] Implementera `extractPPTMetadata()` funktion
-  - [x] Lägg till PPT-specifik metadata (slides, presentationer, författare)
-  - [x] Uppdatera frontend för PPT-visning
-  - [x] Testa med olika PPT-format (.ppt, .pptx)
-
-### **POWERPOINT-METADATA JAG BEHÖVER EXTRAHERA:** ✅ SLUTFÖRT!
-- [x] **Grundläggande metadata**
-  - [x] Titel och författare
-  - [x] Antal slides
-  - [x] Skapandedatum och modifieringsdatum
-  - [x] Filstorlek
-
-- [x] **Avancerad metadata**
-  - [x] Presentationstema (via company/företag)
-  - [x] Slide-layouts (via slide_count)
-  - [x] Inbäddade objekt (via word_count)
-  - [x] Kommentarer och anteckningar (via revision_number)
-
-### **SÄKERHET OCH BEST PRACTICES (UPPGIFTSKRITERIER)**
-- [ ] **Gitignore-uppdatering**
-  - [ ] Lägg till alla binära filer (PDF, MP3, JPG, PPT)
-  - [ ] Skapa instruktioner för Google Drive-delning
-  - [ ] Dokumentera hur man lägger till testdata lokalt
-
-- [ ] **Databas-säkerhet**
-  - [ ] Skapa `.env` fil för databas-credentials
-  - [ ] Lägg till `.env` i `.gitignore`
-  - [ ] Dokumentera databas-setup för teamet
-
-## 🎯 PROJEKT STATUS - UPPGIFTSFOKUSERAD
-
-### **VAD JAG HAR UPPNÅTT:**
-- ✅ **Grundläggande metadata-extraktion** för PDF, JPG, MP3
-- ✅ **Webbbaserat gränssnitt** för sökning och visning
-- ✅ **Enkel sökfunktion** med debounce
-- ✅ **Git-versionshantering** med branching-träning
-- ✅ **Professionell kodstruktur** med best practices
-
-### **VAD JAG BEHÖVER FÖR UPPGIFTEN:**
-- [ ] **MySQL-databas** (molntjänst) - KRITISKT för G-betyg
-- [ ] **Avancerad sökning** (operatorer, geografisk) - KRITISKT för G-betyg
-- [x] **Filtypsfiltrering** - KRITISKT för G-betyg ✅ SLUTFÖRT!
-- [x] **PPT-stöd** - KRITISKT för G-betyg (enligt uppgiften) ✅ SLUTFÖRT!
-- [ ] **Relevanssortering** - KRITISKT för VG-betyg
-- [x] **Testdata för alla filtyper** - KRITISKT för G-betyg ✅ SLUTFÖRT!
-
-### **NÄSTA STEG (PRIORITET 1):**
-- [ ] **MySQL-databas integration** - KRITISKT för G-betyg
-- [ ] **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
-- [ ] **Geografisk sökning** - GPS-koordinater för JPG-filer
-- [ ] **Relevanssortering** - Sortera resultat efter relevans
-
-### **VIKTIGA IMPLEMENTERINGAR VI REDAN HAR:**
-- [x] **Filtypsfiltrering** - Dropdown för PDF, JPG, MP3, PowerPoint ✅ SLUTFÖRT!
-- [x] **PowerPoint-stöd** - 1001 PPT-filer med intelligent titel-extraktion ✅ SLUTFÖRT!
-- [x] **Multi-filtyp stöd** - PDF, JPG, MP3, PPT med enhetlig metadata ✅ SLUTFÖRT!
-- [x] **Sökfunktion** - Debounce, filtypsfiltrering, sökhistorik ✅ SLUTFÖRT!
+### **POWERPOINT-TITEL PROBLEM** ✅ LÖST!
+- [x] **Problem:** PowerPoint-filer visar "Slide 1", "7264", "Arial 32" som titlar
+- [x] **Lösning:** Intelligent titel-extraktion baserat på company och slide_count
+- [x] **Resultat:** PowerPoint-filer visar beskrivande titlar
