@@ -165,7 +165,19 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [ ] Sökhistorik-baserad relevans
   - [ ] Användarinteraktion-baserad relevans
 
-### **16. ANVÄNDARUPPLEVELSE (UX) - FRAMTIDA FÖRBÄTTRINGAR**
+### **16. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)**
+- [ ] **Ladda upp alla testfiler till Google Drive**
+  - [ ] PDF-filer (20 st) från frontend/pdfs/
+  - [ ] JPG-filer (20 st) från frontend/jpgs/
+  - [ ] MP3-filer från frontend/mp3s/
+  - [ ] PPT-filer från frontend/ppts/
+- [ ] **Skapa delningslänk för läraren**
+- [ ] **Skapa instruktioner för läraren**
+  - [ ] Hur man laddar ner filerna
+  - [ ] Hur man lägger dem i rätt mappar
+  - [ ] Hur man startar servern
+
+### **17. ANVÄNDARUPPLEVELSE (UX) - FRAMTIDA FÖRBÄTTRINGAR**
 - [ ] **Dark/Light mode växling**
 - [ ] **Drag & drop för filuppladdning**
 - [ ] **Export-funktion (JSON, CSV)**
