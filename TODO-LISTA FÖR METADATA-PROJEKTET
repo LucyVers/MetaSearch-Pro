@@ -23,11 +23,11 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 1. [ ] **Systemägare:** MySQL-databas för metadata-lagring
 2. [ ] **Systemägare:** System för att extrahera metadata från mappar
 3. ✅ **Besökare:** Webbaserat gränssnitt för sökning
-4. [ ] **Besökare:** Filtypsfiltrering i sökning
+4. [x] **Besökare:** Filtypsfiltrering i sökning ✅ SLUTFÖRT!
 5. ✅ **Besökare:** Sökning på filnamn och metadata
 6. [ ] **Besökare:** Avancerad sökning (lika med, större än, etc.)
 7. [ ] **Besökare:** Geografisk sökning (lat/long)
-8. [ ] **Besökare/Systemägare:** Testdata för alla filtyper
+8. [x] **Besökare/Systemägare:** Testdata för alla filtyper ✅ SLUTFÖRT!
 
 ### **BETYGSKRITERIER:**
 - **G:** Fungerande sökmotor
@@ -109,19 +109,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **0 fel** i produktion
 - **100% funktionalitet** uppnådd
 
-**INFÖR GRUPPARBETET:**
-Detta projekt har förberett mig för:
-- **Metadata-extrahering** från olika filtyper
-- **Professionell kodning** med best practices
-- **Teamarbete** med Git och dokumentation
-- **Användarupplevelse** och UX-design
-- **Felhantering** och robusthet
 
-**Nästa steg för grupparbetet:**
-- Använd samma principer för bilder, ljud, CSV
-- Implementera sökfunktion över alla filtyper
-- Skapa enhetlig användarupplevelse
-- Dokumentera och dela kunskaper med teamet
 
 ## 🚀 UPPGIFTSFOKUSERADE FUNKTIONER
 
@@ -137,23 +125,6 @@ Detta projekt har förberett mig för:
   - [ ] Implementera bulk-import från mappar
   - [ ] Hantera duplicerade filer
   - [ ] Backup-strategi för databas
-
-### **9. AVANCERAD SÖKFUNKTION (UPPGIFTSKRITERIER)**
-- [ ] **STEG 1: Filtypsfiltrering**
-  - [ ] Dropdown för att välja filtyp (PDF, JPG, MP3, CSV, PPT)
-  - [ ] Backend: Filtrera sökresultat per filtyp
-  - [ ] Frontend: Visa endast vald filtyp
-
-- [ ] **STEG 2: Avancerad sökning**
-  - [ ] Sökoperatorer (lika med, inte lika med, större än, mindre än)
-  - [ ] Datumintervall-sökning
-  - [ ] Filstorleks-sökning
-  - [ ] Metadata-specifik sökning per filtyp
-
-- [ ] **STEG 3: Geografisk sökning**
-  - [ ] Extrahera GPS-koordinater från EXIF-data
-  - [ ] Implementera lat/long-sökning
-  - [ ] Visa resultat på karta (valfritt)
 
 ### **10. RELEVANSSORTERING (VG-KRITERIUM)**
 - [ ] **STEG 1: Grundläggande relevans**
@@ -228,10 +199,23 @@ Detta projekt har förberett mig för:
 4. Modifiera API för databas-lagring
 
 **FAS 2: AVANCERAD SÖKFUNKTION (G-KRITERIUM)**
-1. Filtypsfiltrering (dropdown)
+1. [x] Filtypsfiltrering (dropdown) ✅ SLUTFÖRT!
+   - [x] Dropdown för att välja filtyp (PDF, JPG, MP3, PPT)
+   - [x] Backend: Filtrera sökresultat per filtyp
+   - [x] Frontend: Visa endast vald filtyp
+
 2. Avancerade sökoperatorer
+   - [ ] Sökoperatorer (lika med, inte lika med, större än, mindre än)
+   - [ ] Datumintervall-sökning
+   - [ ] Filstorleks-sökning
+   - [ ] Metadata-specifik sökning per filtyp
+
 3. Geografisk sökning (lat/long)
-4. Testdata för alla filtyper
+   - [ ] Extrahera GPS-koordinater från EXIF-data
+   - [ ] Implementera lat/long-sökning
+   - [ ] Visa resultat på karta (valfritt)
+
+4. [x] Testdata för alla filtyper ✅ SLUTFÖRT!
 
 **FAS 3: RELEVANSSORTERING (VG-KRITERIUM)**
 1. Grundläggande relevans-algoritm
@@ -239,11 +223,7 @@ Detta projekt har förberett mig för:
 3. Användarinteraktion-baserad relevans
 4. Sökhistorik-integration
 
-**FAS 4: SÄKERHET OCH BEST PRACTICES**
-1. Gitignore för binära filer
-2. .env för databas-credentials
-3. Google Drive-instruktioner
-4. Team-dokumentation
+
 
 **FAS 5: TESTNING OCH OPTIMERING**
 1. Testa alla filtyper
