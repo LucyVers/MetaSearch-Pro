@@ -11,6 +11,17 @@ import ExifParser from 'exif-parser';
 // Import music-metadata for MP3 metadata extraction
 import { parseFile } from 'music-metadata';
 
+// Load PowerPoint metadata from JSON file
+let pptMetadata = [];
+try {
+  const pptMetadataContent = fs.readFileSync('./data/ppt-metadata.json', 'utf8');
+  pptMetadata = JSON.parse(pptMetadataContent);
+  console.log(`Loaded ${pptMetadata.length} PowerPoint metadata records`);
+} catch (error) {
+  console.log('No PowerPoint metadata found, will create empty array');
+  pptMetadata = [];
+}
+
 // MULTI-FILETYPE SUPPORT - COMMON METADATA STRUCTURE
 // This defines the common structure that all file types will use
 const COMMON_METADATA_STRUCTURE = {
@@ -282,6 +293,97 @@ async function extractMP3Metadata(filePath) {
       artist: null,
       year: null,
       genre: null
+    };
+  }
+}
+
+// PPT METADATA EXTRACTION FUNCTION
+function extractPPTMetadata(filePath) {
+  try {
+    // Get filename without path
+    const filename = filePath.split('/').pop();
+    const digest = filename.replace('.ppt', '');
+    
+    // Find metadata for this file
+    const metadata = pptMetadata.find(record => record.digest === digest);
+    
+    // Get file stats
+    const fileStats = fs.statSync(filePath);
+    const fileSizeInBytes = fileStats.size;
+    
+    // Create better title if the original is poor
+    let betterTitle = metadata ? metadata.title : 'Unknown PowerPoint';
+    
+    // If title is "Slide 1" or similar, create a better title
+    if (betterTitle === 'Slide 1' || betterTitle === 'Unknown PowerPoint' || betterTitle.trim() === '' || 
+        /^\d+$/.test(betterTitle) || betterTitle.length < 3 || 
+        /^(Arial|Times|Calibri|Verdana)\s+\d+$/i.test(betterTitle)) {
+      // Try to create title from company and slides info
+      if (metadata && metadata.company && metadata.company !== '-' && metadata.company !== 'Unknown Company') {
+        betterTitle = `${metadata.company} Presentation`;
+        if (metadata.slide_count) {
+          betterTitle += ` (${metadata.slide_count} slides)`;
+        }
+      } else {
+        // Fallback to filename-based title
+        betterTitle = `PowerPoint Presentation - ${filename.replace('.ppt', '')}`;
+      }
+    }
+    
+    // Initialize metadata object using common structure
+    const pptData = {
+      filename: filename,
+      fileType: 'PPT',
+      fileSize: formatFileSize(fileSizeInBytes),
+      title: betterTitle,
+      author: metadata ? metadata.company : null,
+      createdDate: metadata && metadata.creation_date ? new Date(metadata.creation_date) : null,
+      modifiedDate: metadata && metadata.last_modified ? new Date(metadata.last_modified) : null,
+      keywords: ['presentation', 'powerpoint', 'ppt'],
+      language: 'Unknown',
+      category: 'Presentation',
+      // PPT specific fields
+      slides: metadata ? metadata.slide_count : 0,
+      wordCount: metadata ? metadata.word_count : 0,
+      revisionNumber: metadata ? metadata.revision_number : null,
+      company: metadata ? metadata.company : null,
+      urlkey: metadata ? metadata.urlkey : null
+    };
+    
+    // Generate keywords from available data
+    const keywordData = [
+      pptData.title,
+      pptData.author,
+      pptData.company,
+      `slides: ${pptData.slides}`,
+      `words: ${pptData.wordCount}`
+    ].filter(Boolean).join(' ');
+    
+    if (keywordData) {
+      pptData.keywords = extractKeywords(keywordData);
+    }
+    
+    return pptData;
+    
+  } catch (error) {
+    console.error(`Error extracting PPT metadata from ${filePath}:`, error);
+    const filename = filePath.split('/').pop();
+    return {
+      filename: filename,
+      fileType: 'PPT',
+      fileSize: formatFileSize(fs.statSync(filePath).size),
+      title: `PowerPoint Presentation - ${filename.replace('.ppt', '')}`,
+      author: null,
+      createdDate: null,
+      modifiedDate: null,
+      keywords: ['presentation', 'powerpoint', 'ppt'],
+      language: 'Unknown',
+      category: 'Presentation',
+      slides: 0,
+      wordCount: 0,
+      revisionNumber: null,
+      company: null,
+      urlkey: null
     };
   }
 }
@@ -691,6 +793,20 @@ app.get('/api/metadata', async (_request, response) => {
     console.error('Error processing MP3 files:', error);
   }
 
+  // PROCESS PPT FILES
+  try {
+    let pptFiles = fs
+      .readdirSync('./frontend/ppts')
+      .filter(x => x.toLowerCase().endsWith('.ppt') || x.toLowerCase().endsWith('.pptx'));
+
+    for (let file of pptFiles) {
+      let pptMetadata = extractPPTMetadata('./frontend/ppts/' + file);
+      metadataList.push({ file, metadata: pptMetadata });
+    }
+  } catch (error) {
+    console.error('Error processing PPT files:', error);
+  }
+
   // Send the meta data as a response to the request
   // (to our web browser)
   response.json(metadataList);
@@ -702,6 +818,7 @@ app.get('/api/search', async (request, response) => {
   
   // Get search query, filter parameters, and sorting parameters from URL parameters
   let searchQuery = request.query.q;
+  const fileType = request.query.type; // New: file type filter
   const minSize = parseInt(request.query.minSize) || 0;
   const maxSize = parseInt(request.query.maxSize) || Infinity;
   const minDate = request.query.minDate ? new Date(request.query.minDate) : null;
@@ -709,10 +826,14 @@ app.get('/api/search', async (request, response) => {
   const sortBy = request.query.sortBy || 'title'; // title, size, date
   const sortOrder = request.query.sortOrder || 'asc'; // asc, desc
   
-  // If no search query provided, return empty results
+  // If no search query provided but file type filter is active, show all files of that type
   if (!searchQuery || searchQuery.trim() === '') {
-    response.json([]);
-    return;
+    // If no file type filter, return empty results
+    if (!request.query.type) {
+      response.json([]);
+      return;
+    }
+    // If file type filter is active, we'll show all files of that type (handled below)
   }
 
   // Add search query to history (if it's not already there)
@@ -860,6 +981,20 @@ app.get('/api/search', async (request, response) => {
     console.error('Error processing MP3 files for search:', error);
   }
   
+  // PROCESS PPT FILES
+  try {
+    let pptFiles = fs
+      .readdirSync('./frontend/ppts')
+      .filter(x => x.toLowerCase().endsWith('.ppt') || x.toLowerCase().endsWith('.pptx'));
+
+    for (let file of pptFiles) {
+      let pptMetadata = extractPPTMetadata('./frontend/ppts/' + file);
+      allMetadata.push({ file, metadata: pptMetadata });
+    }
+  } catch (error) {
+    console.error('Error processing PPT files for search:', error);
+  }
+  
   // Create a new array for search results
   let searchResults = [];
 
@@ -878,7 +1013,9 @@ app.get('/api/search', async (request, response) => {
     const category = (metadata.category || '').toLowerCase();
     const fileType = (metadata.fileType || '').toLowerCase();
     
-    const matchesSearch = title.includes(searchQueryLower) || 
+    // If no search query, match everything (for file type filtering only)
+    const matchesSearch = !searchQuery || searchQuery.trim() === '' || 
+                         title.includes(searchQueryLower) || 
                          author.includes(searchQueryLower) || 
                          content.includes(searchQueryLower) || 
                          keywords.includes(searchQueryLower) || 
@@ -886,13 +1023,22 @@ app.get('/api/search', async (request, response) => {
                          category.includes(searchQueryLower) || 
                          fileType.includes(searchQueryLower);
     
-    // FILTER LOGIC: Check file size and date filters
+    // FILTER LOGIC: Check file type, size and date filters
+    const currentFileType = (metadata.fileType || '').toLowerCase();
+    const requestedFileType = request.query.type;
+    const matchesFileTypeFilter = !requestedFileType || currentFileType === requestedFileType.toLowerCase();
+    
+    // Debug logging for file type filtering
+    if (requestedFileType) {
+      console.log(`File: ${file}, Current: ${currentFileType}, Requested: ${requestedFileType}, Matches: ${matchesFileTypeFilter}`);
+    }
+    
     const fileSizeInKB = metadata.fileSizeBytes ? Math.round(metadata.fileSizeBytes / 1024) : 0;
     const matchesSizeFilter = fileSizeInKB >= minSize && fileSizeInKB <= maxSize;
     
     const matchesDateFilter = !minDate || !maxDate || (metadata.createdDate && metadata.createdDate >= minDate && metadata.createdDate <= maxDate);
     
-    if (matchesSearch && matchesSizeFilter && matchesDateFilter) {
+    if (matchesSearch && matchesFileTypeFilter && matchesSizeFilter && matchesDateFilter) {
       // Add matching file to search results
       searchResults.push({ file, metadata: metadata });
     }

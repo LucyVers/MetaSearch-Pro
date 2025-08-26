@@ -34,6 +34,37 @@ body {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.search-controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.file-type-filter {
+  padding: 16px 24px;
+  font-size: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: var(--surface-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.file-type-filter:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.file-type-filter:hover {
+  border-color: var(--secondary-hover);
+}
+
 .search-input {
   width: 100%;
   max-width: 500px;

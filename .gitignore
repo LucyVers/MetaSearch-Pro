@@ -20,6 +20,15 @@ frontend/mp3s/
 *.wav
 *.flac
 
+# PowerPoint files and test data
+frontend/ppts/
+*.ppt
+*.pptx
+
+# CSV files and data
+data/
+*.csv
+
 # Development and personal files
 *.md
 !README.md

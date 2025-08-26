@@ -21,7 +21,16 @@
 <body>
   <!-- Search container for PDF metadata -->
   <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Sök i alla filtyper..." class="search-input">
+    <div class="search-controls">
+      <input type="text" id="searchInput" placeholder="Sök i alla filtyper..." class="search-input">
+      <select id="fileTypeFilter" class="file-type-filter">
+        <option value="all">Alla filtyper</option>
+        <option value="pdf">📄 PDF-filer</option>
+        <option value="jpg">🖼️ JPG-bilder</option>
+        <option value="mp3">🎵 MP3-ljud</option>
+        <option value="ppt">📊 PowerPoint</option>
+      </select>
+    </div>
     <div id="searchResults" class="search-results"></div>
     <div id="searchHistory" class="search-history"></div>
   </div>

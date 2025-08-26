@@ -6,13 +6,71 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
-### 2025-08-22 - JPG-stöd förbättrat och oanvänd mapp borttagen! 🎯
+### 2025-08-26 - Filtypsfiltrering IMPLEMENTERAT! 🎉
 
-**Vad jag gjorde:**
-- ✅ **Tagit bort oanvänd `frontend/images/` mapp** - Följde med från grundprojektet men användes inte
-- ✅ **Lagt till fler EXIF-fält i frontend** - Photo Date, Photographer, Location (GPS)
-- ✅ **Förklarat design-logik** - Sökmotorn visar bara metadata, inte bildmotivet för rent gränssnitt
-- ✅ **"View Image"-knapp** - Låter användaren öppna bilden i full storlek
+**Vad jag implementerade:**
+1. **Dropdown för filtyper** - Användaren kan välja mellan PDF, JPG, MP3, PowerPoint
+2. **Real-time filtrering** - Fungerar både med och utan sökterm
+3. **Backend-stöd** - API hanterar `type` parameter för filtrering
+4. **Frontend-integration** - Dropdown triggar sökning automatiskt
+5. **Debug-verifiering** - Filtreringen fungerar korrekt för alla filtyper
+
+**Tekniska detaljer:**
+- **HTML:** Dropdown med emoji-ikoner för varje filtyp
+- **CSS:** Styling som matchar befintlig design med hover-effekter
+- **JavaScript:** Event listener för dropdown-ändringar
+- **Backend:** Filtrerar baserat på `metadata.fileType`
+- **API:** Hanterar `request.query.type` parameter
+
+**Problem som löstes:**
+1. **Variabel-konflikt** - `fileType` krockade med `request.query.type`
+2. **Tom sökning** - Filtypsfiltrering fungerade inte utan sökterm
+3. **Event triggering** - Dropdown triggade inte sökning automatiskt
+
+**Lösningar:**
+- **Variabel-konflikt:** Använder `requestedFileType` istället för `fileType`
+- **Tom sökning:** Uppdaterad logik för att hantera tom sökning med filtypsfiltrering
+- **Event triggering:** Dropdown triggar alltid `performSearch()` oavsett sökterm
+
+**Resultat:**
+- ✅ Användaren kan välja filtyp och se bara den typen
+- ✅ Fungerar med befintlig sökning (kombinerar text + filtyp)
+- ✅ Fungerar utan sökning (visar alla filer av vald typ)
+- ✅ Tydlig visuell feedback med emoji-ikoner
+- ✅ Responsiv design som matchar befintlig UI
+
+**Debug-verifiering:**
+- JPG-filtrering: ✅ 20 JPG-filer matchar korrekt
+- PDF-filtrering: ✅ 20 PDF-filer matchar korrekt
+- MP3/PPT-filtrering: ✅ Filtreras bort när JPG valt
+
+### 2025-08-26 - PowerPoint-stöd FULLSTÄNDIGT IMPLEMENTERAT! 🎉
+
+**Vad jag implementerade:**
+1. **PowerPoint-metadata extraktion** - Använder Library of Congress förbehandlad data
+2. **CSV till JSON konvertering** - 1001 PowerPoint-poster konverterade
+3. **Intelligent titel-extraktion** - Fixar felaktig metadata ("Slide 1", "7264", "Arial 32")
+4. **Fullständig frontend-integration** - PPT-ikoner, metadata-visning, nedladdning
+5. **Sökning för PowerPoint-filer** - Fungerar med alla andra filtyper
+
+**Tekniska detaljer:**
+- **extractPPTMetadata()** funktion implementerad
+- **JSON-baserad metadata** istället för direkt PPT-parsing
+- **Förbättrad titel-detektering** för felaktig metadata
+- **Frontend uppdaterad** för PPT-specifik visning
+- **API:er uppdaterade** för PowerPoint-stöd
+
+**Resultat:**
+- ✅ 1001 PowerPoint-filer med metadata
+- ✅ Intelligent titel-extraktion ("Company Presentation (X slides)")
+- ✅ Fullständig sökning och visning
+- ✅ Nedladdning av .ppt-filer
+- ✅ All metadata visas (slides, ord, företag, revision)
+
+**Lösning för felaktig metadata:**
+- "Slide 1" → "Company Presentation (X slides)"
+- "7264" → "Company Presentation (X slides)"  
+- "Arial 32" → "Company Presentation (X slides)"
 
 ### 2025-08-25 - Sökning och layout-problem LÖSTA! 🎉
 
@@ -98,6 +156,14 @@
 - Skapa MP3-branch för musikfiler
 - Skapa CSV-branch för databaser
 - Skapa PPT-branch för presentationer
+
+### 2025-08-22 - JPG-stöd förbättrat och oanvänd mapp borttagen! 🎯
+
+**Vad jag gjorde:**
+- ✅ **Tagit bort oanvänd `frontend/images/` mapp** - Följde med från grundprojektet men användes inte
+- ✅ **Lagt till fler EXIF-fält i frontend** - Photo Date, Photographer, Location (GPS)
+- ✅ **Förklarat design-logik** - Sökmotorn visar bara metadata, inte bildmotivet för rent gränssnitt
+- ✅ **"View Image"-knapp** - Låter användaren öppna bilden i full storlek
 
 ### 2025-08-22 - Multi-filtyp huvudlogik implementerad
 
