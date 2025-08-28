@@ -6,6 +6,40 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-08-28 - GEOGRAFISK SÖKNING MED GPS-KOORDINATER IMPLEMENTERAT! 🗺️
+
+**Vad jag implementerade:**
+1. **GPS-sökning** - Sök på latitud och longitud för JPG-filer
+2. **GPS-specifika operatorer** - Exakt position, öster/väster om longitud, norr/söder om latitud
+3. **Frontend-integration** - GPS-input fält som visas endast för JPG-filer
+4. **Backend-logik** - GPS-sökning med befintlig infrastruktur
+5. **SOLID-principer** - Utökar befintlig söklogik utan att ändra den
+
+**Tekniska detaljer:**
+- **Frontend:** GPS-input fält (latitud/longitud) som visas automatiskt när JPG väljs
+- **Backend:** `applyGPSSearchOperator()` funktion för GPS-jämförelser
+- **GPS-operatorer:** Exakt position, öster/väster om longitud, norr/söder om latitud
+- **Integration:** Använder befintlig `location` data från JPG EXIF-metadata
+
+**GPS-operatorer implementerade:**
+- **Exakt position** (equals) - Hitta bilder på exakt koordinat
+- **Öster om longitud** (greater_than) - Hitta bilder öster om angiven longitud
+- **Väster om longitud** (less_than) - Hitta bilder väster om angiven longitud
+- **Norr om latitud** (greater_than_lat) - Hitta bilder norr om angiven latitud
+- **Söder om latitud** (less_than_lat) - Hitta bilder söder om angiven latitud
+
+**Resultat:**
+- ✅ **Geografisk sökning** med GPS-koordinater
+- ✅ **JPG-specifik funktionalitet** - visas endast för JPG-filer
+- ✅ **SOLID-compliant** - utökar befintlig söklogik
+- ✅ **Användarvänlig** - enkel input för latitud/longitud
+- ✅ **Real-time sökning** - resultat uppdateras direkt
+
+**Exempel på användning:**
+- **Latitud: 59.3293, Longitud: 18.0686, Operator: Exakt position** = Hitta bilder från Stockholm
+- **Longitud: 18.0, Operator: Öster om longitud** = Hitta bilder öster om longitud 18.0
+- **Latitud: 60.0, Operator: Söder om latitud** = Hitta bilder söder om latitud 60.0
+
 ### 2025-08-28 - AVANCERAD SÖKFUNKTION MED OPERATORER IMPLEMENTERAT! 🎉
 
 **Vad jag implementerade:**

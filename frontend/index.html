@@ -38,6 +38,19 @@
         <option value="less_than">Mindre än</option>
       </select>
     </div>
+    <div class="gps-search-controls" id="gpsSearchControls" style="display: none;">
+      <div class="gps-input-group">
+        <input type="number" id="latitudeInput" placeholder="Latitud (t.ex. 59.3293)" class="gps-input" step="any">
+        <input type="number" id="longitudeInput" placeholder="Longitud (t.ex. 18.0686)" class="gps-input" step="any">
+      </div>
+      <select id="gpsOperator" class="gps-operator">
+        <option value="equals">Exakt position</option>
+        <option value="greater_than">Öster om longitud</option>
+        <option value="less_than">Väster om longitud</option>
+        <option value="greater_than_lat">Norr om latitud</option>
+        <option value="less_than_lat">Söder om latitud</option>
+      </select>
+    </div>
     <div id="searchResults" class="search-results"></div>
     <div id="searchHistory" class="search-history"></div>
   </div>

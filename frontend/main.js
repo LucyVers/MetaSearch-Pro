@@ -2,6 +2,10 @@
 let searchInput = document.getElementById('searchInput');
 let fileTypeFilter = document.getElementById('fileTypeFilter');
 let searchOperator = document.getElementById('searchOperator');
+let gpsSearchControls = document.getElementById('gpsSearchControls');
+let latitudeInput = document.getElementById('latitudeInput');
+let longitudeInput = document.getElementById('longitudeInput');
+let gpsOperator = document.getElementById('gpsOperator');
 let searchResults = document.getElementById('searchResults');
 let searchHistory = document.getElementById('searchHistory');
 let mainContent = document.querySelector('main');
@@ -385,6 +389,49 @@ searchInput.addEventListener('input', function() {
   }, 1000); // Wait 1000ms (1 second) after user stops typing
 });
 
+// Function to perform GPS search
+async function performGPSSearch() {
+  const latitude = latitudeInput.value;
+  const longitude = longitudeInput.value;
+  const selectedGpsOperator = gpsOperator.value;
+  
+  // If no GPS coordinates provided, perform regular search
+  if (!latitude && !longitude) {
+    performSearch(searchInput.value);
+    return;
+  }
+  
+  // Show loading animation
+  searchResults.innerHTML = '<div class="search-loading"><div class="loading"></div>Söker GPS-koordinater...</div>';
+  mainContent.style.display = 'none';
+  
+  try {
+    // Call GPS search API
+    let url = `/api/search?type=jpg&gps=true`;
+    if (latitude) url += `&latitude=${latitude}`;
+    if (longitude) url += `&longitude=${longitude}`;
+    if (selectedGpsOperator) url += `&gpsOperator=${selectedGpsOperator}`;
+    
+    let response = await fetch(url);
+    let searchData = await response.json();
+    
+    // Display GPS search results
+    if (searchData.length === 0) {
+      searchResults.innerHTML = '<p>Inga JPG-filer hittades för de angivna GPS-koordinaterna</p>';
+    } else {
+      searchResults.innerHTML = `<h3>GPS-sökresultat (${searchData.length} JPG-filer):</h3>`;
+      
+      // Display each GPS search result
+      for (let item of searchData) {
+        displaySearchResult(item);
+      }
+    }
+  } catch (error) {
+    console.error('Error performing GPS search:', error);
+    searchResults.innerHTML = '<p>Fel vid GPS-sökning</p>';
+  }
+}
+
 // Add event listener for file type filter
 fileTypeFilter.addEventListener('change', function() {
   // Always perform search when filter changes, even if search term is empty
@@ -395,6 +442,40 @@ fileTypeFilter.addEventListener('change', function() {
 searchOperator.addEventListener('change', function() {
   // Always perform search when operator changes, even if search term is empty
   performSearch(searchInput.value);
+});
+
+// Add event listener for file type filter to show/hide GPS search
+fileTypeFilter.addEventListener('change', function() {
+  const selectedFileType = fileTypeFilter.value;
+  
+  // Show GPS search controls only for JPG files
+  if (selectedFileType === 'jpg') {
+    gpsSearchControls.style.display = 'flex';
+  } else {
+    gpsSearchControls.style.display = 'none';
+  }
+  
+  // Always perform search when filter changes
+  performSearch(searchInput.value);
+});
+
+// Add event listeners for GPS inputs
+latitudeInput.addEventListener('input', function() {
+  if (fileTypeFilter.value === 'jpg') {
+    performGPSSearch();
+  }
+});
+
+longitudeInput.addEventListener('input', function() {
+  if (fileTypeFilter.value === 'jpg') {
+    performGPSSearch();
+  }
+});
+
+gpsOperator.addEventListener('change', function() {
+  if (fileTypeFilter.value === 'jpg') {
+    performGPSSearch();
+  }
 });
 
 // Load search history when page loads

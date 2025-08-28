@@ -25,7 +25,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 4. ✅ **Besökare:** Filtypsfiltrering i sökning
 5. ✅ **Besökare:** Sökning på filnamn och metadata
 6. [ ] **Besökare:** Avancerad sökning (lika med, större än, etc.)
-7. [ ] **Besökare:** Geografisk sökning (lat/long)
+7. [x] **Besökare:** Geografisk sökning (lat/long) ✅ SLUTFÖRD!
 8. ✅ **Besökare/Systemägare:** Testdata för alla filtyper
 
 ### **BETYGSKRITERIER:**
@@ -149,10 +149,10 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [x] Filstorleks-sökning
   - [x] Metadata-specifik sökning per filtyp
 
-- [ ] **STEG 2: Geografisk sökning**
-  - [ ] Extrahera GPS-koordinater från EXIF-data
-  - [ ] Implementera lat/long-sökning
-  - [ ] Visa resultat på karta (valfritt)
+- [x] **STEG 2: Geografisk sökning** ✅ SLUTFÖRD!
+  - [x] Extrahera GPS-koordinater från EXIF-data
+  - [x] Implementera lat/long-sökning
+  - [x] Visa resultat på karta (valfritt)
 
 ### **14. RELEVANSSORTERING (VG-KRITERIUM)**
 - [ ] **STEG 1: Grundläggande relevans**
@@ -201,13 +201,13 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 ### **VAD JAG BEHÖVER FÖR UPPGIFTEN:**
 - ✅ **MySQL-databas** (molntjänst) - KRITISKT för G-betyg
 - ✅ **Avancerad sökning** (operatorer) - KRITISKT för G-betyg
-- [ ] **Geografisk sökning** (GPS-koordinater) - KRITISKT för G-betyg
+- ✅ **Geografisk sökning** (GPS-koordinater) - KRITISKT för G-betyg
 - [ ] **Relevanssortering** - KRITISKT för VG-betyg
 
 ### **NÄSTA STEG (PRIORITET 1):**
 1. ✅ **MySQL-databas integration** - KRITISKT för G-betyg
 2. ✅ **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
-3. **Geografisk sökning** - GPS-koordinater för JPG-filer
+3. ✅ **Geografisk sökning** - GPS-koordinater för JPG-filer
 4. **Relevanssortering** - Sortera resultat efter relevans
 
 ### **VALFRIA FÖRBÄTTRINGAR (efter huvuduppgiften):**

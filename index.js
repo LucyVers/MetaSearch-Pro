@@ -80,6 +80,44 @@ function applySearchOperator(value, searchTerm, operator) {
   }
 }
 
+// Function to apply GPS search operator
+function applyGPSSearchOperator(fileLat, fileLon, searchLat, searchLon, operator) {
+  if (!fileLat || !fileLon || (!searchLat && !searchLon)) return false;
+  
+  const fileLatNum = parseFloat(fileLat);
+  const fileLonNum = parseFloat(fileLon);
+  const searchLatNum = parseFloat(searchLat);
+  const searchLonNum = parseFloat(searchLon);
+  
+  if (isNaN(fileLatNum) || isNaN(fileLonNum)) return false;
+  
+  switch (operator) {
+    case 'equals':
+      if (searchLat && searchLon) {
+        return Math.abs(fileLatNum - searchLatNum) < 0.001 && Math.abs(fileLonNum - searchLonNum) < 0.001;
+      } else if (searchLat) {
+        return Math.abs(fileLatNum - searchLatNum) < 0.001;
+      } else if (searchLon) {
+        return Math.abs(fileLonNum - searchLonNum) < 0.001;
+      }
+      return false;
+    case 'greater_than':
+      if (searchLon) return fileLonNum > searchLonNum;
+      return false;
+    case 'less_than':
+      if (searchLon) return fileLonNum < searchLonNum;
+      return false;
+    case 'greater_than_lat':
+      if (searchLat) return fileLatNum > searchLatNum;
+      return false;
+    case 'less_than_lat':
+      if (searchLat) return fileLatNum < searchLatNum;
+      return false;
+    default:
+      return false;
+  }
+}
+
 // Function to save metadata to database
 async function saveMetadataToDatabase(metadata) {
   try {
@@ -1002,6 +1040,10 @@ app.get('/api/search', async (request, response) => {
   let searchQuery = request.query.q;
   const fileType = request.query.type; // New: file type filter
   const searchOperator = request.query.operator || 'contains'; // New: search operator
+  const isGPSSearch = request.query.gps === 'true'; // New: GPS search flag
+  const latitude = parseFloat(request.query.latitude); // New: GPS latitude
+  const longitude = parseFloat(request.query.longitude); // New: GPS longitude
+  const gpsOperator = request.query.gpsOperator || 'equals'; // New: GPS operator
   const minSize = parseInt(request.query.minSize) || 0;
   const maxSize = parseInt(request.query.maxSize) || Infinity;
   const minDate = request.query.minDate ? new Date(request.query.minDate) : null;
@@ -1195,6 +1237,31 @@ app.get('/api/search', async (request, response) => {
     const category = metadata.category || '';
     const fileType = metadata.fileType || '';
     
+    // GPS SEARCH LOGIC: Check if GPS coordinates match
+    let matchesGPSSearch = true;
+    if (isGPSSearch && metadata.fileType === 'jpg') {
+      let locationData = null;
+      try {
+        // Try to parse location from JSON string (database format)
+        if (metadata.location && typeof metadata.location === 'string') {
+          locationData = JSON.parse(metadata.location);
+        } else if (metadata.location && typeof metadata.location === 'object') {
+          locationData = metadata.location;
+        }
+      } catch (e) {
+        // If parsing fails, try direct access
+        locationData = metadata.location;
+      }
+      
+      if (locationData && (latitude || longitude)) {
+        const fileLat = locationData.latitude || locationData.lat;
+        const fileLon = locationData.longitude || locationData.lon;
+        matchesGPSSearch = applyGPSSearchOperator(fileLat, fileLon, latitude, longitude, gpsOperator);
+      } else {
+        matchesGPSSearch = false; // No GPS data available
+      }
+    }
+    
     // If no search query, match everything (for file type filtering only)
     const matchesSearch = !searchQuery || searchQuery.trim() === '' || 
                          applySearchOperator(title, searchQuery, searchOperator) || 
@@ -1220,7 +1287,7 @@ app.get('/api/search', async (request, response) => {
     
     const matchesDateFilter = !minDate || !maxDate || (metadata.createdDate && metadata.createdDate >= minDate && metadata.createdDate <= maxDate);
     
-    if (matchesSearch && matchesFileTypeFilter && matchesSizeFilter && matchesDateFilter) {
+    if (matchesSearch && matchesGPSSearch && matchesFileTypeFilter && matchesSizeFilter && matchesDateFilter) {
       // Add matching file to search results
       searchResults.push({ file, metadata: metadata });
     }
