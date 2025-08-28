@@ -10,6 +10,9 @@ import Fuse from 'fuse.js';
 import ExifParser from 'exif-parser';
 // Import music-metadata for MP3 metadata extraction
 import { parseFile } from 'music-metadata';
+// Import database connection and models
+import sequelize from './database.js';
+import FileMetadata from './models.js';
 
 // Load PowerPoint metadata from JSON file
 let pptMetadata = [];
@@ -50,6 +53,34 @@ const COMMON_METADATA_STRUCTURE = {
 // Search history storage (in memory - will reset when server restarts)
 let searchHistory = [];
 const MAX_HISTORY_ITEMS = 10;
+
+// Function to save metadata to database
+async function saveMetadataToDatabase(metadata) {
+  try {
+    // Check if file already exists in database
+    const existingFile = await FileMetadata.findOne({
+      where: {
+        filename: metadata.filename,
+        filepath: metadata.filepath
+      }
+    });
+
+    if (existingFile) {
+      // Update existing record
+      await existingFile.update(metadata);
+      console.log(`📝 Uppdaterade metadata för: ${metadata.filename}`);
+    } else {
+      // Create new record
+      await FileMetadata.create(metadata);
+      console.log(`💾 Sparade ny metadata för: ${metadata.filename}`);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error(`❌ Fel vid sparande av metadata för ${metadata.filename}:`, error.message);
+    return false;
+  }
+}
 
 // Create a web server, store in the variable app
 let app = express();
@@ -763,6 +794,26 @@ app.get('/api/metadata', async (_request, response) => {
     
     // Add the filename and the enhanced metadata to our meta data list
     metadataList.push({ file, metadata: enhancedMetadata });
+    
+    // Save to database
+    const dbMetadata = {
+      filename: file,
+      filepath: './frontend/pdfs/' + file,
+      fileType: 'pdf',
+      fileSize: fileSizeInBytes,
+      title: extractedTitle,
+      author: enhancedAuthor,
+      creationDate: createdDate,
+      modificationDate: modifiedDate,
+      keywords: keywords.join(', '),
+      description: textSummary,
+      category: category,
+      language: language,
+      pdfVersion: pdfVersion,
+      pageCount: data.numpages || null
+    };
+    
+    await saveMetadataToDatabase(dbMetadata);
   }
 
   // PROCESS JPG FILES
@@ -774,6 +825,31 @@ app.get('/api/metadata', async (_request, response) => {
     for (let file of jpgFiles) {
       let jpgMetadata = extractJPGMetadata('./frontend/jpgs/' + file);
       metadataList.push({ file, metadata: jpgMetadata });
+      
+      // Save to database
+      const dbMetadata = {
+        filename: file,
+        filepath: './frontend/jpgs/' + file,
+        fileType: 'jpg',
+        fileSize: jpgMetadata.fileSizeBytes || 0,
+        title: jpgMetadata.title,
+        author: jpgMetadata.photographer,
+        creationDate: jpgMetadata.photoDate,
+        modificationDate: jpgMetadata.modifiedDate,
+        keywords: jpgMetadata.keywords ? jpgMetadata.keywords.join(', ') : '',
+        description: jpgMetadata.description,
+        category: jpgMetadata.category,
+        language: jpgMetadata.language,
+        dimensions: jpgMetadata.dimensions,
+        camera: jpgMetadata.camera,
+        photoDate: jpgMetadata.photoDate,
+        photographer: jpgMetadata.photographer,
+        location: jpgMetadata.location ? JSON.stringify(jpgMetadata.location) : null,
+        gpsLatitude: jpgMetadata.gpsLatitude,
+        gpsLongitude: jpgMetadata.gpsLongitude
+      };
+      
+      await saveMetadataToDatabase(dbMetadata);
     }
   } catch (error) {
     console.error('Error processing JPG files:', error);
@@ -788,6 +864,29 @@ app.get('/api/metadata', async (_request, response) => {
     for (let file of mp3Files) {
       let mp3Metadata = await extractMP3Metadata('./frontend/mp3s/' + file);
       metadataList.push({ file, metadata: mp3Metadata });
+      
+      // Save to database
+      const dbMetadata = {
+        filename: file,
+        filepath: './frontend/mp3s/' + file,
+        fileType: 'mp3',
+        fileSize: mp3Metadata.fileSizeBytes || 0,
+        title: mp3Metadata.title,
+        author: mp3Metadata.artist,
+        creationDate: mp3Metadata.createdDate,
+        modificationDate: mp3Metadata.modifiedDate,
+        keywords: mp3Metadata.keywords ? mp3Metadata.keywords.join(', ') : '',
+        description: mp3Metadata.description,
+        category: mp3Metadata.category,
+        language: mp3Metadata.language,
+        artist: mp3Metadata.artist,
+        album: mp3Metadata.album,
+        duration: mp3Metadata.duration,
+        genre: mp3Metadata.genre,
+        year: mp3Metadata.year
+      };
+      
+      await saveMetadataToDatabase(dbMetadata);
     }
   } catch (error) {
     console.error('Error processing MP3 files:', error);
@@ -802,6 +901,28 @@ app.get('/api/metadata', async (_request, response) => {
     for (let file of pptFiles) {
       let pptMetadata = extractPPTMetadata('./frontend/ppts/' + file);
       metadataList.push({ file, metadata: pptMetadata });
+      
+      // Save to database
+      const dbMetadata = {
+        filename: file,
+        filepath: './frontend/ppts/' + file,
+        fileType: 'ppt',
+        fileSize: pptMetadata.fileSizeBytes || 0,
+        title: pptMetadata.title,
+        author: pptMetadata.author,
+        creationDate: pptMetadata.createdDate,
+        modificationDate: pptMetadata.modifiedDate,
+        keywords: pptMetadata.keywords ? pptMetadata.keywords.join(', ') : '',
+        description: pptMetadata.description,
+        category: pptMetadata.category,
+        language: pptMetadata.language,
+        slideCount: pptMetadata.slides,
+        wordCount: pptMetadata.words,
+        company: pptMetadata.company,
+        revision: pptMetadata.revision
+      };
+      
+      await saveMetadataToDatabase(dbMetadata);
     }
   } catch (error) {
     console.error('Error processing PPT files:', error);
@@ -811,6 +932,41 @@ app.get('/api/metadata', async (_request, response) => {
   // (to our web browser)
   response.json(metadataList);
 
+});
+
+// New endpoint to get metadata from database
+app.get('/api/database-metadata', async (request, response) => {
+  try {
+    const fileType = request.query.fileType;
+    const searchQuery = request.query.q;
+    
+    let whereClause = {};
+    
+    // Filter by file type if specified
+    if (fileType && fileType !== 'all') {
+      whereClause.fileType = fileType;
+    }
+    
+    // Search in title, author, keywords, description
+    if (searchQuery && searchQuery.trim() !== '') {
+      whereClause[sequelize.Op.or] = [
+        { title: { [sequelize.Op.like]: `%${searchQuery}%` } },
+        { author: { [sequelize.Op.like]: `%${searchQuery}%` } },
+        { keywords: { [sequelize.Op.like]: `%${searchQuery}%` } },
+        { description: { [sequelize.Op.like]: `%${searchQuery}%` } }
+      ];
+    }
+    
+    const metadata = await FileMetadata.findAll({
+      where: whereClause,
+      order: [['createdAt', 'DESC']]
+    });
+    
+    response.json(metadata);
+  } catch (error) {
+    console.error('Error fetching from database:', error);
+    response.status(500).json({ error: 'Database error' });
+  }
 });
 
 // Create a REST route for searching PDF metadata

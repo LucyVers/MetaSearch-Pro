@@ -120,27 +120,38 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 ### **12. GIT BRANCHES TRÄNING (SLUTFÖRD)**
 - [x] Skapa test-branch för musikfiler
-- [x] Lära sig branch-hantering säkert
+- [x] Lära mig branch-hantering säkert
 - [x] Träna merge-konflikter
 - [x] Skapa backup-strategi
 - [x] Dokumentera Git-workflow
+
+### **13. MYSQL-DATABAS INTEGRATION (SLUTFÖRD)**
+- [x] Installera Sequelize ORM och mysql2
+- [x] Skapa databas-anslutning med credentials.json
+- [x] Designa enhetlig FileMetadata-modell för alla filtyper
+- [x] Implementera automatisk tabell-skapning
+- [x] Modifiera `/api/metadata` för att spara i databas
+- [x] Skapa `/api/database-metadata` endpoint
+- [x] Testa anslutning och bulk-import av 80 filer
+- [x] Fixa JPG location-fält (objekt till JSON-string)
+- [x] Säker credentials-hantering med gitignore
 
 ---
 
 ## 🚀 **AKTUELLA UPPGIFTER (PRIORITERADE)**
 
-### **13. MYSQL-DATABAS INTEGRATION (KRITISK PRIORITET - G-KRITERIUM)**
-- [ ] **STEG 1: Databas-setup**
-  - [ ] Skapa MySQL-databas på molntjänst (PlanetScale/AWS/Google Cloud)
-  - [ ] Designa databasschema för metadata-lagring
-  - [ ] Skapa tabeller för olika filtyper (PDF, JPG, MP3, PPT)
-  - [ ] Implementera anslutning från Node.js
+### **13. MYSQL-DATABAS INTEGRATION (KRITISK PRIORITET - G-KRITERIUM)** ✅ SLUTFÖRD!
+- [x] **STEG 1: Databas-setup**
+  - [x] Skapa MySQL-databas på molntjänst
+  - [x] Designa databasschema för metadata-lagring
+  - [x] Skapa tabeller för olika filtyper (PDF, JPG, MP3, PPT)
+  - [x] Implementera anslutning från Node.js
 
-- [ ] **STEG 2: Metadata-lagring**
-  - [ ] Modifiera `/api/metadata` för att spara i databas
-  - [ ] Implementera bulk-import från mappar
-  - [ ] Hantera duplicerade filer
-  - [ ] Backup-strategi för databas
+- [x] **STEG 2: Metadata-lagring**
+  - [x] Modifiera `/api/metadata` för att spara i databas
+  - [x] Implementera bulk-import från mappar
+  - [x] Hantera duplicerade filer
+  - [x] Backup-strategi för databas
 
 ### **14. AVANCERAD SÖKFUNKTION (KRITISK PRIORITET - G-KRITERIUM)**
 - [ ] **STEG 1: Sökoperatorer**

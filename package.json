@@ -25,6 +25,8 @@
     "express": "^4.19.2",
     "fuse.js": "^7.1.0",
     "music-metadata": "^11.8.3",
-    "pdf-parse-fork": "^1.2.0"
+    "mysql2": "^3.14.3",
+    "pdf-parse-fork": "^1.2.0",
+    "sequelize": "^6.37.7"
   }
 }

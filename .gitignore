@@ -70,6 +70,10 @@ Thumbs.db
 .env.test.local
 .env.production.local
 
+# Database credentials
+credentials.json
+db-credentials.json
+
 # Logs
 logs
 *.log
