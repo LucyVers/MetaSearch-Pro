@@ -1012,7 +1012,7 @@ app.get('/api/database-metadata', async (request, response) => {
     }
     
     // Search in title, author, keywords, description
-    if (searchQuery && searchQuery.trim() !== '') {
+    if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
       whereClause[sequelize.Op.or] = [
         { title: { [sequelize.Op.like]: `%${searchQuery}%` } },
         { author: { [sequelize.Op.like]: `%${searchQuery}%` } },
@@ -1040,7 +1040,7 @@ app.get('/api/search', async (request, response) => {
   let searchQuery = request.query.q;
   const fileType = request.query.type; // New: file type filter
   const searchOperator = request.query.operator || 'contains'; // New: search operator
-  const isGPSSearch = request.query.gps === 'true'; // New: GPS search flag
+      const isGPSSearch = request.query.gps === 'true'; // GPS search flag
   const latitude = parseFloat(request.query.latitude); // New: GPS latitude
   const longitude = parseFloat(request.query.longitude); // New: GPS longitude
   const gpsOperator = request.query.gpsOperator || 'equals'; // New: GPS operator
@@ -1052,7 +1052,7 @@ app.get('/api/search', async (request, response) => {
   const sortOrder = request.query.sortOrder || 'asc'; // asc, desc
   
   // If no search query provided but file type filter is active, show all files of that type
-  if (!searchQuery || searchQuery.trim() === '') {
+  if (!searchQuery || (typeof searchQuery === 'string' && searchQuery.trim() === '')) {
     // If no file type filter, return empty results
     if (!request.query.type) {
       response.json([]);
@@ -1062,16 +1062,20 @@ app.get('/api/search', async (request, response) => {
   }
 
   // Add search query to history (if it's not already there)
-  const trimmedQuery = searchQuery.trim();
-  if (!searchHistory.includes(trimmedQuery)) {
-    searchHistory.unshift(trimmedQuery); // Add to beginning
-    if (searchHistory.length > MAX_HISTORY_ITEMS) {
-      searchHistory = searchHistory.slice(0, MAX_HISTORY_ITEMS); // Keep only latest 10
+  if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
+    const trimmedQuery = searchQuery.trim();
+    if (!searchHistory.includes(trimmedQuery)) {
+      searchHistory.unshift(trimmedQuery); // Add to beginning
+      if (searchHistory.length > MAX_HISTORY_ITEMS) {
+        searchHistory = searchHistory.slice(0, MAX_HISTORY_ITEMS); // Keep only latest 10
+      }
     }
   }
   
   // Convert search query to lowercase for case-insensitive search
-  searchQuery = searchQuery.toLowerCase().trim();
+  if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
+    searchQuery = searchQuery.toLowerCase().trim();
+  }
   
   // Get ALL metadata from all file types
   let allMetadata = [];
@@ -1239,31 +1243,31 @@ app.get('/api/search', async (request, response) => {
     
     // GPS SEARCH LOGIC: Check if GPS coordinates match
     let matchesGPSSearch = true;
-    if (isGPSSearch && metadata.fileType === 'jpg') {
-      let locationData = null;
-      try {
-        // Try to parse location from JSON string (database format)
-        if (metadata.location && typeof metadata.location === 'string') {
-          locationData = JSON.parse(metadata.location);
-        } else if (metadata.location && typeof metadata.location === 'object') {
+      if (isGPSSearch && (metadata.fileType === 'jpg' || metadata.fileType === 'JPG')) {
+        let locationData = null;
+        try {
+          // Try to parse location from JSON string (database format)
+          if (metadata.location && typeof metadata.location === 'string') {
+            locationData = JSON.parse(metadata.location);
+          } else if (metadata.location && typeof metadata.location === 'object') {
+            locationData = metadata.location;
+          }
+        } catch (e) {
+          // If parsing fails, try direct access
           locationData = metadata.location;
         }
-      } catch (e) {
-        // If parsing fails, try direct access
-        locationData = metadata.location;
+        
+        if (locationData && (latitude || longitude)) {
+          const fileLat = locationData.latitude || locationData.lat;
+          const fileLon = locationData.longitude || locationData.lon;
+          matchesGPSSearch = applyGPSSearchOperator(fileLat, fileLon, latitude, longitude, gpsOperator);
+        } else {
+          matchesGPSSearch = false; // No GPS data available
+        }
       }
-      
-      if (locationData && (latitude || longitude)) {
-        const fileLat = locationData.latitude || locationData.lat;
-        const fileLon = locationData.longitude || locationData.lon;
-        matchesGPSSearch = applyGPSSearchOperator(fileLat, fileLon, latitude, longitude, gpsOperator);
-      } else {
-        matchesGPSSearch = false; // No GPS data available
-      }
-    }
     
     // If no search query, match everything (for file type filtering only)
-    const matchesSearch = !searchQuery || searchQuery.trim() === '' || 
+            const matchesSearch = !searchQuery || (typeof searchQuery === 'string' && searchQuery.trim() === '') || 
                          applySearchOperator(title, searchQuery, searchOperator) || 
                          applySearchOperator(author, searchQuery, searchOperator) || 
                          applySearchOperator(content, searchQuery, searchOperator) || 
@@ -1293,6 +1297,9 @@ app.get('/api/search', async (request, response) => {
     }
   }
 
+  // Debug: Log final results count
+  
+  
   // SORT THE SEARCH RESULTS
   searchResults.sort((a, b) => {
     let aValue, bValue;

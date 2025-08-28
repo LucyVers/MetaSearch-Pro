@@ -391,12 +391,16 @@ searchInput.addEventListener('input', function() {
 
 // Function to perform GPS search
 async function performGPSSearch() {
+  
   const latitude = latitudeInput.value;
   const longitude = longitudeInput.value;
   const selectedGpsOperator = gpsOperator.value;
   
+  
+  
   // If no GPS coordinates provided, perform regular search
   if (!latitude && !longitude) {
+    
     performSearch(searchInput.value);
     return;
   }
@@ -423,7 +427,95 @@ async function performGPSSearch() {
       
       // Display each GPS search result
       for (let item of searchData) {
-        displaySearchResult(item);
+        // Create article element for GPS search result
+        let article = document.createElement('article');
+        
+        // Get title for any file type
+        let fileTitle = item.metadata.title || item.metadata.extractedTitle || item.metadata.info?.Title || item.file;
+        
+        // Format dates properly
+        let createdDate = item.metadata.createdDate ? 
+          new Date(item.metadata.createdDate).toLocaleString('sv-SE') : null;
+        let modifiedDate = item.metadata.modifiedDate ? 
+          new Date(item.metadata.modifiedDate).toLocaleString('sv-SE') : null;
+        
+        // Build table rows dynamically based on available data
+        let tableRows = [];
+        
+        // Always show file information
+        tableRows.push(`
+          <tr>
+            <td>File:</td>
+            <td>${item.file}</td>
+          </tr>
+        `);
+        
+        // Show size if available
+        if (item.metadata.fileSize) {
+          tableRows.push(`
+            <tr>
+              <td>Size:</td>
+              <td>${item.metadata.fileSize}</td>
+            </tr>
+          `);
+        }
+        
+        // Show GPS location if available
+        if (item.metadata.location) {
+          tableRows.push(`
+            <tr>
+              <td>Location:</td>
+              <td>${item.metadata.location.latitude.toFixed(6)}, ${item.metadata.location.longitude.toFixed(6)}</td>
+            </tr>
+          `);
+        }
+        
+        // Show other metadata fields
+        if (item.metadata.author) {
+          tableRows.push(`
+            <tr>
+              <td>Author:</td>
+              <td>${item.metadata.author}</td>
+            </tr>
+          `);
+        }
+        
+        if (createdDate) {
+          tableRows.push(`
+            <tr>
+              <td>Created:</td>
+              <td>${createdDate}</td>
+            </tr>
+          `);
+        }
+        
+        if (modifiedDate) {
+          tableRows.push(`
+            <tr>
+              <td>Modified:</td>
+              <td>${modifiedDate}</td>
+            </tr>
+          `);
+        }
+        
+        // Get file type icon and download info
+        let fileIcon = '🖼️'; // Default for JPG
+        let downloadText = 'View Image';
+        let downloadPath = `jpgs/${item.file}`;
+        
+        // Add content to the article
+        article.innerHTML = `
+          <h3>${fileIcon} ${fileTitle}</h3>
+          <table>
+            ${tableRows.join('')}
+          </table>
+          <div class="download-section">
+            <a href="${downloadPath}" class="download-link">📥 ${downloadText}</a>
+          </div>
+        `;
+        
+        // Add the article to the search results
+        searchResults.appendChild(article);
       }
     }
   } catch (error) {
@@ -432,48 +524,49 @@ async function performGPSSearch() {
   }
 }
 
-// Add event listener for file type filter
-fileTypeFilter.addEventListener('change', function() {
-  // Always perform search when filter changes, even if search term is empty
-  performSearch(searchInput.value);
-});
-
 // Add event listener for search operator
 searchOperator.addEventListener('change', function() {
   // Always perform search when operator changes, even if search term is empty
   performSearch(searchInput.value);
 });
 
-// Add event listener for file type filter to show/hide GPS search
+// Add event listener for file type filter to show/hide GPS search and perform search
 fileTypeFilter.addEventListener('change', function() {
   const selectedFileType = fileTypeFilter.value;
   
   // Show GPS search controls only for JPG files
   if (selectedFileType === 'jpg') {
     gpsSearchControls.style.display = 'flex';
+    
+    // Always perform regular search first when JPG is selected
+    performSearch(searchInput.value);
   } else {
     gpsSearchControls.style.display = 'none';
+    performSearch(searchInput.value);
   }
-  
-  // Always perform search when filter changes
-  performSearch(searchInput.value);
 });
 
 // Add event listeners for GPS inputs
 latitudeInput.addEventListener('input', function() {
-  if (fileTypeFilter.value === 'jpg') {
+  console.log('Latitude input changed:', this.value);
+  if (fileTypeFilter.value === 'jpg' && (this.value || longitudeInput.value)) {
+    
     performGPSSearch();
   }
 });
 
 longitudeInput.addEventListener('input', function() {
-  if (fileTypeFilter.value === 'jpg') {
+  console.log('Longitude input changed:', this.value);
+  if (fileTypeFilter.value === 'jpg' && (this.value || latitudeInput.value)) {
+    
     performGPSSearch();
   }
 });
 
 gpsOperator.addEventListener('change', function() {
-  if (fileTypeFilter.value === 'jpg') {
+  console.log('GPS operator changed:', this.value);
+  if (fileTypeFilter.value === 'jpg' && (latitudeInput.value || longitudeInput.value)) {
+    
     performGPSSearch();
   }
 });

@@ -1078,4 +1078,42 @@ Reglerna inkluderar:
 - Alla PDF:er ska ha rik metadata
 - Förberedelse för nästa fas: Git branches
 
+## **2024-12-19 - GPS-SÖKNING DEBUGGING OCH FIX** ✅
+
+### **Problem:**
+GPS-sökningen fungerade inte korrekt - alla 20 JPG-filer visades istället för att filtrera baserat på koordinater.
+
+### **Root Cause:**
+**Case-sensitivity problem:** GPS-söklogiken kollade endast `metadata.fileType === 'jpg'` men filerna hade `fileType: 'JPG'` (stora bokstäver).
+
+### **Debugging Process:**
+1. **Första steget:** Lade till debug-loggar för att se vad som hände
+2. **Upptäckt:** `isGPSSearch: true` men GPS-söklogiken kördes aldrig för JPG-filer
+3. **Analys:** Såg att `metadata.fileType` var `'JPG'` men koden kollade `'jpg'`
+4. **Lösning:** Ändrade villkoret till `metadata.fileType === 'jpg' || metadata.fileType === 'JPG'`
+
+### **Fix Applied:**
+```javascript
+// FÖRE:
+if (isGPSSearch && metadata.fileType === 'jpg') {
+
+// EFTER:
+if (isGPSSearch && (metadata.fileType === 'jpg' || metadata.fileType === 'JPG')) {
+```
+
+### **Resultat:**
+✅ GPS-sökningen fungerar nu perfekt!
+- Söker med `38.615535, -0.065393` hittar exakt 1 fil: `DSC00042.JPG`
+- Filtrerar korrekt baserat på GPS-koordinater
+- Visar endast matchande filer
+
+### **Cleanup:**
+- Tog bort alla debug-loggar från både backend (`index.js`) och frontend (`main.js`)
+- Koden är nu ren och produktionsklar
+
+### **Lärdomar:**
+- **Case-sensitivity är kritisk** när man jämför strängar
+- **Debug-loggar är värdefulla** för att hitta root cause
+- **Systematisk debugging** leder till snabb lösning
+
 
