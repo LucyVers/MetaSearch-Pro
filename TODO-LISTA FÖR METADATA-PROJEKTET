@@ -8,7 +8,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 ### **TEKNISKA KRAV:**
 - ✅ Node.js för metadata-extraktion
 - ✅ Node.js för webbserver med REST-API
-- [ ] **MySQL-databas** (molntjänst) för metadata-lagring
+- ✅ **MySQL-databas** (molntjänst) för metadata-lagring
 - ✅ Webbaserat frontend (HTML, CSS, JavaScript)
 - ✅ Git för versionshantering
 
@@ -19,8 +19,8 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - ✅ **PowerPoint-dokument** (PPT) - IMPLEMENTERAT
 
 ### **USER STORIES ATT UPPFYLLA:**
-1. [ ] **Systemägare:** MySQL-databas för metadata-lagring
-2. [ ] **Systemägare:** System för att extrahera metadata från mappar
+1. ✅ **Systemägare:** MySQL-databas för metadata-lagring
+2. ✅ **Systemägare:** System för att extrahera metadata från mappar
 3. ✅ **Besökare:** Webbaserat gränssnitt för sökning
 4. ✅ **Besökare:** Filtypsfiltrering i sökning
 5. ✅ **Besökare:** Sökning på filnamn och metadata
@@ -140,20 +140,9 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 ## 🚀 **AKTUELLA UPPGIFTER (PRIORITERADE)**
 
-### **13. MYSQL-DATABAS INTEGRATION (KRITISK PRIORITET - G-KRITERIUM)** ✅ SLUTFÖRD!
-- [x] **STEG 1: Databas-setup**
-  - [x] Skapa MySQL-databas på molntjänst
-  - [x] Designa databasschema för metadata-lagring
-  - [x] Skapa tabeller för olika filtyper (PDF, JPG, MP3, PPT)
-  - [x] Implementera anslutning från Node.js
 
-- [x] **STEG 2: Metadata-lagring**
-  - [x] Modifiera `/api/metadata` för att spara i databas
-  - [x] Implementera bulk-import från mappar
-  - [x] Hantera duplicerade filer
-  - [x] Backup-strategi för databas
 
-### **14. AVANCERAD SÖKFUNKTION (KRITISK PRIORITET - G-KRITERIUM)**
+### **13. AVANCERAD SÖKFUNKTION (KRITISK PRIORITET - G-KRITERIUM)**
 - [ ] **STEG 1: Sökoperatorer**
   - [ ] Sökoperatorer (lika med, inte lika med, större än, mindre än)
   - [ ] Datumintervall-sökning
@@ -165,7 +154,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [ ] Implementera lat/long-sökning
   - [ ] Visa resultat på karta (valfritt)
 
-### **15. RELEVANSSORTERING (VG-KRITERIUM)**
+### **14. RELEVANSSORTERING (VG-KRITERIUM)**
 - [ ] **STEG 1: Grundläggande relevans**
   - [ ] Sortera efter matchande fält
   - [ ] Prioritera exakta matchningar
@@ -176,7 +165,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [ ] Sökhistorik-baserad relevans
   - [ ] Användarinteraktion-baserad relevans
 
-### **16. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)**
+### **15. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)**
 - [ ] **Ladda upp alla testfiler till Google Drive**
   - [ ] PDF-filer (20 st) från frontend/pdfs/
   - [ ] JPG-filer (20 st) från frontend/jpgs/
@@ -188,7 +177,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [ ] Hur man lägger dem i rätt mappar
   - [ ] Hur man startar servern
 
-### **17. ANVÄNDARUPPLEVELSE (UX) - FRAMTIDA FÖRBÄTTRINGAR**
+### **16. ANVÄNDARUPPLEVELSE (UX) - FRAMTIDA FÖRBÄTTRINGAR**
 - [ ] **Dark/Light mode växling**
 - [ ] **Drag & drop för filuppladdning**
 - [ ] **Export-funktion (JSON, CSV)**
@@ -206,14 +195,16 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - ✅ **Filtypsfiltrering** med dropdown
 - ✅ **Git-versionshantering** med branching-träning
 - ✅ **Professionell kodstruktur** med best practices
+- ✅ **MySQL-databas integration** med Sequelize ORM
+- ✅ **Automatisk metadata-sparning** för alla filtyper
 
 ### **VAD JAG BEHÖVER FÖR UPPGIFTEN:**
-- [ ] **MySQL-databas** (molntjänst) - KRITISKT för G-betyg
+- ✅ **MySQL-databas** (molntjänst) - KRITISKT för G-betyg
 - [ ] **Avancerad sökning** (operatorer, geografisk) - KRITISKT för G-betyg
 - [ ] **Relevanssortering** - KRITISKT för VG-betyg
 
 ### **NÄSTA STEG (PRIORITET 1):**
-1. **MySQL-databas integration** - KRITISKT för G-betyg
+1. ✅ **MySQL-databas integration** - KRITISKT för G-betyg
 2. **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
 3. **Geografisk sökning** - GPS-koordinater för JPG-filer
 4. **Relevanssortering** - Sortera resultat efter relevans
@@ -246,3 +237,8 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [x] **Problem:** PowerPoint-filer visar "Slide 1", "7264", "Arial 32" som titlar
 - [x] **Lösning:** Intelligent titel-extraktion baserat på company och slide_count
 - [x] **Resultat:** PowerPoint-filer visar beskrivande titlar
+
+### **JPG LOCATION DATABAS-PROBLEM** ✅ LÖST!
+- [x] **Problem:** JPG location-fält är objekt men databasen förväntar sig string
+- [x] **Lösning:** Konvertera location-objekt till JSON-string med `JSON.stringify()`
+- [x] **Resultat:** Alla JPG-filer sparas korrekt i databasen
