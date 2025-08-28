@@ -1,6 +1,7 @@
 // Search functionality
 let searchInput = document.getElementById('searchInput');
 let fileTypeFilter = document.getElementById('fileTypeFilter');
+let searchOperator = document.getElementById('searchOperator');
 let searchResults = document.getElementById('searchResults');
 let searchHistory = document.getElementById('searchHistory');
 let mainContent = document.querySelector('main');
@@ -34,8 +35,9 @@ async function loadSearchHistory() {
 
 // Function to perform search
 async function performSearch(searchTerm) {
-  // Get selected file type filter
+  // Get selected file type filter and search operator
   const selectedFileType = fileTypeFilter.value;
+  const selectedOperator = searchOperator.value;
   
   // If no search term and no file type filter, show all files
   if (searchTerm.trim() === '' && selectedFileType === 'all') {
@@ -51,10 +53,13 @@ async function performSearch(searchTerm) {
 
   
   try {
-    // Call search API with file type filter
+    // Call search API with file type filter and search operator
     let url = `/api/search?q=${encodeURIComponent(searchTerm)}`;
     if (selectedFileType !== 'all') {
       url += `&type=${selectedFileType}`;
+    }
+    if (selectedOperator !== 'contains') {
+      url += `&operator=${selectedOperator}`;
     }
     let response = await fetch(url);
     let searchData = await response.json();
@@ -383,6 +388,12 @@ searchInput.addEventListener('input', function() {
 // Add event listener for file type filter
 fileTypeFilter.addEventListener('change', function() {
   // Always perform search when filter changes, even if search term is empty
+  performSearch(searchInput.value);
+});
+
+// Add event listener for search operator
+searchOperator.addEventListener('change', function() {
+  // Always perform search when operator changes, even if search term is empty
   performSearch(searchInput.value);
 });
 

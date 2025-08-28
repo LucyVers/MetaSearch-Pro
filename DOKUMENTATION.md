@@ -6,7 +6,41 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
-### 2025-08-28 - MySQL DATABAS INTEGRATION FULLSTÄNDIGT IMPLEMENTERAT! 🎉
+### 2025-08-28 - AVANCERAD SÖKFUNKTION MED OPERATORER IMPLEMENTERAT! 🎉
+
+**Vad jag implementerade:**
+1. **Sökoperatorer** - Lika med, inte lika med, större än, mindre än
+2. **Frontend-uppdateringar** - Dropdown för sökoperatorer
+3. **Backend-logik** - Avancerad sökning med operatorer
+4. **CSS-styling** - Snygg design för operator-dropdown
+5. **JavaScript-integration** - Event listeners för operator-ändringar
+
+**Tekniska detaljer:**
+- **Frontend:** Ny dropdown med 5 sökoperatorer (Innehåller, Lika med, Inte lika med, Större än, Mindre än)
+- **Backend:** `applySearchOperator()` funktion för att hantera olika operatorer
+- **CSS:** Styling som matchar befintlig design
+- **JavaScript:** Event listeners som triggar sökning vid operator-ändring
+
+**Sökoperatorer implementerade:**
+- **Innehåller** (contains) - Standard sökning
+- **Lika med** (equals) - Exakt matchning
+- **Inte lika med** (not_equals) - Exkluderar matchningar
+- **Större än** (greater_than) - Numerisk jämförelse
+- **Mindre än** (less_than) - Numerisk jämförelse
+
+**Resultat:**
+- ✅ **Avancerad sökning** med 5 olika operatorer
+- ✅ **Frontend-integration** med dropdown
+- ✅ **Backend-logik** för operator-hantering
+- ✅ **Responsiv design** som matchar befintlig UI
+- ✅ **Real-time sökning** vid operator-ändring
+
+**Exempel på användning:**
+- **"PDF" + Lika med** = Hitta filer med exakt titel "PDF"
+- **"100" + Större än** = Hitta filer större än 100 KB
+- **"2020" + Mindre än** = Hitta filer från före 2020
+
+### 2025-08-27 - MySQL DATABAS INTEGRATION FULLSTÄNDIGT IMPLEMENTERAT! 🎉
 
 **Vad jag implementerade:**
 1. **MySQL-databas integration** - Använder Sequelize ORM för Node.js

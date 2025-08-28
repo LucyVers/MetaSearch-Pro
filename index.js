@@ -54,6 +54,32 @@ const COMMON_METADATA_STRUCTURE = {
 let searchHistory = [];
 const MAX_HISTORY_ITEMS = 10;
 
+// Function to apply search operator
+function applySearchOperator(value, searchTerm, operator) {
+  if (!value || !searchTerm) return false;
+  
+  const valueStr = value.toString().toLowerCase();
+  const searchStr = searchTerm.toLowerCase();
+  
+  switch (operator) {
+    case 'equals':
+      return valueStr === searchStr;
+    case 'not_equals':
+      return valueStr !== searchStr;
+    case 'greater_than':
+      const numValue = parseFloat(valueStr);
+      const numSearch = parseFloat(searchStr);
+      return !isNaN(numValue) && !isNaN(numSearch) && numValue > numSearch;
+    case 'less_than':
+      const numValue2 = parseFloat(valueStr);
+      const numSearch2 = parseFloat(searchStr);
+      return !isNaN(numValue2) && !isNaN(numSearch2) && numValue2 < numSearch2;
+    case 'contains':
+    default:
+      return valueStr.includes(searchStr);
+  }
+}
+
 // Function to save metadata to database
 async function saveMetadataToDatabase(metadata) {
   try {
@@ -975,6 +1001,7 @@ app.get('/api/search', async (request, response) => {
   // Get search query, filter parameters, and sorting parameters from URL parameters
   let searchQuery = request.query.q;
   const fileType = request.query.type; // New: file type filter
+  const searchOperator = request.query.operator || 'contains'; // New: search operator
   const minSize = parseInt(request.query.minSize) || 0;
   const maxSize = parseInt(request.query.maxSize) || Infinity;
   const minDate = request.query.minDate ? new Date(request.query.minDate) : null;
@@ -1159,25 +1186,24 @@ app.get('/api/search', async (request, response) => {
     let file = item.file;
     let metadata = item.metadata;
     
-    // SIMPLE SEARCH LOGIC: Check if search query matches any field
-    const searchQueryLower = searchQuery.toLowerCase();
-    const title = (metadata.title || metadata.extractedTitle || '').toLowerCase();
-    const author = (metadata.author || metadata.enhancedAuthor || '').toLowerCase();
-    const content = (metadata.text || metadata.textSummary || '').toLowerCase();
-    const keywords = (metadata.keywords || []).join(' ').toLowerCase();
-    const language = (metadata.language || '').toLowerCase();
-    const category = (metadata.category || '').toLowerCase();
-    const fileType = (metadata.fileType || '').toLowerCase();
+    // ADVANCED SEARCH LOGIC: Check if search query matches any field using operators
+    const title = metadata.title || metadata.extractedTitle || '';
+    const author = metadata.author || metadata.enhancedAuthor || '';
+    const content = metadata.text || metadata.textSummary || '';
+    const keywords = (metadata.keywords || []).join(' ');
+    const language = metadata.language || '';
+    const category = metadata.category || '';
+    const fileType = metadata.fileType || '';
     
     // If no search query, match everything (for file type filtering only)
     const matchesSearch = !searchQuery || searchQuery.trim() === '' || 
-                         title.includes(searchQueryLower) || 
-                         author.includes(searchQueryLower) || 
-                         content.includes(searchQueryLower) || 
-                         keywords.includes(searchQueryLower) || 
-                         language.includes(searchQueryLower) || 
-                         category.includes(searchQueryLower) || 
-                         fileType.includes(searchQueryLower);
+                         applySearchOperator(title, searchQuery, searchOperator) || 
+                         applySearchOperator(author, searchQuery, searchOperator) || 
+                         applySearchOperator(content, searchQuery, searchOperator) || 
+                         applySearchOperator(keywords, searchQuery, searchOperator) || 
+                         applySearchOperator(language, searchQuery, searchOperator) || 
+                         applySearchOperator(category, searchQuery, searchOperator) || 
+                         applySearchOperator(fileType, searchQuery, searchOperator);
     
     // FILTER LOGIC: Check file type, size and date filters
     const currentFileType = (metadata.fileType || '').toLowerCase();

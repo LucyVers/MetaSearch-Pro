@@ -142,12 +142,12 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 
 
-### **13. AVANCERAD SÖKFUNKTION (KRITISK PRIORITET - G-KRITERIUM)**
-- [ ] **STEG 1: Sökoperatorer**
-  - [ ] Sökoperatorer (lika med, inte lika med, större än, mindre än)
-  - [ ] Datumintervall-sökning
-  - [ ] Filstorleks-sökning
-  - [ ] Metadata-specifik sökning per filtyp
+### **13. AVANCERAD SÖKFUNKTION (KRITISK PRIORITET - G-KRITERIUM)** ✅ SLUTFÖRD!
+- [x] **STEG 1: Sökoperatorer**
+  - [x] Sökoperatorer (lika med, inte lika med, större än, mindre än)
+  - [x] Datumintervall-sökning
+  - [x] Filstorleks-sökning
+  - [x] Metadata-specifik sökning per filtyp
 
 - [ ] **STEG 2: Geografisk sökning**
   - [ ] Extrahera GPS-koordinater från EXIF-data
@@ -200,12 +200,13 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 ### **VAD JAG BEHÖVER FÖR UPPGIFTEN:**
 - ✅ **MySQL-databas** (molntjänst) - KRITISKT för G-betyg
-- [ ] **Avancerad sökning** (operatorer, geografisk) - KRITISKT för G-betyg
+- ✅ **Avancerad sökning** (operatorer) - KRITISKT för G-betyg
+- [ ] **Geografisk sökning** (GPS-koordinater) - KRITISKT för G-betyg
 - [ ] **Relevanssortering** - KRITISKT för VG-betyg
 
 ### **NÄSTA STEG (PRIORITET 1):**
 1. ✅ **MySQL-databas integration** - KRITISKT för G-betyg
-2. **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
+2. ✅ **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
 3. **Geografisk sökning** - GPS-koordinater för JPG-filer
 4. **Relevanssortering** - Sortera resultat efter relevans
 
