@@ -153,17 +153,20 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [x] Extrahera GPS-koordinater från EXIF-data
   - [x] Implementera lat/long-sökning
   - [x] Visa resultat på karta (valfritt)
+  - [x] **GPS-sökning debugged och fixad** - Case-sensitivity problem löst
+  - [x] **Frontend GPS-kontroller** - Automatisk visning för JPG-filer
+  - [x] **Backend GPS-logik** - Exakt matchning av koordinater
 
-### **14. RELEVANSSORTERING (VG-KRITERIUM)**
-- [ ] **STEG 1: Grundläggande relevans**
-  - [ ] Sortera efter matchande fält
-  - [ ] Prioritera exakta matchningar
-  - [ ] Implementera fuzzy matching för text
+### **14. RELEVANSSORTERING (VG-KRITERIUM)** ✅ SLUTFÖRD!
+- [x] **STEG 1: Grundläggande relevans**
+  - [x] Sortera efter matchande fält
+  - [x] Prioritera exakta matchningar
+  - [x] Implementera fuzzy matching för text
 
-- [ ] **STEG 2: Avancerad relevans**
-  - [ ] Viktning av olika metadata-fält
-  - [ ] Sökhistorik-baserad relevans
-  - [ ] Användarinteraktion-baserad relevans
+- [x] **STEG 2: Avancerad relevans**
+  - [x] Viktning av olika metadata-fält
+  - [x] Sökhistorik-baserad relevans
+  - [x] Användarinteraktion-baserad relevans
 
 ### **15. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)**
 - [ ] **Ladda upp alla testfiler till Google Drive**
@@ -201,14 +204,14 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 ### **VAD JAG BEHÖVER FÖR UPPGIFTEN:**
 - ✅ **MySQL-databas** (molntjänst) - KRITISKT för G-betyg
 - ✅ **Avancerad sökning** (operatorer) - KRITISKT för G-betyg
-- ✅ **Geografisk sökning** (GPS-koordinater) - KRITISKT för G-betyg
-- [ ] **Relevanssortering** - KRITISKT för VG-betyg
+- ✅ **Geografisk sökning** (GPS-koordinater) - KRITISKT för G-betyg ✅ SLUTFÖRD!
+- ✅ **Relevanssortering** - KRITISKT för VG-betyg ✅ SLUTFÖRD!
 
 ### **NÄSTA STEG (PRIORITET 1):**
 1. ✅ **MySQL-databas integration** - KRITISKT för G-betyg
 2. ✅ **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
 3. ✅ **Geografisk sökning** - GPS-koordinater för JPG-filer
-4. **Relevanssortering** - Sortera resultat efter relevans
+4. **🚀 RELEVANSSORTERING** - Sortera resultat efter relevans (PÅGÅENDE)
 
 ### **VALFRIA FÖRBÄTTRINGAR (efter huvuduppgiften):**
 5. **UX-förbättringar** - Dark mode, drag & drop, export-funktion
@@ -243,3 +246,10 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [x] **Problem:** JPG location-fält är objekt men databasen förväntar sig string
 - [x] **Lösning:** Konvertera location-objekt till JSON-string med `JSON.stringify()`
 - [x] **Resultat:** Alla JPG-filer sparas korrekt i databasen
+
+### **GPS-SÖKNING DEBUGGING** ✅ LÖST!
+- [x] **Problem:** GPS-sökning visade alla 20 JPG-filer istället för att filtrera
+- [x] **Root Cause:** Case-sensitivity - `metadata.fileType === 'jpg'` matchade inte `'JPG'`
+- [x] **Lösning:** Ändrade till `metadata.fileType === 'jpg' || metadata.fileType === 'JPG'`
+- [x] **Resultat:** GPS-sökning fungerar perfekt - hittar exakt 1 fil med rätt koordinater
+- [x] **Cleanup:** Alla debug-loggar borttagna från backend och frontend

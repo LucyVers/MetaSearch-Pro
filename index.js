@@ -208,6 +208,60 @@ function extractAuthorFromText(text, existingAuthor) {
   return null;
 }
 
+// Function to calculate relevance score for search results
+function calculateRelevanceScore(metadata, searchQuery, searchOperator) {
+  if (!searchQuery || !searchQuery.trim()) return 0;
+  
+  let totalScore = 0;
+  const query = searchQuery.toLowerCase().trim();
+  
+  // Define field weights (higher = more important)
+  const fieldWeights = {
+    title: 10,           // Most important
+    author: 8,           // Very important
+    content: 5,          // Important
+    keywords: 6,         // Important
+    language: 2,         // Less important
+    category: 2,         // Less important
+    fileType: 1          // Least important
+  };
+  
+  // Check each field for matches
+  const fields = {
+    title: metadata.title || metadata.extractedTitle || '',
+    author: metadata.author || metadata.enhancedAuthor || '',
+    content: metadata.text || metadata.textSummary || '',
+    keywords: (metadata.keywords || []).join(' '),
+    language: metadata.language || '',
+    category: metadata.category || '',
+    fileType: metadata.fileType || ''
+  };
+  
+  // Calculate score for each field
+  for (const [fieldName, fieldValue] of Object.entries(fields)) {
+    const weight = fieldWeights[fieldName];
+    const value = fieldValue.toString().toLowerCase();
+    
+    // Check if field matches search query
+    if (applySearchOperator(value, query, searchOperator)) {
+      // Base score for matching
+      totalScore += weight;
+      
+      // Bonus for exact matches
+      if (value === query) {
+        totalScore += 5; // Extra bonus for exact match
+      }
+      
+      // Bonus for word boundary matches (starts with, ends with, whole word)
+      if (value.startsWith(query) || value.endsWith(query)) {
+        totalScore += 2;
+      }
+    }
+  }
+  
+  return totalScore;
+}
+
 // MULTI-FILETYPE SUPPORT - FILE TYPE DETECTION
 function detectFileType(filename) {
   const extension = filename.toLowerCase().split('.').pop();
@@ -1292,8 +1346,15 @@ app.get('/api/search', async (request, response) => {
     const matchesDateFilter = !minDate || !maxDate || (metadata.createdDate && metadata.createdDate >= minDate && metadata.createdDate <= maxDate);
     
     if (matchesSearch && matchesGPSSearch && matchesFileTypeFilter && matchesSizeFilter && matchesDateFilter) {
-      // Add matching file to search results
-      searchResults.push({ file, metadata: metadata });
+      // Calculate relevance score for this file
+      const relevanceScore = calculateRelevanceScore(metadata, searchQuery, searchOperator);
+      
+      // Add matching file to search results with relevance score
+      searchResults.push({ 
+        file, 
+        metadata: metadata, 
+        relevanceScore: relevanceScore 
+      });
     }
   }
 
@@ -1302,6 +1363,18 @@ app.get('/api/search', async (request, response) => {
   
   // SORT THE SEARCH RESULTS
   searchResults.sort((a, b) => {
+    // If there's a search query, prioritize relevance score
+    if (searchQuery && searchQuery.trim() !== '') {
+      const aRelevance = a.relevanceScore || 0;
+      const bRelevance = b.relevanceScore || 0;
+      
+      // Sort by relevance score (highest first)
+      if (aRelevance !== bRelevance) {
+        return bRelevance - aRelevance;
+      }
+    }
+    
+    // Fallback to existing sorting logic
     let aValue, bValue;
     
     switch (sortBy) {
