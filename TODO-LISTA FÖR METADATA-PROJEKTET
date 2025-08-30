@@ -180,12 +180,61 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [ ] Hur man lägger dem i rätt mappar
   - [ ] Hur man startar servern
 
-### **16. ANVÄNDARUPPLEVELSE (UX) - FRAMTIDA FÖRBÄTTRINGAR**
-- [ ] **Dark/Light mode växling**
-- [ ] **Drag & drop för filuppladdning**
-- [ ] **Export-funktion (JSON, CSV)**
-- [ ] **Förbättrad loading-animation**
-- [ ] **Responsiv design för mobil/tablet**
+### **16. LUCY'S EGNA VAL och mål för att ta projektet till nästa nivå!🌟
+
+#### **STEG 1: PROFESSIONELL WEBSITE DESIGN** 🎨 ✅ SLUTFÖRD!
+- [x] **Header med navigation** - Logo, meny, sökfält
+- [x] **Footer med information** - Kontakt, tekniker, GitHub-länk
+- [x] **Modern layout** - Grid-system, cards, animations
+- [x] **Responsiv design** - Mobil, tablet, desktop
+- [x] **Loading-animationer** - Snygga övergångar
+
+#### **STEG 2: LJUDFILER MED SPELARE** 🎵
+- [ ] **Inbyggd MP3-spelare** - Snyggt designad med kontroller
+- [ ] **Ljudsnuttar** - Spela 30 sekunder av varje låt
+- [ ] **Playlist-funktion** - Skapa spellistor av MP3-filer
+- [ ] **Ljudvisualisering** - Spektrogram eller waveform
+- [ ] **Volymkontroll** - Individuell volym per fil
+
+#### **STEG 3: BILDGALLERI FÖR JPG** 📸
+- [ ] **Lightbox-galleri** - Klicka för större bilder
+- [ ] **Zoom-funktion** - Zooma in på detaljer
+- [ ] **Slideshow** - Automatisk bildspel
+- [ ] **Thumbnail-grid** - Snyggt grid-layout
+- [ ] **Bildrotation** - Rotera bilder
+
+#### **STEG 4: AVANCERADE FUNKTIONER** ⚡
+- [ ] **PDF-preview** - Visa första sidan direkt
+- [ ] **PowerPoint-preview** - Visa första sliden
+- [ ] **Favoriter-system** - Spara favoritfiler
+- [ ] **Sökhistorik** - Visa tidigare sökningar
+- [ ] **Taggar-system** - Lägg till taggar på filer
+
+#### **STEG 5: INTERAKTIVA FUNKTIONER** 🎮
+- [ ] **Drag & drop upload** - Dra filer direkt till sidan
+- [ ] **Bulk-export** - Exportera flera filer som ZIP
+- [ ] **Filtypsstatistik** - Visa antal filer per typ
+- [ ] **Metadata-editor** - Redigera metadata direkt
+- [ ] **Dark/Light mode** - Växla mellan teman
+
+#### **STEG 6: AVANCERAD SÖKNING** 🔍
+- [ ] **Fuzzy search** - Hitta filer även med stavfel
+- [ ] **Avancerade filter** - Datum, storlek, typ
+- [ ] **Sökresultat-export** - Spara sökresultat
+- [ ] **Sökstatistik** - Visa hur många resultat
+- [ ] **Sökförslag** - Automatiska förslag
+
+#### **STEG 7: PERFORMANCE OCH UX** 🚀
+- [ ] **Lazy loading** - Ladda bilder när de behövs
+- [ ] **Infinite scroll** - Ladda fler resultat automatiskt
+- [ ] **Keyboard shortcuts** - Snabba tangentbordskommandon
+- [ ] **Offline-stöd** - Fungera utan internet
+- [ ] **Push-notifikationer** - Meddelanden om nya filer
+
+### **17. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)** - SKIPPAS TILL SENARE
+- [ ] **Ladda upp alla testfiler till Google Drive** (100 filer per datatyp)
+- [ ] **Skapa delningslänk för läraren**
+- [ ] **Skapa instruktioner för läraren**
 
 ---
 
@@ -211,10 +260,16 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 1. ✅ **MySQL-databas integration** - KRITISKT för G-betyg
 2. ✅ **Avancerad sökning** - Operatorer (lika med, större än, mindre än)
 3. ✅ **Geografisk sökning** - GPS-koordinater för JPG-filer
-4. **🚀 RELEVANSSORTERING** - Sortera resultat efter relevans (PÅGÅENDE)
+4. ✅ **Relevanssortering** - Sortera resultat efter relevans ✅ SLUTFÖRD!
 
-### **VALFRIA FÖRBÄTTRINGAR (efter huvuduppgiften):**
-5. **UX-förbättringar** - Dark mode, drag & drop, export-funktion
+### **LUCY'S EGNA VAL:**
+5. **🎨 PROFESSIONELL WEBSITE DESIGN** - Header, footer, modern layout
+6. **🎵 LJUDFILER MED SPELARE** - MP3-spelare med kontroller
+7. **📸 BILDGALLERI FÖR JPG** - Lightbox, zoom, slideshow
+8. **⚡ AVANCERADE FUNKTIONER** - Preview, favoriter, taggar
+9. **🎮 INTERAKTIVA FUNKTIONER** - Drag & drop, export, statistik
+10. **🔍 AVANCERAD SÖKNING** - Fuzzy search, filter, förslag
+11. **🚀 PERFORMANCE OCH UX** - Lazy loading, shortcuts, offline
 
 ---
 
