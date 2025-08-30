@@ -6,6 +6,42 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-08-30 - STEG 1.5: NAVIGATION OCH PROFESSIONELLA SIDOR IMPLEMENTERAT! 🌐
+
+**Vad jag implementerade:**
+1. **"Om oss" sida** - Professionell presentation av Sonberg Studio
+2. **"Kontakt" sida** - Kontaktformulär med bekräftelsemeddelande
+3. **Navigation** - Fungerande länkar mellan sidorna
+4. **Hover-effekter** - Konsistenta animationer på alla sidor
+5. **Formulärhantering** - JavaScript för kontaktformuläret
+
+**Tekniska detaljer:**
+- **HTML-struktur** - Separata filer: `about.html`, `contact.html`, `index.html`
+- **CSS-styling** - Återanvändbar CSS med hover-effekter
+- **JavaScript** - `contact.js` för formulärhantering
+- **Responsiv design** - Fungerar på alla enheter
+- **SOLID-principer** - Enkel och underhållbar kod
+
+**Funktioner implementerade:**
+- **"Om oss" sida** - Projektbeskrivning, tekniska färdigheter, LIA-möjligheter
+- **"Kontakt" sida** - Kontaktformulär, Lucy's info, tjänster
+- **Hover-effekter** - Ljuslila hover på LIA-knappar och tjänster
+- **Formulärhantering** - Bekräftelsemeddelande med animation
+- **Personlig ton** - "Jag" för LIA-sökningar
+
+**Resultat:**
+- ✅ **Professionella sidor** - Perfekt för LIA och konsultjobb
+- ✅ **Fungerande navigation** - Smooth övergångar mellan sidor
+- ✅ **Konsistenta hover-effekter** - Snygga animationer överallt
+- ✅ **Formulärhantering** - Bekräftelsemeddelande fungerar
+- ✅ **Responsiv design** - Fungerar på alla enheter
+
+**Exempel på användning:**
+- **Navigation** - Klicka på "Om oss" och "Kontakt" i menyn
+- **Hover-effekter** - Håll musen över LIA-knappar och tjänster
+- **Formuläret** - Fyll i och skicka förfrågan på kontakt-sidan
+- **Bekräftelse** - Snyggt popup-meddelande med animation
+
 ### 2025-08-29 - STEG 1: PROFESSIONELL WEBSITE DESIGN IMPLEMENTERAT! 🎨
 
 **Vad jag implementerade:**

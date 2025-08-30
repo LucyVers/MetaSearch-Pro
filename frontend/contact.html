@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kontakt - SONBERG STUDIO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- SONBERG STUDIO Header -->
+  <header class="studio-header">
+    <div class="header-container">
+      <div class="logo">
+        <h1 class="logo-text">SONBERG STUDIO</h1>
+        <p class="logo-subtitle">Metadata Search Engine</p>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Hem</a>
+        <a href="#" class="nav-link">Sök</a>
+        <a href="about.html" class="nav-link">Om oss</a>
+        <a href="contact.html" class="nav-link active">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Kontakt innehåll -->
+  <main class="contact-container">
+    <div class="contact-content">
+      <h1 class="contact-title">Kontakta mig</h1>
+      
+      <div class="contact-grid">
+        <!-- Kontaktformulär -->
+        <section class="contact-section">
+          <h2>Skicka förfrågan</h2>
+          <form class="contact-form" id="contactForm">
+            <div class="form-group">
+              <label for="name">Namn *</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">E-post *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="company">Företag</label>
+              <input type="text" id="company" name="company">
+            </div>
+            
+            <div class="form-group">
+              <label for="service">Tjänst du är intresserad av</label>
+              <select id="service" name="service">
+                <option value="">Välj tjänst</option>
+                <option value="metadata">Metadata-extraktion</option>
+                <option value="webdev">Webbutveckling</option>
+                <option value="database">Databas-design</option>
+                <option value="api">API-utveckling</option>
+                <option value="lia">LIA-praktik</option>
+                <option value="consulting">Konsultuppdrag</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Meddelande *</label>
+              <textarea id="message" name="message" rows="5" required placeholder="Beskriv ditt projekt eller förfrågan..."></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Skicka förfrågan</button>
+          </form>
+        </section>
+
+        <!-- Kontaktinformation -->
+        <section class="contact-section">
+          <h2>Kontaktinformation</h2>
+          
+          <div class="contact-info">
+            <div class="info-item">
+              <h3>Lucy Sonberg</h3>
+              <p>Fullstack-utvecklare & Metadata-specialist</p>
+            </div>
+            
+            <div class="info-item">
+              <h4>E-post</h4>
+              <p>lucy.sonberg@example.com</p>
+            </div>
+            
+            <div class="info-item">
+              <h4>GitHub</h4>
+              <a href="https://github.com/LucyVers" target="_blank" class="contact-link">github.com/LucyVers</a>
+            </div>
+            
+            <div class="info-item">
+              <h4>LinkedIn</h4>
+              <a href="#" target="_blank" class="contact-link">linkedin.com/in/lucy-sonberg</a>
+            </div>
+          </div>
+
+          <div class="services-info">
+            <h3>Mina tjänster</h3>
+            <ul class="services-list">
+              <li>Metadata-extraktion för alla filtyper</li>
+              <li>Webbapplikationer med modern design</li>
+              <li>Databas-integration och API:er</li>
+              <li>LIA-praktikplatser för studenter</li>
+              <li>Konsultuppdrag för företag</li>
+            </ul>
+          </div>
+
+          <div class="pricing-info">
+            <h3>Kontakta mig</h3>
+            <p>Är du intresserad av att veta mer om mina tjänster eller har du frågor om detta projekt?</p>
+            <p>Jag är öppen för LIA-praktikplatser och konsultuppdrag där jag kan bidra med mina färdigheter.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- SONBERG STUDIO Footer -->
+  <footer class="studio-footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>SONBERG STUDIO</h3>
+        <p>Avancerad metadata-sökmotor för alla filtyper</p>
+      </div>
+      <div class="footer-section">
+        <h4>Tekniker</h4>
+        <p>Node.js • Express • MySQL • JavaScript</p>
+      </div>
+      <div class="footer-section">
+        <h4>Kontakt</h4>
+        <p>Lucy Sonberg</p>
+        <a href="https://github.com/LucyVers/pdf-metadata-project" target="_blank" class="footer-link">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 SONBERG STUDIO. Alla rättigheter förbehållna.</p>
+    </div>
+  </footer>
+
+  <script src="contact.js"></script>
+</body>
+
+</html>

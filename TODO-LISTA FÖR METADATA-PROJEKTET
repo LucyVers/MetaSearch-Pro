@@ -189,6 +189,27 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [x] **Responsiv design** - Mobil, tablet, desktop
 - [x] **Loading-animationer** - Snygga övergångar
 
+#### **STEG 1.5: NAVIGATION OCH PROFESSIONELLA SIDOR** 🌐 ✅ SLUTFÖRD!
+- [x] **"Om oss" sida** - Professionell presentation av SONBERG STUDIO
+  - [x] Projektbeskrivning och tekniska färdigheter
+  - [x] Tjänster som erbjuds (metadata, webbutveckling, databas)
+  - [x] LIA och konsultmöjligheter
+  - [x] Portfolio och GitHub-länkar
+- [x] **"Kontakt" sida** - Kontaktformulär och information
+  - [x] Kontaktformulär för företagsförfrågningar
+  - [x] Lucy's kontaktinfo och sociala medier
+  - [x] Tjänster och priser
+  - [x] LIA-praktikmöjligheter
+- [x] **Smooth navigation** - Snygga övergångar mellan sidorna
+  - [x] JavaScript navigation utan page reload
+  - [x] CSS animationer för sidövergångar
+  - [x] Responsiv design för alla enheter
+- [x] **SOLID-principer** - Enkel och underhållbar kod
+  - [x] Separata HTML-filer för varje sida
+  - [x] Återanvändbar CSS
+  - [x] Enkel JavaScript-navigation
+  - [x] Ingen komplex kod eller frameworks
+
 #### **STEG 2: LJUDFILER MED SPELARE** 🎵
 - [ ] **Inbyggd MP3-spelare** - Snyggt designad med kontroller
 - [ ] **Ljudsnuttar** - Spela 30 sekunder av varje låt
