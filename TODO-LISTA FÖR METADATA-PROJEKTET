@@ -252,6 +252,26 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [ ] **Offline-stöd** - Fungera utan internet
 - [ ] **Push-notifikationer** - Meddelanden om nya filer
 
+#### **STEG 8: LIVE DEMO OCH PORTFOLIO** 🎬
+- [ ] **Live Demo-knapp** - Visa projektet i action
+- [ ] **Video-demo** - Skapa YouTube/LinkedIn video
+- [ ] **Screenshot-galleri** - Visa projektets funktioner
+- [ ] **Teknisk dokumentation** - För utvecklare och rekryterare
+
+#### **STEG 9: BLOG-SEKTION** 📝
+- ✅ **Blogginlägg 1** - Metadata och webbanalys för företag
+- ✅ **Blogginlägg 2** - Semantisk webb och mikrodata
+- ✅ **Blogginlägg 3** - Praktisk webbanalys för företag
+- [ ] **Blog-integration** - Lägg till blogg på webbplatsen
+- [ ] **SEO-optimering** - Meta tags, schema.org markup
+
+#### **STEG 10: LIVE-DEPLOYMENT OCH MARKNADSFÖRING** 🌐
+- [ ] **Vercel deployment** - Gratis hosting för portfolio
+- [ ] **Supabase integration** - Backend-as-a-Service (senare)
+- [ ] **SEO-optimering** - Sökmotorranking
+- [ ] **LinkedIn-marknadsföring** - Dela projekt och blogginlägg
+- [ ] **GitHub-portfolio** - Professionell README och dokumentation
+
 ### **17. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)** - SKIPPAS TILL SENARE
 - [ ] **Ladda upp alla testfiler till Google Drive** (100 filer per datatyp)
 - [ ] **Skapa delningslänk för läraren**

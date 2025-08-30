@@ -6,7 +6,62 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
-### 2025-08-30 - STEG 1.5: NAVIGATION OCH PROFESSIONELLA SIDOR IMPLEMENTERAT! 🌐
+### 2025-08-30 - BLOG-SEKTION SKAPAD! 📝
+
+**Vad jag implementerade:**
+- **3 professionella blogginlägg** baserade på kursens lärandemål:
+  1. **Metadata och webbanalys** - Strategiskt verktyg för företag
+  2. **Semantisk webb och mikrodata** - Framtidens SEO
+  3. **Praktisk webbanalys** - Från data till beslut
+- **Företagsfokuserat innehåll** - Visar expertis för potentiella kunder
+- **Praktiska exempel** från vårt metadata search engine projekt
+- **Call-to-action** - Kontaktinformation för konsultuppdrag
+
+**Tekniskt innehåll:**
+- **Schema.org markup** - Exempel på mikrodata-implementation
+- **JavaScript-kod** - Exempel på webbanalys och datainsamling
+- **A/B-testning** - Metoder för optimering
+- **SEO-strategier** - Sökmotoroptimering
+
+**Resultat:**
+- ✅ **3 professionella artiklar** - Redo för LinkedIn och portfolio
+- ✅ **Expertis-demonstration** - Visar djup kunskap inom området
+- ✅ **Kundfokuserat** - Adresserar företagsbehov och problem
+- ✅ **Tekniskt djup** - Visar praktisk implementation
+
+### 2025-08-30 - LIVE-DEPLOYMENT STRATEGI PLANERAD! 🌐
+
+**Vercel - Gratis Hosting för Portfolio:**
+- **Kostnad**: GRATIS för personliga projekt
+- **Funktioner**: 
+  - Automatisk deployment från GitHub
+  - Custom domains
+  - SSL-certifikat
+  - Global CDN
+  - Serverless functions
+- **Begränsningar**: 
+  - 100GB bandwidth/månad
+  - 100 serverless function executions/dag
+  - Perfekt för portfolio-projekt
+
+**Supabase - Backend-as-a-Service (Framtida):**
+- **Kostnad**: GRATIS tier med 500MB databas
+- **Funktioner**:
+  - PostgreSQL-databas
+  - Real-time subscriptions
+  - Authentication
+  - Storage
+  - Edge functions
+- **Fördelar**: Enklare än egen backend, skalbar
+
+**SEO-Strategi för Hög Ranking:**
+- **Sökord**: "metadata search engine Stockholm", "LIA praktikplats webbutveckling"
+- **Meta tags**: Title, description, keywords
+- **Schema.org**: Strukturerad data för sökmotorer
+- **Social media**: Open Graph tags för LinkedIn
+- **Content marketing**: Blogginlägg för organisk trafik
+
+### 2025-08-29 - STEG 1.5: NAVIGATION OCH PROFESSIONELLA SIDOR IMPLEMENTERAT! 🌐
 
 **Vad jag implementerade:**
 1. **"Om oss" sida** - Professionell presentation av Sonberg Studio
@@ -41,6 +96,59 @@
 - **Hover-effekter** - Håll musen över LIA-knappar och tjänster
 - **Formuläret** - Fyll i och skicka förfrågan på kontakt-sidan
 - **Bekräftelse** - Snyggt popup-meddelande med animation
+
+**Vad jag implementerade:**
+- **3 professionella blogginlägg** baserade på kursens lärandemål:
+  1. **Metadata och webbanalys** - Strategiskt verktyg för företag
+  2. **Semantisk webb och mikrodata** - Framtidens SEO
+  3. **Praktisk webbanalys** - Från data till beslut
+- **Företagsfokuserat innehåll** - Visar expertis för potentiella kunder
+- **Praktiska exempel** från vårt metadata search engine projekt
+- **Call-to-action** - Kontaktinformation för konsultuppdrag
+
+**Tekniskt innehåll:**
+- **Schema.org markup** - Exempel på mikrodata-implementation
+- **JavaScript-kod** - Exempel på webbanalys och datainsamling
+- **A/B-testning** - Metoder för optimering
+- **SEO-strategier** - Sökmotoroptimering
+
+**Resultat:**
+- ✅ **3 professionella artiklar** - Redo för LinkedIn och portfolio
+- ✅ **Expertis-demonstration** - Visar djup kunskap inom området
+- ✅ **Kundfokuserat** - Adresserar företagsbehov och problem
+- ✅ **Tekniskt djup** - Visar praktisk implementation
+
+### 2025-08-30 - LIVE-DEPLOYMENT STRATEGI PLANERAD! 🌐
+
+**Vercel - Gratis Hosting för Portfolio:**
+- **Kostnad**: GRATIS för personliga projekt
+- **Funktioner**: 
+  - Automatisk deployment från GitHub
+  - Custom domains
+  - SSL-certifikat
+  - Global CDN
+  - Serverless functions
+- **Begränsningar**: 
+  - 100GB bandwidth/månad
+  - 100 serverless function executions/dag
+  - Perfekt för portfolio-projekt
+
+**Supabase - Backend-as-a-Service (Framtida):**
+- **Kostnad**: GRATIS tier med 500MB databas
+- **Funktioner**:
+  - PostgreSQL-databas
+  - Real-time subscriptions
+  - Authentication
+  - Storage
+  - Edge functions
+- **Fördelar**: Enklare än egen backend, skalbar
+
+**SEO-Strategi för Hög Ranking:**
+- **Sökord**: "metadata search engine Stockholm", "LIA praktikplats webbutveckling"
+- **Meta tags**: Title, description, keywords
+- **Schema.org**: Strukturerad data för sökmotorer
+- **Social media**: Open Graph tags för LinkedIn
+- **Content marketing**: Blogginlägg för organisk trafik
 
 ### 2025-08-29 - STEG 1: PROFESSIONELL WEBSITE DESIGN IMPLEMENTERAT! 🎨
 
