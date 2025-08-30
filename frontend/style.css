@@ -1236,7 +1236,7 @@ h3 {
 
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   margin-bottom: 3rem;
 }
@@ -1248,6 +1248,12 @@ h3 {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   border: 1px solid var(--border-color);
+}
+
+.blog-article:nth-child(3) {
+  grid-column: 1 / -1;
+  max-width: 50%;
+  margin: 0 auto;
 }
 
 .blog-article:hover {
@@ -1332,6 +1338,7 @@ h3 {
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-top: 2rem;
 }
 
 .read-more-btn {
@@ -1378,19 +1385,25 @@ h3 {
   color: white;
   padding: 3rem 2rem;
   border-radius: 12px;
-  margin-top: 2rem;
+  margin-top: 4rem;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  position: relative;
+  z-index: 1;
 }
 
 .blog-cta h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
   font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .blog-cta p {
   font-size: 1.1rem;
   margin-bottom: 2rem;
-  opacity: 0.9;
+  opacity: 1;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .cta-buttons {
@@ -1433,6 +1446,24 @@ h3 {
 }
 
 /* Responsive design för blog */
+@media (max-width: 1400px) {
+  .blog-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  
+  .blog-article {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .blog-container {
     padding: 1rem;
