@@ -43,7 +43,7 @@ open http://localhost:3000
 ## 📁 PROJEKTSTRUKTUR
 
 ```
-pdf-metadata-project/
+MetaSearch-Pro/
 ├── index.js                    # Backend server
 ├── package.json               # Projektkonfiguration
 ├── data/

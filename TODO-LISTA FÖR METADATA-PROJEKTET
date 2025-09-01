@@ -210,12 +210,12 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - [x] Enkel JavaScript-navigation
   - [x] Ingen komplex kod eller frameworks
 
-#### **STEG 2: LJUDFILER MED SPELARE** 🎵
-- [ ] **Inbyggd MP3-spelare** - Snyggt designad med kontroller
-- [ ] **Ljudsnuttar** - Spela 30 sekunder av varje låt
-- [ ] **Playlist-funktion** - Skapa spellistor av MP3-filer
-- [ ] **Ljudvisualisering** - Spektrogram eller waveform
-- [ ] **Volymkontroll** - Individuell volym per fil
+#### **STEG 2: LJUDFILER MED SPELARE** 🎵 ✅ SLUTFÖRD!
+- [x] **Inbyggd MP3-spelare** - Snyggt designad med kontroller ✅ SLUTFÖRD 2025-09-01!
+- [x] **Ljudsnuttar** - Spela 30 sekunder av varje låt ✅ SLUTFÖRD 2025-09-01!
+- [ ] **Playlist-funktion** - Skapa spellistor av MP3-filer (FRAMTIDA UTBYGGNAD)
+- [ ] **Ljudvisualisering** - Spektrogram eller waveform (FRAMTIDA UTBYGGNAD)
+- [ ] **Volymkontroll** - Individuell volym per fil (FRAMTIDA UTBYGGNAD)
 
 #### **STEG 3: BILDGALLERI FÖR JPG** 📸
 - [ ] **Lightbox-galleri** - Klicka för större bilder
@@ -311,6 +311,12 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 9. **🎮 INTERAKTIVA FUNKTIONER** - Drag & drop, export, statistik
 10. **🔍 AVANCERAD SÖKNING** - Fuzzy search, filter, förslag
 11. **🚀 PERFORMANCE OCH UX** - Lazy loading, shortcuts, offline
+
+### **THOMAS "NICE-TO-HAVE" EXEMPEL (FRÅN SKOLANS muBLOGG):**
+12. **📋 CHECKBOXES FÖR METADATA-FÄLT** - Välj flera fält att söka i samtidigt
+13. **👁️ DÖLJA/VISA DETALJERAD METADATA** - Toggle för att expandera/kollapsa metadata
+14. **📊 ALFABETISK SORTERING** - Komplement till relevanssortering (A-Ö, datum, storlek)
+15. **🔢 ANTAL SÖKRESULTAT** - Visa antal resultat innan listan (redan implementerat)
 
 ---
 

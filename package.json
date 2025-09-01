@@ -1,5 +1,5 @@
 {
-  "name": "pdf-metadata-project",
+  "name": "MetaSearch-Pro",
   "version": "1.0.0",
   "description": "PDF metadata extraction web app built with Node.js and Express. Extracts titles, file sizes, PDF versions, and handles dates robustly. Features download links and professional UI with progressive disclosure. Great for learning metadata extraction and REST API development.",
   "main": "index.js",

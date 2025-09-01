@@ -37,6 +37,66 @@ async function loadSearchHistory() {
   }
 }
 
+// SOLID: Single Responsibility - Audio player creation
+function createAudioPlayer(audioPath, metadata) {
+  const audioId = `audio-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  let audioMetadata = '';
+  if (metadata.duration) {
+    const minutes = Math.floor(metadata.duration / 60);
+    const seconds = metadata.duration % 60;
+    audioMetadata += `Duration: ${minutes}:${seconds.toString().padStart(2, '0')} | `;
+  }
+  if (metadata.artist) audioMetadata += `Artist: ${metadata.artist} | `;
+  if (metadata.album) audioMetadata += `Album: ${metadata.album}`;
+  
+  return `
+    <div class="audio-player-container">
+      <div class="audio-info">
+        <span class="preview-label">🎵 Audio Preview (30s)</span>
+        ${audioMetadata ? `<div class="audio-metadata">${audioMetadata}</div>` : ''}
+      </div>
+      <audio id="${audioId}" controls preload="metadata" class="custom-audio-player">
+        <source src="${audioPath}" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+  `;
+}
+
+// SOLID: Single Responsibility - Handle 30-second preview limitation
+function handlePreviewLimitation(audioElement) {
+  if (!audioElement) return;
+  
+  audioElement.addEventListener('loadedmetadata', function() {
+    // Ensure we start from beginning
+    this.currentTime = 0;
+  });
+  
+  audioElement.addEventListener('timeupdate', function() {
+    // Stop at 30 seconds
+    if (this.currentTime >= 30) {
+      this.pause();
+      this.currentTime = 0;
+    }
+  });
+  
+  audioElement.addEventListener('play', function() {
+    // Always start from beginning for preview
+    if (this.currentTime >= 30) {
+      this.currentTime = 0;
+    }
+  });
+}
+
+// SOLID: Single Responsibility - Add audio event listeners  
+function addAudioEventListeners(articleElement) {
+  const audioPlayer = articleElement.querySelector('.custom-audio-player');
+  if (audioPlayer) {
+    handlePreviewLimitation(audioPlayer);
+  }
+}
+
 // Function to perform search
 async function performSearch(searchTerm) {
   // Get selected file type filter and search operator
@@ -355,17 +415,32 @@ async function performSearch(searchTerm) {
           downloadPath = `pdfs/${item.file}`;
         }
         
+        // SOLID: Interface Segregation - Different interfaces for different file types
+        let downloadSection;
+        if (item.metadata.fileType === 'MP3') {
+          downloadSection = createAudioPlayer(downloadPath, item.metadata);
+        } else {
+          downloadSection = `
+            <div class="download-section">
+              <a href="${downloadPath}" class="download-link">📥 ${downloadText}</a>
+            </div>
+          `;
+        }
+        
         article.innerHTML = `
           <h3>${fileIcon} ${fileTitle}</h3>
           <table>
             ${tableRows.join('')}
           </table>
-          <div class="download-section">
-            <a href="${downloadPath}" class="download-link">📥 ${downloadText}</a>
-          </div>
+          ${downloadSection}
         `;
         // add the article to the search results
         searchResults.appendChild(article);
+        
+        // SOLID: Dependency Inversion - Use abstracted audio handling
+        if (item.metadata.fileType === 'MP3') {
+          addAudioEventListeners(article);
+        }
       }
     }
   } catch (error) {
@@ -856,16 +931,31 @@ for (let item of metadata) {
     downloadPath = `pdfs/${item.file}`;
   }
   
+  // SOLID: Interface Segregation - Different interfaces for different file types  
+  let downloadSection;
+  if (item.metadata.fileType === 'MP3') {
+    downloadSection = createAudioPlayer(downloadPath, item.metadata);
+  } else {
+    downloadSection = `
+      <div class="download-section">
+        <a href="${downloadPath}" class="download-link">📥 ${downloadText}</a>
+      </div>
+    `;
+  }
+  
   // add content to the article
   article.innerHTML = `
     <h3>${fileIcon} ${fileTitle}</h3>
     <table>
       ${tableRows.join('')}
     </table>
-    <div class="download-section">
-      <a href="${downloadPath}" class="download-link">📥 ${downloadText}</a>
-    </div>
+    ${downloadSection}
   `;
   // add the article to the main element
   document.querySelector('main').append(article);
+  
+  // SOLID: Dependency Inversion - Use abstracted audio handling
+  if (item.metadata.fileType === 'MP3') {
+    addAudioEventListeners(article);
+  }
 }
