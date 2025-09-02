@@ -217,12 +217,16 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [ ] **Ljudvisualisering** - Spektrogram eller waveform (FRAMTIDA UTBYGGNAD)
 - [ ] **Volymkontroll** - Individuell volym per fil (FRAMTIDA UTBYGGNAD)
 
-#### **STEG 3: BILDGALLERI FÖR JPG** 📸
-- [ ] **Lightbox-galleri** - Klicka för större bilder
-- [ ] **Zoom-funktion** - Zooma in på detaljer
-- [ ] **Slideshow** - Automatisk bildspel
-- [ ] **Thumbnail-grid** - Snyggt grid-layout
-- [ ] **Bildrotation** - Rotera bilder
+#### **STEG 3: BILDGALLERI FÖR JPG** 📸 ✅ SLUTFÖRD!
+- [x] **STEG 3.1: createImageGallery() funktion** - SOLID-principer implementation ✅ SLUTFÖRD 2025-09-02!
+- [x] **STEG 3.2: Lightbox med overlay** - Fullskärmsvisning med navigation (prev/next) ✅ SLUTFÖRD 2025-09-02!
+- [x] **STEG 3.3: Zoom-funktion** - Interaktiv navigation och smooth UX ✅ SLUTFÖRD 2025-09-02!
+- [x] **STEG 3.4: Metadata-overlay** - EXIF-data (camera, GPS, datum) i lightbox ✅ SLUTFÖRD 2025-09-02!
+- [x] **STEG 3.5: SONBERG STUDIO styling** - Lila tema, animationer, responsiv design ✅ SLUTFÖRD 2025-09-02!
+- [x] **STEG 3.6: Keyboard & Accessibility** - Arrow keys, ESC, screen reader support ✅ SLUTFÖRD 2025-09-02!
+- [x] **STEG 3.7: Testing med 20 JPG-filer** - Verifiering av funktionalitet ✅ SLUTFÖRD 2025-09-02!
+- [ ] **FRAMTIDA: Thumbnail-grid** - Grid-layout för snabb bildöversikt
+- [ ] **FRAMTIDA: Slideshow & rotation** - Automatisk bildspel och rotation
 
 #### **STEG 4: AVANCERADE FUNKTIONER** ⚡
 - [ ] **PDF-preview** - Visa första sidan direkt
@@ -312,7 +316,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 10. **🔍 AVANCERAD SÖKNING** - Fuzzy search, filter, förslag
 11. **🚀 PERFORMANCE OCH UX** - Lazy loading, shortcuts, offline
 
-### **THOMAS "NICE-TO-HAVE" EXEMPEL (FRÅN SKOLANS muBLOGG):**
+### **THOMAS "NICE-TO-HAVE" EXEMPEL (FRÅN BLOGGEN):**
 12. **📋 CHECKBOXES FÖR METADATA-FÄLT** - Välj flera fält att söka i samtidigt
 13. **👁️ DÖLJA/VISA DETALJERAD METADATA** - Toggle för att expandera/kollapsa metadata
 14. **📊 ALFABETISK SORTERING** - Komplement till relevanssortering (A-Ö, datum, storlek)

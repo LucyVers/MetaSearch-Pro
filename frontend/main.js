@@ -97,6 +97,188 @@ function addAudioEventListeners(articleElement) {
   }
 }
 
+// SOLID: Single Responsibility - Image gallery creation
+function createImageGallery(imagePath, metadata, allImages, currentIndex) {
+  console.log('createImageGallery called:', { imagePath, metadata, allImagesCount: allImages?.length, currentIndex });
+  
+  // Fallback if allImages is undefined or empty
+  if (!allImages || allImages.length === 0) {
+    allImages = [{ file: imagePath.split('/').pop(), metadata: metadata }];
+    currentIndex = 0;
+  }
+  
+  const galleryId = `gallery-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
+  let imageMetadata = '';
+  if (metadata.dimensions) imageMetadata += `Dimensions: ${metadata.dimensions} | `;
+  if (metadata.camera) imageMetadata += `Camera: ${metadata.camera} | `;
+  if (metadata.createdDate) {
+    const photoDate = new Date(metadata.createdDate).toLocaleDateString('sv-SE');
+    imageMetadata += `Photo Date: ${photoDate}`;
+  }
+  
+  return `
+    <div class="image-gallery-container">
+      <div class="image-info">
+        <span class="gallery-label">🖼️ Image Gallery</span>
+        ${imageMetadata ? `<div class="image-metadata">${imageMetadata}</div>` : ''}
+      </div>
+      <div class="image-preview">
+        <img src="${imagePath}" alt="${metadata.title || metadata.filename}" class="gallery-thumbnail" loading="lazy">
+        <button class="open-lightbox-btn" data-gallery-id="${galleryId}" data-image-index="${currentIndex}">
+          📸 Open in Gallery
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// SOLID: Single Responsibility - Handle lightbox functionality
+function handleLightboxEvents(articleElement, allImages, currentIndex) {
+  const openBtn = articleElement.querySelector('.open-lightbox-btn');
+  if (openBtn) {
+    openBtn.addEventListener('click', function() {
+      openLightbox(allImages, currentIndex);
+    });
+  }
+}
+
+// SOLID: Single Responsibility - Open lightbox with navigation
+function openLightbox(allImages, startIndex) {
+  // Create lightbox overlay
+  const lightbox = document.createElement('div');
+  lightbox.className = 'lightbox-overlay';
+  lightbox.innerHTML = `
+    <div class="lightbox-container">
+      <button class="lightbox-close" aria-label="Close gallery">&times;</button>
+      <button class="lightbox-prev" aria-label="Previous image">&#8249;</button>
+      <button class="lightbox-next" aria-label="Next image">&#8250;</button>
+      <div class="lightbox-counter">
+        <span class="current-image">1</span> / <span class="total-images">${allImages.length}</span>
+      </div>
+      <div class="lightbox-content">
+        <img class="lightbox-image" src="" alt="" loading="lazy">
+        <div class="lightbox-metadata">
+          <div class="metadata-content"></div>
+          <button class="metadata-toggle">Show Details</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(lightbox);
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+  
+  let currentImageIndex = startIndex;
+  
+  // Load current image
+  loadLightboxImage(lightbox, allImages, currentImageIndex);
+  
+  // Event listeners
+  setupLightboxEventListeners(lightbox, allImages, currentImageIndex);
+}
+
+// SOLID: Single Responsibility - Load image in lightbox
+function loadLightboxImage(lightbox, allImages, index) {
+  const image = lightbox.querySelector('.lightbox-image');
+  const metadataContent = lightbox.querySelector('.metadata-content');
+  const currentSpan = lightbox.querySelector('.current-image');
+  
+  const currentImage = allImages[index];
+  const imagePath = `jpgs/${currentImage.file}`;
+  
+  // Update image
+  image.src = imagePath;
+  image.alt = currentImage.metadata.title || currentImage.metadata.filename;
+  
+  // Update counter
+  currentSpan.textContent = index + 1;
+  
+  // Update metadata
+  let metadataHTML = `<h3>${currentImage.metadata.filename}</h3>`;
+  if (currentImage.metadata.dimensions) metadataHTML += `<p><strong>Dimensions:</strong> <span class="metadata-value">${currentImage.metadata.dimensions}</span></p>`;
+  if (currentImage.metadata.camera) metadataHTML += `<p><strong>Camera:</strong> <span class="metadata-value">${currentImage.metadata.camera}</span></p>`;
+  if (currentImage.metadata.fileSize) metadataHTML += `<p><strong>File Size:</strong> <span class="metadata-value">${currentImage.metadata.fileSize}</span></p>`;
+  if (currentImage.metadata.createdDate) {
+    const photoDate = new Date(currentImage.metadata.createdDate).toLocaleString('sv-SE');
+    metadataHTML += `<p><strong>Photo Date:</strong> <span class="metadata-value">${photoDate}</span></p>`;
+  }
+  if (currentImage.metadata.location) {
+    metadataHTML += `<p><strong>GPS Location:</strong> <span class="metadata-value">${currentImage.metadata.location.latitude.toFixed(6)}, ${currentImage.metadata.location.longitude.toFixed(6)}</span></p>`;
+  }
+  
+  metadataContent.innerHTML = metadataHTML;
+}
+
+// SOLID: Single Responsibility - Setup lightbox event listeners
+function setupLightboxEventListeners(lightbox, allImages, startIndex) {
+  let currentIndex = startIndex;
+  
+  // Close lightbox
+  const closeBtn = lightbox.querySelector('.lightbox-close');
+  closeBtn.addEventListener('click', closeLightbox);
+  
+  // Click outside to close
+  lightbox.addEventListener('click', function(e) {
+    if (e.target === lightbox) closeLightbox();
+  });
+  
+  // Previous/Next navigation
+  const prevBtn = lightbox.querySelector('.lightbox-prev');
+  const nextBtn = lightbox.querySelector('.lightbox-next');
+  
+  prevBtn.addEventListener('click', function() {
+    currentIndex = (currentIndex - 1 + allImages.length) % allImages.length;
+    loadLightboxImage(lightbox, allImages, currentIndex);
+  });
+  
+  nextBtn.addEventListener('click', function() {
+    currentIndex = (currentIndex + 1) % allImages.length;
+    loadLightboxImage(lightbox, allImages, currentIndex);
+  });
+  
+  // Metadata toggle
+  const metadataToggle = lightbox.querySelector('.metadata-toggle');
+  const metadataContent = lightbox.querySelector('.metadata-content');
+  
+  metadataToggle.addEventListener('click', function() {
+    metadataContent.classList.toggle('visible');
+    metadataToggle.textContent = metadataContent.classList.contains('visible') ? 'Hide Details' : 'Show Details';
+  });
+  
+  // Keyboard navigation
+  function handleKeyboard(e) {
+    switch(e.key) {
+      case 'Escape':
+        closeLightbox();
+        break;
+      case 'ArrowLeft':
+        prevBtn.click();
+        break;
+      case 'ArrowRight':
+        nextBtn.click();
+        break;
+    }
+  }
+  
+  document.addEventListener('keydown', handleKeyboard);
+  
+  // Store cleanup function
+  lightbox.cleanup = function() {
+    document.removeEventListener('keydown', handleKeyboard);
+  };
+}
+
+// SOLID: Single Responsibility - Close lightbox
+function closeLightbox() {
+  const lightbox = document.querySelector('.lightbox-overlay');
+  if (lightbox) {
+    if (lightbox.cleanup) lightbox.cleanup();
+    document.body.style.overflow = ''; // Restore scrolling
+    lightbox.remove();
+  }
+}
+
 // Function to perform search
 async function performSearch(searchTerm) {
   // Get selected file type filter and search operator
@@ -419,6 +601,12 @@ async function performSearch(searchTerm) {
         let downloadSection;
         if (item.metadata.fileType === 'MP3') {
           downloadSection = createAudioPlayer(downloadPath, item.metadata);
+        } else if (item.metadata.fileType === 'JPG') {
+          // Get all JPG images for gallery navigation from the search results
+          const allImages = searchData.filter(img => img.metadata.fileType === 'JPG');
+          const currentIndex = allImages.findIndex(img => img.file === item.file);
+          console.log('JPG Gallery Debug:', { allImages: allImages.length, currentIndex, filename: item.file });
+          downloadSection = createImageGallery(downloadPath, item.metadata, allImages, currentIndex);
         } else {
           downloadSection = `
             <div class="download-section">
@@ -437,14 +625,19 @@ async function performSearch(searchTerm) {
         // add the article to the search results
         searchResults.appendChild(article);
         
-        // SOLID: Dependency Inversion - Use abstracted audio handling
+        // SOLID: Dependency Inversion - Use abstracted media handling
         if (item.metadata.fileType === 'MP3') {
           addAudioEventListeners(article);
+        } else if (item.metadata.fileType === 'JPG') {
+          const allImages = searchData.filter(img => img.metadata.fileType === 'JPG');
+          const currentIndex = allImages.findIndex(img => img.file === item.file);
+          handleLightboxEvents(article, allImages, currentIndex);
         }
       }
     }
   } catch (error) {
-    searchResults.innerHTML = '<p>Ett fel uppstod vid sökning</p>';
+    console.error('Search error:', error);
+    searchResults.innerHTML = `<p>Ett fel uppstod vid sökning: ${error.message}</p>`;
   }
 }
 
@@ -935,6 +1128,12 @@ for (let item of metadata) {
   let downloadSection;
   if (item.metadata.fileType === 'MP3') {
     downloadSection = createAudioPlayer(downloadPath, item.metadata);
+  } else if (item.metadata.fileType === 'JPG') {
+    // Get all JPG images for gallery navigation  
+    const allImages = metadata.filter(img => img.metadata.fileType === 'JPG');
+    const currentIndex = allImages.findIndex(img => img.file === item.file);
+    console.log('Main JPG Gallery Debug:', { allImages: allImages.length, currentIndex, filename: item.file });
+    downloadSection = createImageGallery(downloadPath, item.metadata, allImages, currentIndex);
   } else {
     downloadSection = `
       <div class="download-section">
@@ -954,8 +1153,12 @@ for (let item of metadata) {
   // add the article to the main element
   document.querySelector('main').append(article);
   
-  // SOLID: Dependency Inversion - Use abstracted audio handling
+  // SOLID: Dependency Inversion - Use abstracted media handling
   if (item.metadata.fileType === 'MP3') {
     addAudioEventListeners(article);
+  } else if (item.metadata.fileType === 'JPG') {
+    const allImages = metadata.filter(img => img.metadata.fileType === 'JPG');
+    const currentIndex = allImages.findIndex(img => img.file === item.file);
+    handleLightboxEvents(article, allImages, currentIndex);
   }
 }
