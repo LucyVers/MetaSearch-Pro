@@ -12,7 +12,7 @@ import ExifParser from 'exif-parser';
 import { parseFile } from 'music-metadata';
 // Import database connection and models
 import sequelize from './database.js';
-import FileMetadata from './models.js';
+import { FileMetadata, Favorites, syncDatabase } from './models.js';
 
 // Load PowerPoint metadata from JSON file
 let pptMetadata = [];
@@ -148,6 +148,9 @@ async function saveMetadataToDatabase(metadata) {
 
 // Create a web server, store in the variable app
 let app = express();
+
+// Middleware för att hantera JSON requests (behövs för favorites API)
+app.use(express.json());
 
 // Helper function to parse PDF dates
 function parsePDFDate(dateString) {
@@ -1412,10 +1415,112 @@ app.get('/api/search-history', (request, response) => {
   response.json(searchHistory);
 });
 
+// === FAVORITES API ENDPOINTS ===
+
+// GET endpoint to retrieve user's favorites
+app.get('/api/favorites', async (request, response) => {
+  try {
+    const userId = request.query.userId || 'default';
+    
+    // Hämta alla favoriter för användaren med filmetadata
+    const favorites = await Favorites.findAll({
+      where: { userId: userId },
+      include: [{
+        model: FileMetadata,
+        attributes: ['id', 'filename', 'fileType', 'title', 'author', 'fileSize', 'createdAt']
+      }],
+      order: [['createdAt', 'DESC']] // Nyaste först
+    });
+    
+    response.json(favorites);
+  } catch (error) {
+    console.error('Error fetching favorites:', error);
+    response.status(500).json({ error: 'Kunde inte hämta favoriter' });
+  }
+});
+
+// POST endpoint to add a file to favorites
+app.post('/api/favorites', async (request, response) => {
+  try {
+    const { filename, userId = 'default' } = request.body;
+    
+    if (!filename) {
+      return response.status(400).json({ error: 'filename krävs' });
+    }
+    
+    // Hitta filen baserat på filnamn
+    const fileExists = await FileMetadata.findOne({
+      where: { filename: filename }
+    });
+    
+    if (!fileExists) {
+      return response.status(404).json({ error: 'Filen hittades inte' });
+    }
+    
+    // Skapa ny favorit med filens ID
+    const favorite = await Favorites.create({
+      fileId: fileExists.id,
+      userId: userId,
+      createdAt: new Date()
+    });
+    
+    response.json({ success: true, favorite: favorite });
+  } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      response.status(409).json({ error: 'Filen är redan en favorit' });
+    } else {
+      console.error('Error adding favorite:', error);
+      response.status(500).json({ error: 'Kunde inte lägga till favorit' });
+    }
+  }
+});
+
+// DELETE endpoint to remove a file from favorites
+app.delete('/api/favorites/:filename', async (request, response) => {
+  try {
+    const { filename } = request.params;
+    const userId = request.query.userId || 'default';
+    
+    // Hitta filen baserat på filnamn
+    const file = await FileMetadata.findOne({
+      where: { filename: filename }
+    });
+    
+    if (!file) {
+      return response.status(404).json({ error: 'Filen hittades inte' });
+    }
+    
+    // Ta bort favoriten
+    const deleted = await Favorites.destroy({
+      where: {
+        fileId: file.id,
+        userId: userId
+      }
+    });
+    
+    if (deleted > 0) {
+      response.json({ success: true, message: 'Favorit borttagen' });
+    } else {
+      response.status(404).json({ error: 'Favorit hittades inte' });
+    }
+  } catch (error) {
+    console.error('Error removing favorite:', error);
+    response.status(500).json({ error: 'Kunde inte ta bort favorit' });
+  }
+});
+
 // Serve all files in the frontend folder
 app.use(express.static('frontend'));
 
 // Start the webserver on port 3000
-app.listen(3000, () => {
+app.listen(3000, async () => {
   console.log('Server listening on http://localhost:3000');
+  
+  // Synkronisera databasen med nya Favorites-tabellen
+  try {
+    await syncDatabase();
+    console.log('✅ Databas synkroniserad med Favorites-tabellen!');
+  } catch (error) {
+    console.error('❌ Fel vid databassynkronisering:', error);
+  }
 });

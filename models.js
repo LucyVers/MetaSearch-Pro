@@ -156,7 +156,7 @@ const FileMetadata = sequelize.define('FileMetadata', {
 });
 
 // Skapa tabeller i databasen
-export async function syncDatabase() {
+async function syncDatabase() {
   try {
     await sequelize.sync({ force: false }); // force: false = skapa bara om de inte finns
     console.log('✅ Databastabeller synkroniserade!');
@@ -167,4 +167,50 @@ export async function syncDatabase() {
   }
 }
 
-export default FileMetadata;
+// Favorites-modell för att spara användarens favoritfiler
+const Favorites = sequelize.define('Favorites', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  fileId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'file_metadata',
+      key: 'id'
+    }
+  },
+  userId: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
+    defaultValue: 'default' // För framtida multi-user support
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  }
+}, {
+  tableName: 'favorites',
+  timestamps: false, // Vi hanterar createdAt manuellt
+  indexes: [
+    {
+      fields: ['fileId']
+    },
+    {
+      fields: ['userId']
+    },
+    {
+      fields: ['fileId', 'userId'],
+      unique: true // En användare kan bara ha en favorit per fil
+    }
+  ]
+});
+
+// Definiera relation mellan FileMetadata och Favorites
+FileMetadata.hasMany(Favorites, { foreignKey: 'fileId' });
+Favorites.belongsTo(FileMetadata, { foreignKey: 'fileId' });
+
+export { FileMetadata, Favorites, syncDatabase };

@@ -240,7 +240,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 #### **STEG 5: AVANCERADE FUNKTIONER** ⚡
 - [x] **PDF-preview** - Visa första sidan direkt ✅ SLUTFÖRD!
 - [ ] **PowerPoint-preview** - Visa första sliden
-- [ ] **Favoriter-system** - Spara favoritfiler
+- [x] **Favoriter-system** - Spara favoritfiler ✅ SLUTFÖRD 2025-09-02!
 - [ ] **Sökhistorik** - Visa tidigare sökningar
 - [ ] **Taggar-system** - Lägg till taggar på filer
 

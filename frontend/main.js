@@ -10,6 +10,10 @@ let searchResults = document.getElementById('searchResults');
 let searchHistory = document.getElementById('searchHistory');
 let mainContent = document.querySelector('main');
 
+// Favoriter-funktionalitet
+let favoritesSection = null;
+let userFavorites = new Set(); // Sparar favorit-fil-ID:n i minnet
+
 // Function to load and display search history
 async function loadSearchHistory() {
   try {
@@ -35,6 +39,165 @@ async function loadSearchHistory() {
   } catch (error) {
     console.error('Error loading search history:', error);
   }
+}
+
+// === FAVORITER FUNKTIONALITET ===
+
+// SOLID: Single Responsibility - Ladda användarens favoriter
+async function loadUserFavorites() {
+  try {
+    const response = await fetch('/api/favorites');
+    const favorites = await response.json();
+    
+    // Uppdatera lokalt minne
+    userFavorites.clear();
+    favorites.forEach(fav => {
+      userFavorites.add(fav.FileMetadata.filename);
+    });
+    
+    // Uppdatera favoriter-sektionen
+    displayFavorites();
+  } catch (error) {
+    console.error('Error loading favorites:', error);
+  }
+}
+
+// SOLID: Single Responsibility - Skapa favoriter-knapp
+function createFavoriteButton(filename, isFavorite = false) {
+  const heartIcon = isFavorite ? '❤️' : '🤍';
+  const buttonClass = isFavorite ? 'favorite-button active' : 'favorite-button';
+  const title = isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter';
+  
+  return `
+    <button class="${buttonClass}" 
+            data-filename="${filename}" 
+            title="${title}">
+      ${heartIcon}
+    </button>
+  `;
+}
+
+// SOLID: Single Responsibility - Växla favorit-status
+async function toggleFavorite(filename) {
+  try {
+    const isFavorite = userFavorites.has(filename);
+    
+    if (isFavorite) {
+      // Ta bort från favoriter
+      const response = await fetch(`/api/favorites/${encodeURIComponent(filename)}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        userFavorites.delete(filename);
+        updateFavoriteButton(filename, false);
+        displayFavorites(); // Uppdatera favoriter-sektionen
+      }
+    } else {
+      // Lägg till i favoriter
+      const response = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ filename: filename })
+      });
+      
+      if (response.ok) {
+        userFavorites.add(filename);
+        updateFavoriteButton(filename, true);
+        displayFavorites(); // Uppdatera favoriter-sektionen
+      }
+    }
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+  }
+}
+
+// SOLID: Single Responsibility - Lägg till event listeners för favoriter-knappar
+function addFavoriteEventListeners(articleElement) {
+  const favoriteButton = articleElement.querySelector('.favorite-button');
+  if (favoriteButton) {
+    favoriteButton.addEventListener('click', function() {
+      const filename = this.getAttribute('data-filename');
+      toggleFavorite(filename);
+    });
+  }
+}
+
+// SOLID: Single Responsibility - Uppdatera favoriter-knapp
+function updateFavoriteButton(filename, isFavorite) {
+  const button = document.querySelector(`[data-filename="${filename}"]`);
+  if (button) {
+    const heartIcon = isFavorite ? '❤️' : '🤍';
+    const buttonClass = isFavorite ? 'favorite-button active' : 'favorite-button';
+    const title = isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter';
+    
+    button.innerHTML = heartIcon;
+    button.className = buttonClass;
+    button.title = title;
+  }
+}
+
+// SOLID: Single Responsibility - Visa favoriter-sektion
+function displayFavorites() {
+  if (!favoritesSection) {
+    // Skapa favoriter-sektion om den inte finns
+    favoritesSection = document.createElement('section');
+    favoritesSection.className = 'favorites-section';
+    favoritesSection.innerHTML = '<h3>❤️ Mina Favoriter</h3>';
+    
+    // Lägg till efter sökresultaten
+    const searchContainer = document.querySelector('.search-container');
+    if (searchContainer) {
+      searchContainer.appendChild(favoritesSection);
+    }
+  }
+  
+  // Hämta favoriter från API
+  fetch('/api/favorites')
+    .then(response => response.json())
+    .then(favorites => {
+      if (favorites.length === 0) {
+        favoritesSection.innerHTML = '<h3>❤️ Mina Favoriter</h3><p>Inga favoriter än. Klicka på hjärtat bredvid en fil för att lägga till den.</p>';
+        return;
+      }
+      
+      let favoritesHTML = '<h3>❤️ Mina Favoriter</h3><div class="favorites-grid">';
+      
+      favorites.forEach(fav => {
+        const file = fav.FileMetadata;
+        favoritesHTML += `
+          <div class="favorite-item">
+            <div class="favorite-header">
+              <span class="favorite-icon">❤️</span>
+              <span class="favorite-title">${file.title || file.filename}</span>
+              <button class="remove-favorite" data-filename="${file.filename}" title="Ta bort från favoriter">❌</button>
+            </div>
+            <div class="favorite-details">
+              <span class="file-type">${file.fileType}</span>
+              <span class="file-size">${file.fileSize}</span>
+              <span class="file-date">${file.createdAt ? new Date(file.createdAt).toLocaleDateString('sv-SE') : 'Okänd'}</span>
+            </div>
+          </div>
+        `;
+      });
+      
+      favoritesHTML += '</div>';
+      favoritesSection.innerHTML = favoritesHTML;
+      
+      // Lägg till event listeners för ta bort-knapparna
+      const removeButtons = favoritesSection.querySelectorAll('.remove-favorite');
+      removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const filename = this.getAttribute('data-filename');
+          toggleFavorite(filename);
+        });
+      });
+    })
+    .catch(error => {
+      console.error('Error displaying favorites:', error);
+    });
 }
 
 // SOLID: Single Responsibility - Audio player creation
@@ -1078,8 +1241,14 @@ async function performSearch(searchTerm) {
           `;
         }
         
+        // Skapa favoriter-knapp - använd filnamnet som identifierare
+        const favoriteButton = createFavoriteButton(item.file, userFavorites.has(item.file));
+        
         article.innerHTML = `
-          <h3>${fileIcon} ${fileTitle}</h3>
+          <div class="file-header">
+            <h3>${fileIcon} ${fileTitle}</h3>
+            ${favoriteButton}
+          </div>
           <table>
             ${tableRows.join('')}
           </table>
@@ -1098,6 +1267,9 @@ async function performSearch(searchTerm) {
         } else if (item.metadata.fileType === 'PDF' || (!item.metadata.fileType && item.file.toLowerCase().endsWith('.pdf'))) {
           addPDFEventListeners(article);
         }
+        
+        // Lägg till event listeners för favoriter-knapp
+        addFavoriteEventListeners(article);
       }
     }
   } catch (error) {
@@ -1313,6 +1485,7 @@ gpsOperator.addEventListener('change', function() {
 
 // Load search history when page loads
 loadSearchHistory();
+loadUserFavorites(); // Ladda användarens favoriter
 
 // Read data from the API metadata
 let metadataRaw = await fetch('/api/metadata');
@@ -1609,9 +1782,15 @@ for (let item of metadata) {
     `;
   }
   
+  // Skapa favoriter-knapp - använd filnamnet som identifierare
+  const favoriteButton = createFavoriteButton(item.file, userFavorites.has(item.file));
+  
   // add content to the article
   article.innerHTML = `
-    <h3>${fileIcon} ${fileTitle}</h3>
+    <div class="file-header">
+      <h3>${fileIcon} ${fileTitle}</h3>
+      ${favoriteButton}
+    </div>
     <table>
       ${tableRows.join('')}
     </table>
@@ -1630,4 +1809,7 @@ for (let item of metadata) {
   } else if (item.metadata.fileType === 'PDF' || (!item.metadata.fileType && item.file.toLowerCase().endsWith('.pdf'))) {
     addPDFEventListeners(article);
   }
+  
+  // Lägg till event listeners för favoriter-knapp
+  addFavoriteEventListeners(article);
 }
