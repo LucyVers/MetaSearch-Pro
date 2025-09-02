@@ -97,6 +97,467 @@ function addAudioEventListeners(articleElement) {
   }
 }
 
+// === PDF PREVIEW FUNCTIONALITY ===
+
+// SOLID: Single Responsibility - PDF rendering logic
+async function renderPDFThumbnail(pdfPath, canvasId) {
+  try {
+    // Set PDF.js worker path
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    
+    // Load PDF document
+    const pdf = await pdfjsLib.getDocument(pdfPath).promise;
+    
+    // Get first page
+    const page = await pdf.getPage(1);
+    
+    // Get canvas and context
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    
+    // Calculate scale for thumbnail (max 200px width)
+    const viewport = page.getViewport({ scale: 1 });
+    const scale = Math.min(200 / viewport.width, 150 / viewport.height);
+    const scaledViewport = page.getViewport({ scale });
+    
+    // Set canvas dimensions
+    canvas.width = scaledViewport.width;
+    canvas.height = scaledViewport.height;
+    
+    // Render page
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: scaledViewport
+    };
+    
+    await page.render(renderContext).promise;
+    
+    // Clean up PDF resources
+    pdf.destroy();
+    
+    return true;
+  } catch (error) {
+    console.error('PDF rendering failed:', error);
+    return false;
+  }
+}
+
+// SOLID: Single Responsibility - Create PDF preview HTML
+function createPDFPreview(pdfPath, metadata) {
+  const uniqueId = `pdf-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const canvasId = `canvas-${uniqueId}`;
+  
+  // Determine appropriate title for the PDF
+  let pdfTitle = 'PDF Preview';
+  if (metadata.title || metadata.extractedTitle) {
+    const title = metadata.title || metadata.extractedTitle;
+    // If title looks like a Word document, show it as converted PDF
+    if (title.toLowerCase().includes('.doc')) {
+      pdfTitle = `Converted PDF (from ${title.split('\\').pop().split('/').pop()})`;
+    } else {
+      pdfTitle = `PDF: ${title}`;
+    }
+  }
+  
+  return `
+    <div class="pdf-preview-container">
+      <div class="pdf-info">
+        <h4>📄 ${pdfTitle}</h4>
+        <div class="pdf-metadata">
+          ${metadata.numpages ? `<span class="metadata-item">📑 ${metadata.numpages} sidor</span>` : ''}
+          ${metadata.fileSize ? `<span class="metadata-item">📏 ${metadata.fileSize}</span>` : ''}
+          ${metadata.pdfVersion && metadata.pdfVersion !== 'Unknown' ? `<span class="metadata-item">📋 PDF ${metadata.pdfVersion}</span>` : ''}
+        </div>
+      </div>
+      <div class="pdf-thumbnail">
+        <canvas id="${canvasId}" class="pdf-canvas"></canvas>
+        <div class="pdf-loading" id="loading-${uniqueId}">
+          <div class="loading-spinner"></div>
+          <span>Laddar förhandsvisning...</span>
+        </div>
+      </div>
+      <div class="pdf-actions">
+        <button class="open-pdf-viewer" data-pdf-path="${pdfPath}" data-metadata='${JSON.stringify(metadata).replace(/'/g, "&apos;")}'>
+          📖 Öppna PDF Viewer
+        </button>
+        <a href="${pdfPath}" class="download-pdf-link" download>📥 Ladda ner PDF</a>
+      </div>
+    </div>
+  `;
+}
+
+// SOLID: Open/Closed - PDF viewer can be extended with more features
+function openPDFViewer(pdfPath, metadata) {
+  const viewerId = `pdf-viewer-${Date.now()}`;
+  const canvasId = `viewer-canvas-${viewerId}`;
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'pdf-viewer-overlay';
+  overlay.innerHTML = `
+    <div class="pdf-viewer-container">
+      <div class="pdf-viewer-header">
+        <h3>📄 ${metadata.title || metadata.extractedTitle || 'PDF Document'}</h3>
+        <div class="pdf-viewer-controls">
+          <div class="pdf-page-navigation">
+            <button class="pdf-prev-page" title="Föregående sida" disabled>◀</button>
+            <span class="pdf-page-info">Sida 1 av --</span>
+            <button class="pdf-next-page" title="Nästa sida" disabled>▶</button>
+          </div>
+          <div class="pdf-zoom-controls">
+            <button class="pdf-zoom-out" title="Zoom ut">🔍-</button>
+            <span class="pdf-zoom-level">100%</span>
+            <button class="pdf-zoom-in" title="Zoom in">🔍+</button>
+          </div>
+          <button class="pdf-viewer-close" aria-label="Stäng PDF viewer">&times;</button>
+        </div>
+      </div>
+      <div class="pdf-viewer-content">
+        <canvas id="${canvasId}" class="pdf-viewer-canvas"></canvas>
+        <div class="pdf-viewer-loading" id="viewer-loading-${viewerId}">
+          <div class="loading-spinner"></div>
+          <span>Laddar PDF...</span>
+        </div>
+      </div>
+      <div class="pdf-viewer-footer">
+        <div class="pdf-info-row">
+          ${metadata.numpages ? `<span>📑 ${metadata.numpages} sidor</span>` : ''}
+          ${metadata.fileSize ? `<span>📏 ${metadata.fileSize}</span>` : ''}
+          ${metadata.author || metadata.enhancedAuthor ? `<span>👤 ${metadata.author || metadata.enhancedAuthor}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+  
+  // Setup event listeners (which will handle the initial PDF loading)
+  setupPDFViewerEventListeners(overlay, pdfPath, canvasId, viewerId);
+}
+
+// SOLID: Interface Segregation - Separate event handling
+function setupPDFViewerEventListeners(overlay, pdfPath, canvasId, viewerId) {
+  let currentZoom = 1;
+  let currentPage = 1;
+  let totalPages = 1;
+  let pdfDocument = null;
+  
+  // Close viewer
+  const closeBtn = overlay.querySelector('.pdf-viewer-close');
+  closeBtn.addEventListener('click', () => closePDFViewer(overlay));
+  
+  // Close on ESC key and cleanup event listeners
+  const escHandler = (e) => {
+    if (e.key === 'Escape') {
+      closePDFViewer(overlay);
+      document.removeEventListener('keydown', escHandler);
+      document.removeEventListener('keydown', keyHandler);
+    }
+  };
+  document.addEventListener('keydown', escHandler);
+  
+  // Close on overlay click (but not content)
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      closePDFViewer(overlay);
+    }
+  });
+  
+  // Zoom controls
+  const zoomIn = overlay.querySelector('.pdf-zoom-in');
+  const zoomOut = overlay.querySelector('.pdf-zoom-out');
+  const zoomLevel = overlay.querySelector('.pdf-zoom-level');
+  
+  zoomIn.addEventListener('click', () => {
+    currentZoom = Math.min(currentZoom + 0.25, 3);
+    zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
+    renderPDFPageInViewer(pdfDocument, currentPage, canvasId, viewerId, currentZoom);
+  });
+  
+  zoomOut.addEventListener('click', () => {
+    currentZoom = Math.max(currentZoom - 0.25, 0.5);
+    zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
+    renderPDFPageInViewer(pdfDocument, currentPage, canvasId, viewerId, currentZoom);
+  });
+  
+  // Page navigation controls
+  const prevPageBtn = overlay.querySelector('.pdf-prev-page');
+  const nextPageBtn = overlay.querySelector('.pdf-next-page');
+  const pageInfo = overlay.querySelector('.pdf-page-info');
+  
+  // Function to update page navigation state
+  function updatePageNavigation() {
+    prevPageBtn.disabled = currentPage <= 1;
+    nextPageBtn.disabled = currentPage >= totalPages;
+    pageInfo.textContent = `Sida ${currentPage} av ${totalPages}`;
+  }
+  
+  prevPageBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderPDFPageInViewer(pdfDocument, currentPage, canvasId, viewerId, currentZoom);
+      updatePageNavigation();
+    }
+  });
+  
+  nextPageBtn.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderPDFPageInViewer(pdfDocument, currentPage, canvasId, viewerId, currentZoom);
+      updatePageNavigation();
+    }
+  });
+  
+  // Keyboard navigation (arrow keys)
+  const keyHandler = (e) => {
+    if (e.key === 'ArrowLeft' && currentPage > 1) {
+      currentPage--;
+      renderPDFPageInViewer(pdfDocument, currentPage, canvasId, viewerId, currentZoom);
+      updatePageNavigation();
+    } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+      currentPage++;
+      renderPDFPageInViewer(pdfDocument, currentPage, canvasId, viewerId, currentZoom);
+      updatePageNavigation();
+    }
+  };
+  document.addEventListener('keydown', keyHandler);
+  
+  // Load PDF document and setup pages
+  pdfjsLib.getDocument(pdfPath).promise.then(pdf => {
+    pdfDocument = pdf;
+    totalPages = pdf.numPages;
+    updatePageNavigation();
+    renderPDFPageInViewer(pdfDocument, currentPage, canvasId, viewerId, currentZoom);
+  }).catch(error => {
+    console.error('Error loading PDF:', error);
+    const loadingElement = document.getElementById(`viewer-loading-${viewerId}`);
+    if (loadingElement) {
+      loadingElement.innerHTML = '<span style="color: red;">❌ Kunde inte ladda PDF</span>';
+    }
+  });
+  
+
+}
+
+// SOLID: Single Responsibility - PDF page rendering
+async function renderPDFPageInViewer(pdfDocument, pageNumber, canvasId, viewerId, zoom = 1) {
+  const canvas = document.getElementById(canvasId);
+  const context = canvas.getContext('2d');
+  const loadingElement = document.getElementById(`viewer-loading-${viewerId}`);
+  
+  if (!pdfDocument || !canvas) return;
+  
+  try {
+    if (loadingElement) loadingElement.style.display = 'flex';
+    
+    const page = await pdfDocument.getPage(pageNumber);
+    const viewport = page.getViewport({ scale: zoom });
+    
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    
+    const renderContext = {
+      canvasContext: context,
+      viewport: viewport
+    };
+    
+    await page.render(renderContext).promise;
+    
+    if (loadingElement) loadingElement.style.display = 'none';
+  } catch (error) {
+    console.error('Error rendering PDF page:', error);
+    console.error('Page number:', pageNumber, 'Document:', pdfDocument);
+    if (loadingElement) {
+      loadingElement.style.display = 'flex';
+      loadingElement.innerHTML = '<span style="color: red;">❌ Kunde inte rendera sidan</span>';
+      
+      // Hide error after 2 seconds and try again
+      setTimeout(() => {
+        if (loadingElement) {
+          loadingElement.style.display = 'none';
+        }
+      }, 2000);
+    }
+  }
+}
+
+// SOLID: Single Responsibility - Initial PDF viewer setup
+async function renderPDFInViewer(pdfPath, canvasId, viewerId, zoom = 1) {
+  try {
+    const loadingElement = document.getElementById(`viewer-loading-${viewerId}`);
+    if (loadingElement) loadingElement.style.display = 'flex';
+    
+    // Load PDF document
+    const pdf = await pdfjsLib.getDocument(pdfPath).promise;
+    
+    // Get first page
+    const page = await pdf.getPage(1);
+    
+    // Get canvas and context
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    
+    // Calculate viewport with zoom
+    const viewport = page.getViewport({ scale: zoom });
+    
+    // Set canvas dimensions
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    
+    // Render page
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+    
+    await page.render(renderContext).promise;
+    
+    // Hide loading
+    if (loadingElement) loadingElement.style.display = 'none';
+    
+    // Clean up PDF resources
+    pdf.destroy();
+    
+  } catch (error) {
+    console.error('PDF viewer rendering failed:', error);
+    const loadingElement = document.getElementById(`viewer-loading-${viewerId}`);
+    if (loadingElement) {
+      loadingElement.innerHTML = '<span style="color: red;">❌ Kunde inte ladda PDF</span>';
+    }
+  }
+}
+
+// SOLID: Dependency Inversion - Clean resource management
+function closePDFViewer(overlay) {
+  // Add fade out animation
+  overlay.style.animation = 'lightboxFadeOut 0.3s ease';
+  setTimeout(() => {
+    if (overlay && overlay.parentNode) {
+      overlay.parentNode.removeChild(overlay);
+    }
+  }, 300);
+}
+
+// SOLID: Interface Segregation - PDF event listeners
+function addPDFEventListeners(articleElement) {
+  const pdfButtons = articleElement.querySelectorAll('.open-pdf-viewer');
+  
+  pdfButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('PDF Viewer button clicked!'); // Debug log
+      console.log('pdfjsLib available:', typeof pdfjsLib !== 'undefined'); // Debug log
+      
+      // Check if PDF.js is loaded
+      if (typeof pdfjsLib === 'undefined') {
+        console.error('PDF.js library is not loaded!');
+        console.error('Available global objects:', Object.keys(window).filter(key => key.toLowerCase().includes('pdf')));
+        alert('PDF viewer inte tillgänglig. Ladda om sidan och försök igen.');
+        return;
+      }
+      
+      const pdfPath = button.dataset.pdfPath;
+      console.log('Raw metadata string:', button.dataset.metadata); // Debug log
+      
+      let metadata;
+      try {
+        // Unescape HTML entities before parsing
+        const unescapedMetadata = button.dataset.metadata.replace(/&apos;/g, "'");
+        metadata = JSON.parse(unescapedMetadata);
+      } catch (error) {
+        console.error('JSON parse error:', error);
+        console.error('Problematic JSON string:', button.dataset.metadata);
+        alert('Fel vid laddning av PDF metadata. Försök igen.');
+        return;
+      }
+      
+      console.log('Opening PDF:', pdfPath, metadata); // Debug log
+      openPDFViewer(pdfPath, metadata);
+    });
+  });
+  
+  // Guard: ensure no stray extracted text/content is rendered inside the preview
+  // Some PDFs include very large extracted text in metadata on certain records.
+  // Strictly keep only the expected blocks and remove any text nodes or unknown elements.
+  const containers = articleElement.querySelectorAll('.pdf-preview-container');
+  containers.forEach(container => {
+    const allowed = new Set(['pdf-info', 'pdf-thumbnail', 'pdf-actions']);
+    Array.from(container.childNodes).forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        node.remove();
+        return;
+      }
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const firstClass = node.classList && node.classList[0];
+        if (!firstClass || !allowed.has(firstClass)) {
+          node.remove();
+        }
+      }
+    });
+  });
+
+  // Extra cleanup: Remove any large text nodes anywhere in the article for PDF files
+  // This handles cases where extracted PDF text leaks outside the container
+  const walker = document.createTreeWalker(
+    articleElement,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode: function(node) {
+        // Skip text inside our allowed PDF elements
+        const parent = node.parentElement;
+        if (parent && (
+          parent.classList.contains('pdf-info') ||
+          parent.classList.contains('pdf-actions') ||
+          parent.tagName === 'H3' ||
+          parent.tagName === 'TD' ||
+          parent.tagName === 'TH' ||
+          parent.tagName === 'BUTTON'
+        )) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        
+        // Remove very large text nodes (likely leaked PDF content)
+        if (node.textContent.trim().length > 50) {
+          return NodeFilter.FILTER_ACCEPT;
+        }
+        
+        return NodeFilter.FILTER_REJECT;
+      }
+    }
+  );
+  
+  const textNodesToRemove = [];
+  let node;
+  while (node = walker.nextNode()) {
+    textNodesToRemove.push(node);
+  }
+  
+  textNodesToRemove.forEach(node => {
+    if (node.parentNode) {
+      node.parentNode.removeChild(node);
+    }
+  });
+
+  // Render thumbnails after a short delay to avoid blocking UI
+  setTimeout(() => {
+    const canvases = articleElement.querySelectorAll('.pdf-canvas');
+    canvases.forEach(canvas => {
+      const container = canvas.closest('.pdf-preview-container');
+      const button = container.querySelector('.open-pdf-viewer');
+      const pdfPath = button.dataset.pdfPath;
+      const loadingElement = container.querySelector('.pdf-loading');
+      
+      renderPDFThumbnail(pdfPath, canvas.id).then(success => {
+        if (loadingElement) {
+          loadingElement.style.display = success ? 'none' : 'flex';
+          if (!success) {
+            loadingElement.innerHTML = '<span style="color: red;">❌ Förhandsvisning misslyckades</span>';
+          }
+        }
+      });
+    });
+  }, 100);
+}
+
 // SOLID: Single Responsibility - Image gallery creation
 function createImageGallery(imagePath, metadata, allImages, currentIndex) {
   console.log('createImageGallery called:', { imagePath, metadata, allImagesCount: allImages?.length, currentIndex });
@@ -333,6 +794,13 @@ async function performSearch(searchTerm) {
         let modifiedDate = item.metadata.modifiedDate ? 
           new Date(item.metadata.modifiedDate).toLocaleString('sv-SE') : null;
         
+        // FOR PDF FILES: Block the massive 'text' field that causes display issues
+        // Certain PDFs contain enormous extracted text content that leaks into the layout
+        if ((item.metadata.fileType === 'PDF' || item.file.toLowerCase().endsWith('.pdf')) && item.metadata.text) {
+          // Completely remove the problematic text field for clean PDF display
+          delete item.metadata.text;
+        }
+        
         // Build table rows dynamically based on available data
         let tableRows = [];
         
@@ -414,15 +882,8 @@ async function performSearch(searchTerm) {
           `);
         }
         
-        // Show text summary if available (NEW FEATURE)
-        if (item.metadata.textSummary && item.metadata.textSummary.trim() !== '') {
-          tableRows.push(`
-            <tr>
-              <td>Summary:</td>
-              <td>${item.metadata.textSummary}</td>
-            </tr>
-          `);
-        }
+        // Don't show textSummary for PDFs in search results to avoid hiding preview
+        // Text summary available in PDF viewer if needed
 
         // Show keywords if available (NEW FEATURE - STEP 2)
         if (item.metadata.keywords && item.metadata.keywords.length > 0) {
@@ -607,6 +1068,8 @@ async function performSearch(searchTerm) {
           const currentIndex = allImages.findIndex(img => img.file === item.file);
           console.log('JPG Gallery Debug:', { allImages: allImages.length, currentIndex, filename: item.file });
           downloadSection = createImageGallery(downloadPath, item.metadata, allImages, currentIndex);
+        } else if (item.metadata.fileType === 'PDF' || item.file.toLowerCase().endsWith('.pdf')) {
+          downloadSection = createPDFPreview(downloadPath, item.metadata);
         } else {
           downloadSection = `
             <div class="download-section">
@@ -632,6 +1095,8 @@ async function performSearch(searchTerm) {
           const allImages = searchData.filter(img => img.metadata.fileType === 'JPG');
           const currentIndex = allImages.findIndex(img => img.file === item.file);
           handleLightboxEvents(article, allImages, currentIndex);
+        } else if (item.metadata.fileType === 'PDF' || (!item.metadata.fileType && item.file.toLowerCase().endsWith('.pdf'))) {
+          addPDFEventListeners(article);
         }
       }
     }
@@ -706,6 +1171,13 @@ async function performGPSSearch() {
           new Date(item.metadata.createdDate).toLocaleString('sv-SE') : null;
         let modifiedDate = item.metadata.modifiedDate ? 
           new Date(item.metadata.modifiedDate).toLocaleString('sv-SE') : null;
+        
+        // FOR PDF FILES: Block the massive 'text' field that causes display issues
+        // Certain PDFs contain enormous extracted text content that leaks into the layout
+        if ((item.metadata.fileType === 'PDF' || item.file.toLowerCase().endsWith('.pdf')) && item.metadata.text) {
+          // Completely remove the problematic text field for clean PDF display
+          delete item.metadata.text;
+        }
         
         // Build table rows dynamically based on available data
         let tableRows = [];
@@ -942,15 +1414,8 @@ for (let item of metadata) {
     `);
   }
   
-  // Show text summary if available (PDF only)
-  if (item.metadata.textSummary && item.metadata.textSummary.trim() !== '') {
-    tableRows.push(`
-      <tr>
-        <td>Summary:</td>
-        <td>${item.metadata.textSummary}</td>
-      </tr>
-    `);
-  }
+  // Don't show textSummary for PDFs in main display to avoid hiding preview
+  // Text summary available in PDF viewer if needed
 
   // Show keywords if available
   if (item.metadata.keywords && item.metadata.keywords.length > 0) {
@@ -1134,6 +1599,8 @@ for (let item of metadata) {
     const currentIndex = allImages.findIndex(img => img.file === item.file);
     console.log('Main JPG Gallery Debug:', { allImages: allImages.length, currentIndex, filename: item.file });
     downloadSection = createImageGallery(downloadPath, item.metadata, allImages, currentIndex);
+  } else if (item.metadata.fileType === 'PDF' || item.file.toLowerCase().endsWith('.pdf')) {
+    downloadSection = createPDFPreview(downloadPath, item.metadata);
   } else {
     downloadSection = `
       <div class="download-section">
@@ -1160,5 +1627,7 @@ for (let item of metadata) {
     const allImages = metadata.filter(img => img.metadata.fileType === 'JPG');
     const currentIndex = allImages.findIndex(img => img.file === item.file);
     handleLightboxEvents(article, allImages, currentIndex);
+  } else if (item.metadata.fileType === 'PDF' || (!item.metadata.fileType && item.file.toLowerCase().endsWith('.pdf'))) {
+    addPDFEventListeners(article);
   }
 }

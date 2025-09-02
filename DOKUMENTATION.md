@@ -6,6 +6,68 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-09-02 - KRITISK PDF TEXT-LÄCKAGE FIX IMPLEMENTERAD! 🐛🔧
+
+**Problem:** Specifika PDF-filer visade enorma textblock istället för ren preview med knappar.
+
+**Drabbade filer:**
+- "Microsoft Word - Oct05_28.doc" (C4C7ZVBASMN3KJOSFYD7Z6OSJZ2VL6SO.pdf)  
+- "Multiyear study of the dependence of sea salt aerosol..." (P75PT46UN56V2ZSIQXVOXK4ILE4ZLOSZ.pdf)
+
+**Teknisk Analys:**
+Dessa PDF-filer innehöll massiva `metadata.text` fält (10,000+ tecken extraherad PDF-text) som läckte ut från backend-datan och täckte över PDF-preview layouten.
+
+**Lösningsprocess (Timmar av Felsökning):**
+1. **Första Misstag**: Försökte rensa HTML-noder efter rendering (misslyckades)
+2. **Andra Misstag**: Försökte blockera `textSummary` fält (fel källa)  
+3. **Tredje Misstag**: Försökte rensa DOM med TreeWalker (för sent i processen)
+4. **FRAMGÅNGSRIK LÖSNING**: Blockera `metadata.text` vid källan före tabellskapande
+
+**Implementation:**
+```javascript
+// FOR PDF FILES: Block massive 'text' field that causes display issues
+if ((item.metadata.fileType === 'PDF' || item.file.toLowerCase().endsWith('.pdf')) && item.metadata.text) {
+  delete item.metadata.text; // Remove problematic field completely
+}
+```
+
+**Applicerad på alla tre platser**: Sökresultat + huvuddisplay för komplett täckning.
+
+**Resultat:**
+- ✅ Ren PDF-preview layout återställd
+- ✅ Synliga knappar ("Öppna PDF Viewer" + "Ladda ner")  
+- ✅ Centrerade metadata-tags
+- ✅ Ingen informationsförlust (bara råtext borttagen, viktiga metadata kvar)
+
+**BONUS FIX - PDF Viewer JSON Parse Error:**
+Efter första fix upptäcktes att "Öppna PDF Viewer" knappen gav `JSON.parse error` på grund av ogiltiga tecken i metadata.
+
+**Problem:** Citattecken och specialtecken i PDF metadata bröt JSON-parsing.
+
+**Lösning:**
+```javascript
+// HTML Escaping
+data-metadata='${JSON.stringify(metadata).replace(/'/g, "&apos;")}'
+
+// Säker parsing med unescape
+const unescapedMetadata = button.dataset.metadata.replace(/&apos;/g, "'");
+metadata = JSON.parse(unescapedMetadata);
+```
+
+**Final Resultat:**
+- ✅ PDF Viewer öppnar perfekt i fullskärm
+- ✅ Kristallklar PDF-rendering med PDF.js
+- ✅ Zoom-kontroller (🔍+ 🔍-) fungerar smidigt  
+- ✅ Elegant header med titel och metadata footer
+- ✅ SONBERG STUDIO tema genomgående
+
+**Lärdomar:**
+- Blockera problematisk data vid källan, inte efter rendering
+- Vissa PDF-extraktionsverktyg genererar opraktiskt stora textfält
+- Frontend-fixes måste appliceras på alla displayrouter
+- **HTML attribut kräver proper escaping för JSON-data**
+- **Try/catch är kritiskt för robust metadata-hantering**
+
 ### 2025-09-02 - PROFESSIONELLT BILDGALLERI MED LIGHTBOX IMPLEMENTERAT! 📸✨
 
 **Vad jag implementerade:**
