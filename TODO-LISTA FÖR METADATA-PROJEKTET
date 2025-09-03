@@ -211,7 +211,45 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 ## 🚀 **AKTUELLA UPPGIFTER (PRIORITERADE - OKLARA)**
 
-### **23. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)**
+### **24. GEODATA-INTEGRATION FÖR JPG & PDF 📍🌍**
+- [ ] **FAS 1: GRUNDLÄGGANDE GEO-INTEGRATION**
+  - [ ] Lägg till geodata-fält i FileMetadata-modellen (latitude, longitude, locationName)
+  - [ ] Uppdatera EXIF-extraktion för att hämta GPS-koordinater från JPG-filer
+  - [ ] Implementera geocoding-funktion (koordinater → platsnamn)
+  - [ ] Uppdatera databasen med nya geodata-fält
+  - [ ] Lägg till geodata-visning i bildgalleri (liten karta bredvid bilder)
+  - [ ] Implementera "📍 Denna bild togs här" med koordinater
+  - [ ] Lägg till klickbar länk till Google Maps för varje bild
+- [ ] **FAS 2: INTERAKTIV KARTA-INTEGRATION**
+  - [ ] Integrera Google Maps JavaScript API
+  - [ ] Skapa "World Map" vy som visar alla filer som prickar på karta
+  - [ ] Implementera klickbar karta som zoomar in på platser
+  - [ ] Lägg till "🌍 World Map" flik bredvid "Favoriter"
+  - [ ] Implementera geografisk sökning ("Visa alla filer från Stockholm")
+  - [ ] Skapa geografisk gruppering av filer per plats
+- [ ] **FAS 3: AVANCERAD GEO-FUNKTIONALITET**
+  - [ ] Implementera radie-sökning ("filer inom 10km från Stockholm")
+  - [ ] Lägg till geografisk filtrering i huvudsökningen
+  - [ ] Implementera geodata-extraktion för PDF-filer (om tillgängligt)
+  - [ ] Skapa avancerade geo-sökfilter (land, stad, radie)
+  - [ ] Implementera geografisk statistik och visualisering
+- [ ] **TEKNISKA UPPGIFTER**
+  - [ ] Skapa `frontend/geo-map.js` för kartlogik
+  - [ ] Skapa `frontend/geo-search.js` för geografisk sökning
+  - [ ] Skapa `utils/geocoding.js` för koordinat-till-platsnamn konvertering
+  - [ ] Lägg till nya API-endpoints för geo-sökning
+  - [ ] Uppdatera databasmodeller och migrationer
+  - [ ] Implementera felhantering för saknade geodata
+  - [ ] Lägg till laddningsindikatorer för kartor
+- [ ] **TESTNING & OPTIMERING**
+  - [ ] Testa med JPG-filer som har GPS-data
+  - [ ] Testa med JPG-filer utan GPS-data
+  - [ ] Validera Google Maps API-integration
+  - [ ] Testa geografisk sökning och filtrering
+  - [ ] Optimera kartladdning för stora filsamlingar
+  - [ ] Testa responsiv design på olika enheter
+
+### **25. GOOGLE DRIVE-DELNING (ENLIGT UPPGIFTEN)**
 - [ ] Ladda upp alla testfiler till Google Drive
   - [ ] PDF-filer (20 st) från frontend/pdfs/
   - [ ] JPG-filer (20 st) från frontend/jpgs/
@@ -220,58 +258,58 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [ ] Skapa delningslänk för läraren
 - [ ] Skapa instruktioner för läraren
 
-### **24. POWERPOINT-PREVIEW SYSTEM**
+### **26. POWERPOINT-PREVIEW SYSTEM**
 - [ ] PowerPoint-preview - Visa första sliden
 - [ ] Thumbnail generation - Skapa små bilder av slides
 - [ ] Slide navigation - Bläddra mellan slides
 - [ ] Metadata extraction - Extrahera presentation-information
 
-### **25. SÖKHISTORIK SYSTEM**
+### **27. SÖKHISTORIK SYSTEM**
 - [ ] Sökhistorik - Visa tidigare sökningar
 - [ ] Spara sökningar - Automatisk sparning av söktermer
 - [ ] Snabbsökningar - Klicka för att återanvända tidigare sökningar
 - [ ] Rensa historik - Ta bort specifika eller alla sökningar
 
-### **26. TAGGAR-SYSTEM**
+### **28. TAGGAR-SYSTEM**
 - [ ] Taggar-system - Lägg till taggar på filer
 - [ ] Skapa taggar - Användardefinierade kategorier
 - [ ] Sök på taggar - Filtrera filer baserat på taggar
 - [ ] Tagga automatiskt - AI-baserad taggning
 
-### **27. AVANCERADE FUNKTIONER**
+### **29. AVANCERADE FUNKTIONER**
 - [ ] Drag & drop upload - Dra filer direkt till sidan
 - [ ] Bulk-export - Exportera flera filer som ZIP
 - [ ] Filtypsstatistik - Visa antal filer per typ
 - [ ] Metadata-editor - Redigera metadata direkt
 - [ ] Dark/Light mode - Växla mellan teman
 
-### **28. AVANCERAD SÖKNING**
+### **30. AVANCERAD SÖKNING**
 - [ ] Fuzzy search - Hitta filer även med stavfel
 - [ ] Avancerade filter - Datum, storlek, typ
 - [ ] Sökresultat-export - Spara sökresultat
 - [ ] Sökstatistik - Visa hur många resultat
 - [ ] Sökförslag - Automatiska förslag
 
-### **29. PERFORMANCE OCH UX**
+### **31. PERFORMANCE OCH UX**
 - [ ] Lazy loading - Ladda bilder när de behövs
 - [ ] Infinite scroll - Ladda fler resultat automatiskt
 - [ ] Keyboard shortcuts - Snabba tangentbordskommandon
 - [ ] Offline-stöd - Fungera utan internet
 - [ ] Push-notifikationer - Meddelanden om nya filer
 
-### **30. LIVE DEMO OCH PORTFOLIO**
+### **32. LIVE DEMO OCH PORTFOLIO**
 - [ ] Live Demo-knapp - Visa projektet i action
 - [ ] Video-demo - Skapa YouTube/LinkedIn video
 - [ ] Screenshot-galleri - Visa projektets funktioner
 - [ ] Teknisk dokumentation - För utvecklare och rekryterare
 
-### **31. SEO OCH MARKNADSFÖRING**
+### **33. SEO OCH MARKNADSFÖRING**
 - [ ] SEO-optimering - Meta tags, schema.org markup
 - [ ] Vercel deployment - Gratis hosting för portfolio
 - [ ] Supabase integration - Backend-as-a-Service (senare)
 - [ ] LinkedIn-marknadsföring - Dela projekt och blogginlägg
 
-### **32. FRAMTIDA FUNKTIONER (OPTIONELLA)**
+### **34. FRAMTIDA FUNKTIONER (OPTIONELLA)**
 - [ ] Auto-scanning för nya filer - Automatisk metadata-extraktion vid nya filer
 - [ ] AI-Integration - OpenAI API för intelligent innehållsanalys
 - [ ] Mobile App - iOS/Android för fältarbete
