@@ -1153,7 +1153,7 @@ h3 {
 /* Keyword tags styling */
 .keyword-tag {
   display: inline-block;
-  background: var(--accent-color);
+  background: var(--studio-accent);
   color: white;
   padding: 2px 8px;
   margin: 2px;
@@ -1163,7 +1163,7 @@ h3 {
 }
 
 .keyword-tag:hover {
-  background: var(--accent-hover);
+  background: var(--primary-color);
   transform: translateY(-1px);
   transition: all 0.2s ease;
 }
