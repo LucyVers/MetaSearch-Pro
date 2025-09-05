@@ -265,60 +265,82 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
   - ✅ MP3-filer 100 från frontend/mp3s/
   - ✅ PPT-filer 100 st från frontend/ppts/
 - ✅ Skapa delningslänk för läraren
-- [ ] Skapa instruktioner för läraren
+- ✅ Skapa instruktioner för läraren
 
-### **26. POWERPOINT-PREVIEW SYSTEM**
+### **26. UI-FÖRBÄTTRINGAR**
+- ✅ Förbättra filtypsvisning i sökresultat - ändra från "Sökresultat för" till "Visar X filer"
+- ✅ Implementera anpassade filtypsnamn (bilder, ljudfiler, dokument, etc.)
+- ✅ Förbättra dropdown-menyn för filtypsval med tydligare visning
+- ✅ Implementera tydligare visuell feedback för vald filtyp och antal resultat
+
+### **27. PROFESSIONALISERING FÖR PORTFOLIO**
+- ✅ Flytta testinstruktioner till docs/teacher-instructions.md
+- ✅ Uppdatera README.md med professionell ton och engelska
+- ✅ Ta bort skolprojekt-referenser och fokusera på enterprise-funktioner
+- ✅ Lägg till projektstatistik och live demo-sektion
+- ✅ Standardisera språket till engelska i alla sektioner
+
+### **28. FULLSTÄNDIG ENGELSKISERING AV PROJEKTET**
+- [ ] Överväga strategi för språkstandardisering (helt engelska vs. hybrid)
+- [ ] Döp om filer: TODO-LISTA → TODO-LIST.md, DOKUMENTATION.md → DOCUMENTATION.md
+- [ ] Översätt frontend-filer (index.html, about.html, contact.html, blog.html)
+- [ ] Översätt kommentarer i backend-filer (index.js, models.js, main.js)
+- [ ] Översätt CSS-kommentarer och texter
+- [ ] Hantera projektuppgift-mappen (ta bort/flytta till docs/)
+- [ ] Uppdatera alla interna referenser till nya filnamn
+
+### **29. POWERPOINT-PREVIEW SYSTEM**
 - [ ] PowerPoint-preview - Visa första sliden
 - [ ] Thumbnail generation - Skapa små bilder av slides
 - [ ] Slide navigation - Bläddra mellan slides
 - [ ] Metadata extraction - Extrahera presentation-information
 
-### **27. SÖKHISTORIK SYSTEM**
+### **30. SÖKHISTORIK SYSTEM**
 - [ ] Sökhistorik - Visa tidigare sökningar
 - [ ] Spara sökningar - Automatisk sparning av söktermer
 - [ ] Snabbsökningar - Klicka för att återanvända tidigare sökningar
 - [ ] Rensa historik - Ta bort specifika eller alla sökningar
 
-### **28. TAGGAR-SYSTEM**
+### **31. TAGGAR-SYSTEM**
 - [ ] Taggar-system - Lägg till taggar på filer
 - [ ] Skapa taggar - Användardefinierade kategorier
 - [ ] Sök på taggar - Filtrera filer baserat på taggar
 - [ ] Tagga automatiskt - AI-baserad taggning
 
-### **29. AVANCERADE FUNKTIONER**
+### **32. AVANCERADE FUNKTIONER**
 - [ ] Drag & drop upload - Dra filer direkt till sidan
 - [ ] Bulk-export - Exportera flera filer som ZIP
 - [ ] Filtypsstatistik - Visa antal filer per typ
 - [ ] Metadata-editor - Redigera metadata direkt
 - [ ] Dark/Light mode - Växla mellan teman
 
-### **30. AVANCERAD SÖKNING**
+### **33. AVANCERAD SÖKNING**
 - [ ] Fuzzy search - Hitta filer även med stavfel
 - [ ] Avancerade filter - Datum, storlek, typ
 - [ ] Sökresultat-export - Spara sökresultat
 - [ ] Sökstatistik - Visa hur många resultat
 - [ ] Sökförslag - Automatiska förslag
 
-### **31. PERFORMANCE OCH UX**
+### **34. PERFORMANCE OCH UX**
 - [ ] Lazy loading - Ladda bilder när de behövs
 - [ ] Infinite scroll - Ladda fler resultat automatiskt
 - [ ] Keyboard shortcuts - Snabba tangentbordskommandon
 - [ ] Offline-stöd - Fungera utan internet
 - [ ] Push-notifikationer - Meddelanden om nya filer
 
-### **32. LIVE DEMO OCH PORTFOLIO**
+### **35. LIVE DEMO OCH PORTFOLIO**
 - [ ] Live Demo-knapp - Visa projektet i action
 - [ ] Video-demo - Skapa YouTube/LinkedIn video
 - [ ] Screenshot-galleri - Visa projektets funktioner
 - [ ] Teknisk dokumentation - För utvecklare och rekryterare
 
-### **33. SEO OCH MARKNADSFÖRING**
+### **36. SEO OCH MARKNADSFÖRING**
 - [ ] SEO-optimering - Meta tags, schema.org markup
 - [ ] Vercel deployment - Gratis hosting för portfolio
 - [ ] Supabase integration - Backend-as-a-Service (senare)
 - [ ] LinkedIn-marknadsföring - Dela projekt och blogginlägg
 
-### **34. FRAMTIDA FUNKTIONER (OPTIONELLA)**
+### **37. FRAMTIDA FUNKTIONER (OPTIONELLA)**
 - [ ] Auto-scanning för nya filer - Automatisk metadata-extraktion vid nya filer
 - [ ] AI-Integration - OpenAI API för intelligent innehållsanalys
 - [ ] Mobile App - iOS/Android för fältarbete
