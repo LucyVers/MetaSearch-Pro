@@ -941,7 +941,21 @@ async function performSearch(searchTerm) {
     if (searchData.length === 0) {
       searchResults.innerHTML = '<p>Inga filer hittades för "' + searchTerm + '"</p>';
     } else {
-      searchResults.innerHTML = '<h3>Sökresultat för "' + searchTerm + '" (' + searchData.length + ' filer):</h3>';
+      // Anpassa rubriken baserat på om det är sökning eller filtrering
+      let headerText;
+      if (searchTerm.trim() === '') {
+        // Om ingen sökterm, visa bara filtyp
+        const fileTypeName = selectedFileType === 'all' ? 'filer' : 
+                           selectedFileType === 'ppt' ? 'PowerPoint-filer' :
+                           selectedFileType === 'pdf' ? 'PDF-filer' :
+                           selectedFileType === 'jpg' ? 'bilder' :
+                           selectedFileType === 'mp3' ? 'ljudfiler' : 'filer';
+        headerText = `<h3>Visar ${searchData.length} ${fileTypeName}</h3>`;
+      } else {
+        // Om sökning, visa sökresultat
+        headerText = `<h3>Sökresultat för "${searchTerm}" (${searchData.length} filer)</h3>`;
+      }
+      searchResults.innerHTML = headerText;
       
       // Display each search result
       for (let item of searchData) {

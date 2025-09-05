@@ -180,6 +180,27 @@ function parsePDFDate(dateString) {
   }
 }
 
+// Helper function to parse PPT dates
+function parsePPTDate(dateString) {
+  if (!dateString || dateString === "-" || dateString.trim() === "") {
+    return null;
+  }
+  
+  try {
+    // Try to parse the date
+    let date = new Date(dateString);
+    
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      return null;
+    }
+    
+    return date;
+  } catch (error) {
+    return null;
+  }
+}
+
 // Helper function to extract author from text content
 function extractAuthorFromText(text, existingAuthor) {
   if (existingAuthor && existingAuthor.trim() !== '') {
@@ -489,8 +510,8 @@ function extractPPTMetadata(filePath) {
       fileSize: formatFileSize(fileSizeInBytes),
       title: betterTitle,
       author: metadata ? metadata.company : null,
-      createdDate: metadata && metadata.creation_date ? new Date(metadata.creation_date) : null,
-      modifiedDate: metadata && metadata.last_modified ? new Date(metadata.last_modified) : null,
+      createdDate: metadata && metadata.creation_date ? parsePPTDate(metadata.creation_date) : null,
+      modifiedDate: metadata && metadata.last_modified ? parsePPTDate(metadata.last_modified) : null,
       keywords: ['presentation', 'powerpoint', 'ppt'],
       language: 'Unknown',
       category: 'Presentation',
