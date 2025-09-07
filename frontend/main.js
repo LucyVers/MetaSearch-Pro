@@ -903,6 +903,25 @@ function closeLightbox() {
   }
 }
 
+// Helper function to clear search results while preserving favorites section
+function clearSearchResultsPreservingFavorites() {
+  const favoritesSectionElement = document.querySelector('.favorites-section');
+  if (favoritesSectionElement) {
+    // Remove favorites temporarily to preserve it
+    const favoritesParent = favoritesSectionElement.parentNode;
+    favoritesParent.removeChild(favoritesSectionElement);
+    
+    // Clear search results
+    searchResults.innerHTML = '';
+    
+    // Add favorites back
+    searchResults.appendChild(favoritesSectionElement);
+  } else {
+    // No favorites section exists, safe to clear everything
+    searchResults.innerHTML = '';
+  }
+}
+
 // Function to perform search
 async function performSearch(searchTerm) {
   // Get selected file type filter and search operator
@@ -911,13 +930,14 @@ async function performSearch(searchTerm) {
   
   // If no search term and no file type filter, show all files
   if (searchTerm.trim() === '' && selectedFileType === 'all') {
-    searchResults.innerHTML = '';
+    clearSearchResultsPreservingFavorites();
     mainContent.style.display = 'block';
     return;
   }
   
-  // Show loading animation for any search/filter operation
-  searchResults.innerHTML = '<div class="search-loading"><div class="loading"></div>Söker...</div>';
+  // Show loading animation for any search/filter operation - preserve favorites
+  clearSearchResultsPreservingFavorites();
+  searchResults.innerHTML += '<div class="search-loading"><div class="loading"></div>Söker...</div>';
   mainContent.style.display = 'none';
   
 
@@ -937,9 +957,10 @@ async function performSearch(searchTerm) {
     // Hide main content and show search results
     mainContent.style.display = 'none';
     
-    // Display search results
+    // Display search results - preserve favorites
     if (searchData.length === 0) {
-      searchResults.innerHTML = '<p>Inga filer hittades för "' + searchTerm + '"</p>';
+      clearSearchResultsPreservingFavorites();
+      searchResults.innerHTML += '<p>Inga filer hittades för "' + searchTerm + '"</p>';
     } else {
       // Anpassa rubriken baserat på om det är sökning eller filtrering
       let headerText;
@@ -955,7 +976,8 @@ async function performSearch(searchTerm) {
         // Om sökning, visa sökresultat
         headerText = `<h3>Sökresultat för "${searchTerm}" (${searchData.length} filer)</h3>`;
       }
-      searchResults.innerHTML = headerText;
+      clearSearchResultsPreservingFavorites();
+      searchResults.innerHTML += headerText;
       
       // Display each search result
       for (let item of searchData) {
@@ -1494,6 +1516,23 @@ gpsOperator.addEventListener('change', function() {
   if (fileTypeFilter.value === 'jpg' && (latitudeInput.value || longitudeInput.value)) {
     
     performGPSSearch();
+  }
+});
+
+// Add event listener for favorites navigation link
+document.getElementById('favoritesNavLink').addEventListener('click', function(e) {
+  e.preventDefault(); // Prevent default link behavior
+  
+  const favoritesSection = document.querySelector('.favorites-section');
+  if (favoritesSection) {
+    // Scroll to favorites section smoothly
+    favoritesSection.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'start' 
+    });
+  } else {
+    // If no favorites exist yet, show message
+    alert('Inga favoriter ännu. Klicka på hjärtat bredvid filer för att lägga till dem som favoriter!');
   }
 });
 
