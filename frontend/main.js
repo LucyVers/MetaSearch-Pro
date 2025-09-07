@@ -914,8 +914,8 @@ function clearSearchResultsPreservingFavorites() {
     // Clear search results
     searchResults.innerHTML = '';
     
-    // Add favorites back
-    searchResults.appendChild(favoritesSectionElement);
+    // Add favorites back at the beginning to maintain consistent position
+    searchResults.insertBefore(favoritesSectionElement, searchResults.firstChild);
   } else {
     // No favorites section exists, safe to clear everything
     searchResults.innerHTML = '';
@@ -943,13 +943,10 @@ async function performSearch(searchTerm) {
 
   
   try {
-    // Call search API with file type filter and search operator
-    let url = `/api/search?q=${encodeURIComponent(searchTerm)}`;
+    // Call database search API with file type filter
+    let url = `/api/database-metadata?q=${encodeURIComponent(searchTerm)}`;
     if (selectedFileType !== 'all') {
-      url += `&type=${selectedFileType}`;
-    }
-    if (selectedOperator !== 'contains') {
-      url += `&operator=${selectedOperator}`;
+      url += `&fileType=${selectedFileType}`;
     }
     let response = await fetch(url);
     let searchData = await response.json();
@@ -1351,8 +1348,9 @@ async function performGPSSearch() {
   mainContent.style.display = 'none';
   
   try {
-    // Call GPS search API
-    let url = `/api/search?type=jpg&gps=true`;
+    // Call database GPS search API for JPG files
+    let url = `/api/database-metadata?fileType=jpg`;
+    // Note: GPS filtering will need to be implemented in the database endpoint
     if (latitude) url += `&latitude=${latitude}`;
     if (longitude) url += `&longitude=${longitude}`;
     if (selectedGpsOperator) url += `&gpsOperator=${selectedGpsOperator}`;
@@ -1519,6 +1517,19 @@ gpsOperator.addEventListener('change', function() {
   }
 });
 
+// Add event listener for home navigation link
+document.getElementById('homeNavLink').addEventListener('click', function(e) {
+  e.preventDefault(); // Prevent default link behavior
+  
+  // Clear search input and show main content
+  searchInput.value = '';
+  searchResults.innerHTML = '';
+  mainContent.style.display = 'block';
+  
+  // Ensure favorites section is still visible if it exists
+  displayFavorites();
+});
+
 // Add event listener for favorites navigation link
 document.getElementById('favoritesNavLink').addEventListener('click', function(e) {
   e.preventDefault(); // Prevent default link behavior
@@ -1531,7 +1542,7 @@ document.getElementById('favoritesNavLink').addEventListener('click', function(e
       block: 'start' 
     });
   } else {
-    // If no favorites exist yet, show message
+    // If no favorites exist yet, just show message
     alert('Inga favoriter ännu. Klicka på hjärtat bredvid filer för att lägga till dem som favoriter!');
   }
 });
@@ -1540,8 +1551,8 @@ document.getElementById('favoritesNavLink').addEventListener('click', function(e
 loadSearchHistory();
 loadUserFavorites(); // Ladda användarens favoriter
 
-// Read data from the API metadata
-let metadataRaw = await fetch('/api/metadata');
+// Read data from the database metadata (much faster!)
+let metadataRaw = await fetch('/api/database-metadata');
 // Convert from json to a js data structure
 let metadata = await metadataRaw.json();
 

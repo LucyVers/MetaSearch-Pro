@@ -1099,17 +1099,68 @@ app.get('/api/database-metadata', async (request, response) => {
       ];
     }
     
-    const metadata = await FileMetadata.findAll({
+    const dbResults = await FileMetadata.findAll({
       where: whereClause,
       order: [['createdAt', 'DESC']]
     });
     
-    response.json(metadata);
+    // Transform database format to frontend-compatible format
+    const transformedResults = dbResults.map(dbItem => {
+      // Convert to plain object
+      const item = dbItem.toJSON();
+      
+      // Create frontend-compatible structure
+      return {
+        file: item.filename,
+        metadata: {
+          fileType: item.fileType ? item.fileType.toUpperCase() : 'UNKNOWN',
+          title: item.title,
+          extractedTitle: item.title, // Alias for compatibility
+          author: item.author,
+          enhancedAuthor: item.author, // Alias for compatibility
+          fileSize: formatFileSize(item.fileSize),
+          createdDate: item.creationDate,
+          modifiedDate: item.modificationDate,
+          numpages: item.pageCount, // PDF field mapping
+          pdfVersion: item.pdfVersion, // PDF field
+          
+          // JPG-specific fields
+          dimensions: item.dimensions,
+          camera: item.camera,
+          location: item.gpsLatitude && item.gpsLongitude ? {
+            latitude: parseFloat(item.gpsLatitude),
+            longitude: parseFloat(item.gpsLongitude)
+          } : null,
+          
+          // MP3-specific fields  
+          duration: item.duration,
+          album: item.album,
+          artist: item.artist,
+          genre: item.genre,
+          
+          // PPT-specific fields
+          slides: item.slideCount,
+          company: item.company,
+          wordCount: item.wordCount,
+          revisionNumber: item.revisionNumber,
+          
+          // Enhanced metadata
+          keywords: item.keywords ? item.keywords.split(',').map(k => k.trim()) : [],
+          language: item.language || 'Unknown',
+          category: item.category || 'Unknown',
+          textSummary: item.description || item.textSummary
+        }
+      };
+    });
+    
+    response.json(transformedResults);
   } catch (error) {
     console.error('Error fetching from database:', error);
     response.status(500).json({ error: 'Database error' });
   }
 });
+
+// formatFileSize function already exists above, using that one
 
 // Create a REST route for searching PDF metadata
 app.get('/api/search', async (request, response) => {
