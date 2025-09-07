@@ -6,6 +6,55 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-09-07 - KRITISK DATABAS-MIGRATION GENOMFÖRD! 🚀⚠️
+
+**VARNING: STORA ÄNDRINGAR SOM KRÄVER OMFATTANDE TESTNING**
+
+**Commit:** `6142d10` - "🚀 MAJOR: Migrera från filsystem till databas-baserad sökning"
+
+**Vad som ändrades:**
+Jag genomförde en stor arkitekturförändring där sökfunktionen migrerades från att läsa filer direkt från filsystemet till att använda databasen som primär källa. Detta är en viktig förbättring för prestanda och skalbarhet, men kräver omfattande testning.
+
+**Tekniska ändringar:**
+
+**Frontend (main.js):**
+- **API-ändring:** Från `/api/search` till `/api/database-metadata`
+- **URL-parametrar:** `type` → `fileType` för konsistens
+- **Navigation:** Programmatisk hantering av hem-länken (`homeNavLink`)
+- **Favoriter:** Förbättrad positionering med `insertBefore()`
+- **GPS-sökning:** Använder nu databas-API istället för filsystem
+
+**Backend (index.js):**
+- **Databastransformation:** Ny funktion som konverterar databasformat till frontend-kompatibelt format
+- **Fältmappning:** Mappar databasfält till frontend-förväntade fält
+- **Filtyp-specifik hantering:** Olika fält för PDF, JPG, MP3, PPT
+- **GPS-koordinater:** Korrekt formatering av lat/long för databas-format
+- **Kompatibilitet:** Behåller bakåtkompatibilitet med befintlig frontend
+
+**HTML (index.html):**
+- **Navigation:** Hem-länken ändrad till programmatisk hantering
+
+**KRITISKA RISKER SOM BEHÖVER TESTAS:**
+
+1. **API-ändringar** - Frontend använder nu helt annat API
+2. **Kompatibilitet** - Databastransformation kan ha inkompatibiliteter
+3. **GPS-funktionalitet** - GPS-koordinater kan behöva justeras
+4. **Performance** - Okänt om nya API är snabbare eller långsammare
+5. **Felhantering** - Nya feltyper kan uppstå med databas-format
+
+**TESTNINGSPLAN (HÖGSTA PRIORITET):**
+- [ ] Testa alla sökfunktioner med nya API
+- [ ] Testa filtypsfiltrering
+- [ ] Testa GPS-sökning med databas-format
+- [ ] Testa favoriter-system
+- [ ] Testa navigation (hem-länken, favoriter-länken)
+- [ ] Testa alla filtyper (PDF, JPG, MP3, PPT)
+- [ ] Testa performance jämfört med gammalt API
+- [ ] Testa felhantering
+- [ ] Dokumentera alla problem som hittas
+
+**MÅL:** INGEN VIDARE UTVECKLING förrän alla funktioner är testade och verifierade!
+
 ### 2025-09-05 - SYSTEMVERIFIERING OCH DATABAS-DISKREPANSE LÖST! 🔍✅
 
 **Vad jag upptäckte och löste:**
