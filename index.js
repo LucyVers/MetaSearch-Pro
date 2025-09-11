@@ -12,6 +12,7 @@ import ExifParser from 'exif-parser';
 import { parseFile } from 'music-metadata';
 // Import database connection and models
 import sequelize from './database.js';
+import { Op } from 'sequelize';
 import { FileMetadata, Favorites, syncDatabase } from './models.js';
 
 // Load PowerPoint metadata from JSON file
@@ -987,8 +988,8 @@ app.get('/api/metadata', async (_request, response) => {
         photoDate: jpgMetadata.photoDate,
         photographer: jpgMetadata.photographer,
         location: jpgMetadata.location ? JSON.stringify(jpgMetadata.location) : null,
-        gpsLatitude: jpgMetadata.gpsLatitude,
-        gpsLongitude: jpgMetadata.gpsLongitude
+        gpsLatitude: jpgMetadata.location?.latitude || null,
+        gpsLongitude: jpgMetadata.location?.longitude || null
       };
       
       await saveMetadataToDatabase(dbMetadata);
@@ -1081,6 +1082,10 @@ app.get('/api/database-metadata', async (request, response) => {
   try {
     const fileType = request.query.fileType;
     const searchQuery = request.query.q;
+    const isGPSSearch = request.query.gps === 'true';
+    const latitude = parseFloat(request.query.latitude);
+    const longitude = parseFloat(request.query.longitude);
+    const gpsOperator = request.query.gpsOperator || 'equals';
     
     let whereClause = {};
     
@@ -1091,11 +1096,11 @@ app.get('/api/database-metadata', async (request, response) => {
     
     // Search in title, author, keywords, description
     if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
-      whereClause[sequelize.Op.or] = [
-        { title: { [sequelize.Op.like]: `%${searchQuery}%` } },
-        { author: { [sequelize.Op.like]: `%${searchQuery}%` } },
-        { keywords: { [sequelize.Op.like]: `%${searchQuery}%` } },
-        { description: { [sequelize.Op.like]: `%${searchQuery}%` } }
+      whereClause[Op.or] = [
+        { title: { [Op.like]: `%${searchQuery}%` } },
+        { author: { [Op.like]: `%${searchQuery}%` } },
+        { keywords: { [Op.like]: `%${searchQuery}%` } },
+        { description: { [Op.like]: `%${searchQuery}%` } }
       ];
     }
     
@@ -1104,8 +1109,25 @@ app.get('/api/database-metadata', async (request, response) => {
       order: [['createdAt', 'DESC']]
     });
     
+    // Filter by GPS if specified (post-processing like old system)
+    let filteredResults = dbResults;
+    if (isGPSSearch && latitude && longitude) {
+      filteredResults = dbResults.filter(dbItem => {
+        if (dbItem.gpsLatitude && dbItem.gpsLongitude) {
+          return applyGPSSearchOperator(
+            parseFloat(dbItem.gpsLatitude),
+            parseFloat(dbItem.gpsLongitude),
+            latitude,
+            longitude,
+            gpsOperator
+          );
+        }
+        return false;
+      });
+    }
+
     // Transform database format to frontend-compatible format
-    const transformedResults = dbResults.map(dbItem => {
+    const transformedResults = filteredResults.map(dbItem => {
       // Convert to plain object
       const item = dbItem.toJSON();
       
