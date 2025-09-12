@@ -36,7 +36,7 @@ const COMMON_METADATA_STRUCTURE = {
   author: null,
   createdDate: null,
   modifiedDate: null,
-  keywords: [],
+  keywords: '',
   language: 'Unknown',
   category: 'Unknown',
   // File type specific fields
@@ -143,6 +143,257 @@ async function saveMetadataToDatabase(metadata) {
     return true;
   } catch (error) {
     console.error(`❌ Fel vid sparande av metadata för ${metadata.filename}:`, error.message);
+    return false;
+  }
+}
+
+// SOLID: Single Responsibility - Database cleanup for missing files
+async function cleanupMissingFiles() {
+  try {
+    console.log('🧹 Rensar databas från poster för saknade filer...');
+    
+    const allFiles = await FileMetadata.findAll();
+    let removedCount = 0;
+    
+    for (const fileRecord of allFiles) {
+      const filePath = fileRecord.filepath;
+      
+      try {
+        // Check if file exists
+        fs.accessSync(filePath);
+      } catch (error) {
+        // File doesn't exist, remove from database
+        await fileRecord.destroy();
+        removedCount++;
+        console.log(`🗑️ Raderade databas-post för saknad fil: ${fileRecord.filename}`);
+      }
+    }
+    
+    console.log(`🧹 Cleanup klar! Raderade ${removedCount} poster för saknade filer.`);
+    return true;
+  } catch (error) {
+    console.error('❌ Fel vid cleanup av saknade filer:', error.message);
+    return false;
+  }
+}
+
+// SOLID: Single Responsibility - Populate database with metadata from filesystem  
+// User Story 2: Extrahera metadata från mappar och spara i databas
+async function populateMetadataDatabase() {
+  try {
+    console.log('🔄 Synkroniserar filsystem med databas...');
+    
+    // First cleanup missing files
+    await cleanupMissingFiles();
+    
+    let totalProcessed = 0;
+    
+    // PROCESS PDF FILES
+    try {
+      console.log('📄 Bearbetar PDF-filer...');
+      let pdfFiles = fs
+        .readdirSync('./frontend/pdfs')
+        .filter(x => x.toLowerCase().endsWith('.pdf'));
+      
+      for (let file of pdfFiles) {
+        // Get the meta data from PDF file
+        let data = await pdfParse(fs.readFileSync('./frontend/pdfs/' + file));
+        
+        // OPTION A: Extract title from text if PDF title is missing
+        let extractedTitle = data.info.Title;
+        if (!extractedTitle || extractedTitle.trim() === '') {
+          // Take first line of text as title
+          let firstLine = data.text.split('\n')[0];
+          // Clean up extra whitespace and special characters
+          extractedTitle = firstLine.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
+          // If first line is too short, take first sentence
+          if (extractedTitle.length < 10) {
+            let firstSentence = data.text.split('.')[0];
+            extractedTitle = firstSentence.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
+          }
+        }
+        
+        // ENHANCED AUTHOR EXTRACTION
+        let enhancedAuthor = extractAuthorFromText(data.text, data.info.Author);
+        
+        // ENHANCED DATE EXTRACTION
+        let createdDate = parsePDFDate(data.info.CreationDate);
+        let modifiedDate = parsePDFDate(data.info.ModDate);
+        
+        // Try to extract date from filename if no date found
+        if (!createdDate) {
+          createdDate = extractDateFromFilename(file);
+        }
+        
+        // Add file size
+        let filePath = './frontend/pdfs/' + file;
+        let fileStats = fs.statSync(filePath);
+        let fileSizeInBytes = fileStats.size;
+        
+        // Enhanced keyword extraction
+        let keywords = extractKeywords(data.text).join(' ');
+        
+        // Text summarization for description
+        let textSummary = data.text.substring(0, 500) + '...';
+        
+        // Language detection
+        let language = analyzeLanguage(data.text);
+        
+        // Document categorization
+        let category = categorizeDocument(data.text, extractedTitle);
+        
+        // PDF Version extraction
+        let pdfVersion = data.info.PDFFormatVersion || 'Unknown';
+        
+        // Save to database
+        const dbMetadata = {
+          filename: file,
+          filepath: './frontend/pdfs/' + file,
+          fileType: 'pdf',
+          fileSize: fileSizeInBytes,
+          title: extractedTitle,
+          author: enhancedAuthor,
+          creationDate: createdDate,
+          modificationDate: modifiedDate,
+          keywords: keywords,
+          description: textSummary,
+          category: category,
+          language: language,
+          pdfVersion: pdfVersion,
+          pageCount: data.numpages || null
+        };
+        
+        await saveMetadataToDatabase(dbMetadata);
+        totalProcessed++;
+      }
+      
+      console.log(`📄 Bearbetade ${pdfFiles.length} PDF-filer`);
+    } catch (error) {
+      console.error('❌ Fel vid bearbetning av PDF-filer:', error.message);
+    }
+
+    // PROCESS JPG FILES
+    try {
+      console.log('🖼️ Bearbetar JPG-filer...');
+      let jpgFiles = fs
+        .readdirSync('./frontend/jpgs')
+        .filter(x => x.toLowerCase().endsWith('.jpg') || x.toLowerCase().endsWith('.jpeg') || x.toLowerCase().endsWith('.png'));
+
+      for (let file of jpgFiles) {
+        let jpgMetadata = extractJPGMetadata('./frontend/jpgs/' + file);
+        
+        // Save to database
+        const dbMetadata = {
+          filename: file,
+          filepath: './frontend/jpgs/' + file,
+          fileType: 'jpg',
+          fileSize: jpgMetadata.fileSizeBytes || 0,
+          title: jpgMetadata.title || file,
+          author: jpgMetadata.artist || null,
+          creationDate: jpgMetadata.createdDate || null,
+          modificationDate: jpgMetadata.modifiedDate || null,
+          keywords: jpgMetadata.keywords || '',
+          description: `Bild: ${jpgMetadata.dimensions || 'Okänd storlek'}`,
+          category: 'Image',
+          language: 'N/A',
+          camera: jpgMetadata.camera || null,
+          dimensions: jpgMetadata.dimensions || null,
+          location: jpgMetadata.location ? JSON.stringify(jpgMetadata.location) : null,
+          gpsLatitude: jpgMetadata.location?.latitude || null,
+          gpsLongitude: jpgMetadata.location?.longitude || null
+        };
+        
+        await saveMetadataToDatabase(dbMetadata);
+        totalProcessed++;
+      }
+      
+      console.log(`🖼️ Bearbetade ${jpgFiles.length} JPG-filer`);
+    } catch (error) {
+      console.error('❌ Fel vid bearbetning av JPG-filer:', error.message);
+    }
+
+    // PROCESS MP3 FILES
+    try {
+      console.log('🎵 Bearbetar MP3-filer...');
+      let mp3Files = fs
+        .readdirSync('./frontend/mp3s')
+        .filter(x => x.toLowerCase().endsWith('.mp3') || x.toLowerCase().endsWith('.wav') || x.toLowerCase().endsWith('.flac'));
+
+      for (let file of mp3Files) {
+        let mp3Metadata = await extractMP3Metadata('./frontend/mp3s/' + file);
+        
+        // Save to database
+        const dbMetadata = {
+          filename: file,
+          filepath: './frontend/mp3s/' + file,
+          fileType: 'mp3',
+          fileSize: mp3Metadata.fileSizeBytes || 0,
+          title: mp3Metadata.title || file,
+          author: mp3Metadata.artist || null,
+          creationDate: mp3Metadata.createdDate || null,
+          modificationDate: mp3Metadata.modifiedDate || null,
+          keywords: mp3Metadata.genre || '',
+          description: `Ljudfil: ${mp3Metadata.duration || 'Okänd längd'}`,
+          category: 'Audio',
+          language: 'N/A',
+          album: mp3Metadata.album,
+          duration: mp3Metadata.duration,
+          genre: mp3Metadata.genre,
+          year: mp3Metadata.year
+        };
+        
+        await saveMetadataToDatabase(dbMetadata);
+        totalProcessed++;
+      }
+      
+      console.log(`🎵 Bearbetade ${mp3Files.length} MP3-filer`);
+    } catch (error) {
+      console.error('❌ Fel vid bearbetning av MP3-filer:', error.message);
+    }
+
+    // PROCESS PPT FILES
+    try {
+      console.log('📊 Bearbetar PPT-filer...');
+      let pptFiles = fs
+        .readdirSync('./frontend/ppts')
+        .filter(x => x.toLowerCase().endsWith('.ppt') || x.toLowerCase().endsWith('.pptx'));
+
+      for (let file of pptFiles) {
+        let pptMetadata = extractPPTMetadata('./frontend/ppts/' + file);
+        
+        // Save to database
+        const dbMetadata = {
+          filename: file,
+          filepath: './frontend/ppts/' + file,
+          fileType: 'ppt',
+          fileSize: pptMetadata.fileSizeBytes || 0,
+          title: pptMetadata.title || file,
+          author: pptMetadata.author || null,
+          creationDate: pptMetadata.createdDate || null,
+          modificationDate: pptMetadata.modifiedDate || null,
+          keywords: pptMetadata.keywords || '',
+          description: `PowerPoint: ${pptMetadata.slides || 'Okänt antal'} slides`,
+          category: 'Presentation',
+          language: 'N/A',
+          slides: pptMetadata.slides,
+          wordCount: pptMetadata.words,
+          company: pptMetadata.company,
+          revision: pptMetadata.revision
+        };
+        
+        await saveMetadataToDatabase(dbMetadata);
+        totalProcessed++;
+      }
+      
+      console.log(`📊 Bearbetade ${pptFiles.length} PPT-filer`);
+    } catch (error) {
+      console.error('❌ Fel vid bearbetning av PPT-filer:', error.message);
+    }
+
+    console.log(`✅ Filsystem-databas synkronisering klar! Totalt bearbetade ${totalProcessed} filer.`);
+    return true;
+  } catch (error) {
+    console.error('❌ Fel vid populering av metadata-databas:', error.message);
     return false;
   }
 }
@@ -345,7 +596,7 @@ function extractJPGMetadata(filePath) {
       author: null,
       createdDate: null,
       modifiedDate: null,
-      keywords: ['image', 'photo', 'jpg'],
+      keywords: 'image photo jpg',
       language: 'Unknown',
       category: 'Image',
       // JPG specific fields
@@ -397,7 +648,7 @@ function extractJPGMetadata(filePath) {
     ].filter(Boolean).join(' ');
     
     if (keywordData) {
-      metadata.keywords = extractKeywords(keywordData);
+      metadata.keywords = extractKeywords(keywordData).join(' ');
     }
     
     return metadata;
@@ -412,7 +663,7 @@ function extractJPGMetadata(filePath) {
       author: null,
       createdDate: null,
       modifiedDate: null,
-      keywords: ['image', 'photo', 'jpg'],
+      keywords: 'image photo jpg',
       language: 'Unknown',
       category: 'Image',
       dimensions: null,
@@ -437,7 +688,7 @@ async function extractMP3Metadata(filePath) {
       author: metadata.common.artist || null,
       createdDate: null,
       modifiedDate: null,
-      keywords: ['music', 'audio', 'mp3'],
+      keywords: 'music audio mp3',
       language: 'Unknown',
       category: 'Music',
       // MP3 specific fields
@@ -459,7 +710,7 @@ async function extractMP3Metadata(filePath) {
       author: null,
       createdDate: null,
       modifiedDate: null,
-      keywords: ['music', 'audio', 'mp3'],
+      keywords: 'music audio mp3',
       language: 'Unknown',
       category: 'Music',
       duration: null,
@@ -513,7 +764,7 @@ function extractPPTMetadata(filePath) {
       author: metadata ? metadata.company : null,
       createdDate: metadata && metadata.creation_date ? parsePPTDate(metadata.creation_date) : null,
       modifiedDate: metadata && metadata.last_modified ? parsePPTDate(metadata.last_modified) : null,
-      keywords: ['presentation', 'powerpoint', 'ppt'],
+      keywords: 'presentation powerpoint ppt',
       language: 'Unknown',
       category: 'Presentation',
       // PPT specific fields
@@ -534,7 +785,7 @@ function extractPPTMetadata(filePath) {
     ].filter(Boolean).join(' ');
     
     if (keywordData) {
-      pptData.keywords = extractKeywords(keywordData);
+      pptData.keywords = extractKeywords(keywordData).join(' ');
     }
     
     return pptData;
@@ -550,7 +801,7 @@ function extractPPTMetadata(filePath) {
       author: null,
       createdDate: null,
       modifiedDate: null,
-      keywords: ['presentation', 'powerpoint', 'ppt'],
+      keywords: 'presentation powerpoint ppt',
       language: 'Unknown',
       category: 'Presentation',
       slides: 0,
@@ -705,6 +956,31 @@ function detectLanguage(text) {
   } else {
     return 'Unknown';
   }
+}
+
+// ADVANCED METADATA EXTRACTION - STEP 3: LANGUAGE DETECTION
+function analyzeLanguage(text) {
+  if (!text || text.length < 10) {
+    return 'Unknown';
+  }
+  
+  const content = text.toLowerCase().substring(0, 1000);
+  
+  // Swedish detection
+  const swedishWords = ['och', 'det', 'att', 'i', 'en', 'är', 'som', 'på', 'för', 'av', 'med', 'till', 'var', 'har', 'inte', 'från', 'vid', 'så', 'kan', 'om', 'efter', 'upp', 'ska', 'bara', 'skulle', 'mycket', 'genom', 'år', 'alla', 'också', 'under', 'två', 'första', 'andra'];
+  const swedishMatches = swedishWords.filter(word => content.includes(' ' + word + ' ')).length;
+  
+  // English detection
+  const englishWords = ['the', 'of', 'and', 'a', 'to', 'in', 'is', 'you', 'that', 'it', 'he', 'was', 'for', 'on', 'are', 'as', 'with', 'his', 'they', 'i', 'at', 'be', 'this', 'have', 'from', 'or', 'one', 'had', 'by', 'word', 'but', 'not', 'what', 'all'];
+  const englishMatches = englishWords.filter(word => content.includes(' ' + word + ' ')).length;
+  
+  if (swedishMatches > englishMatches && swedishMatches > 3) {
+    return 'Swedish';
+  } else if (englishMatches > 3) {
+    return 'English';
+  }
+  
+  return 'Unknown';
 }
 
 // ADVANCED METADATA EXTRACTION - STEP 4: AUTOMATIC CATEGORIZATION
@@ -910,9 +1186,9 @@ app.get('/api/metadata', async (_request, response) => {
     }
     
     // ADVANCED METADATA EXTRACTION - STEP 2: KEYWORD EXTRACTION
-    let keywords = [];
+    let keywords = '';
     if (data.text && data.text.trim().length > 0) {
-      keywords = extractKeywords(data.text);
+      keywords = extractKeywords(data.text).join(' ');
     }
     
     // ADVANCED METADATA EXTRACTION - STEP 3: LANGUAGE DETECTION
@@ -950,7 +1226,7 @@ app.get('/api/metadata', async (_request, response) => {
       author: enhancedAuthor,
       creationDate: createdDate,
       modificationDate: modifiedDate,
-      keywords: keywords.join(', '),
+      keywords: keywords,
       description: textSummary,
       category: category,
       language: language,
@@ -1294,7 +1570,7 @@ app.get('/api/search', async (request, response) => {
       }
       
       // Keywords extraction
-      let keywords = extractKeywords(data.text);
+      let keywords = extractKeywords(data.text).join(' ');
       
       // Language detection
       let language = detectLanguage(data.text);
@@ -1621,6 +1897,9 @@ app.listen(3000, async () => {
   try {
     await syncDatabase();
     console.log('✅ Databas synkroniserad med Favorites-tabellen!');
+    
+    // Synkronisera filsystem med databas (User Story 2)
+    await populateMetadataDatabase();
   } catch (error) {
     console.error('❌ Fel vid databassynkronisering:', error);
   }

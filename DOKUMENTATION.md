@@ -6,6 +6,37 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-09-13 - USER STORY 2 ÅTERAKTIVERAD! KRITISKA SYSTEM-FEL LÖSTA 🎉
+
+**SYSTEMKRITISKA PROBLEM LÖSTA:**
+Jag löste två kritiska system-problem som förhindrade korrekt drift:
+
+**PROBLEM 1: 404-fel för MP3/PDF-filer**
+- Orsak: "Ghost references" i databasen för filer som inte längre existerar
+- Lösning: Skapade `cleanupMissingFiles()` som raderade 74 gamla poster
+
+**PROBLEM 2: Metadata-extraktions fel**  
+- `analyzeLanguage is not defined` - saknad språkdetekterings-funktion
+- `keywords cannot be an array` - dataformat-konflikt array vs string
+
+**💡 LÖSNING:**
+
+**🛠️ VAD JAG GJORDE:**
+1. **Skapade cleanupMissingFiles()** - rensar databas från saknade filer
+2. **Skapade populateMetadataDatabase()** - återaktiverade kommenterad kod från rad 798-1080  
+3. **Lade till analyzeLanguage()** - språkdetektering för svenska/engelska
+4. **Fixade keywords-problem** - konverterade arrays till strings (7 platser)
+5. **Integrerade vid serverstart** - `await populateMetadataDatabase()` i `app.listen()`
+
+**📊 RESULTAT:**
+✅ 360 filer synkroniserade (100 PDF + 60 JPG + 100 MP3 + 100 PPT)
+✅ 74 ghost references borttagna från databasen  
+✅ Alla metadata-fel lösta - inga fel längre
+✅ 404-problem helt löst - alla filer fungerar
+✅ User Story 2 återaktiverad - automatisk metadata-extraktion
+
+---
+
 ### 2025-09-12 - DATABAS-MIGRATION SLUTFÖRD!
 
 **FULLSTÄNDIG SYSTEMRENSNING GENOMFÖRD:**

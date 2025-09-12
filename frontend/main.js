@@ -52,7 +52,7 @@ async function loadUserFavorites() {
     // Uppdatera lokalt minne
     userFavorites.clear();
     favorites.forEach(fav => {
-      userFavorites.add(fav.FileMetadata.filename);
+      userFavorites.add(fav.FileMetadatum.filename);
     });
     
     // Uppdatera favoriter-sektionen
@@ -80,21 +80,29 @@ function createFavoriteButton(filename, isFavorite = false) {
 // SOLID: Single Responsibility - Växla favorit-status
 async function toggleFavorite(filename) {
   try {
+    console.log('toggleFavorite called with filename:', filename);
     const isFavorite = userFavorites.has(filename);
+    console.log('isFavorite:', isFavorite);
     
     if (isFavorite) {
       // Ta bort från favoriter
+      console.log('Removing favorite:', filename);
       const response = await fetch(`/api/favorites/${encodeURIComponent(filename)}`, {
         method: 'DELETE'
       });
+      console.log('DELETE response status:', response.status);
       
       if (response.ok) {
         userFavorites.delete(filename);
         updateFavoriteButton(filename, false);
         displayFavorites(); // Uppdatera favoriter-sektionen
+        console.log('Successfully removed favorite');
+      } else {
+        console.error('Failed to remove favorite, status:', response.status);
       }
     } else {
       // Lägg till i favoriter
+      console.log('Adding favorite:', filename);
       const response = await fetch('/api/favorites', {
         method: 'POST',
         headers: {
@@ -102,11 +110,15 @@ async function toggleFavorite(filename) {
         },
         body: JSON.stringify({ filename: filename })
       });
+      console.log('POST response status:', response.status);
       
       if (response.ok) {
         userFavorites.add(filename);
         updateFavoriteButton(filename, true);
         displayFavorites(); // Uppdatera favoriter-sektionen
+        console.log('Successfully added favorite');
+      } else {
+        console.error('Failed to add favorite, status:', response.status);
       }
     }
   } catch (error) {
@@ -147,9 +159,12 @@ function displayFavorites() {
     favoritesSection.className = 'favorites-section';
     favoritesSection.innerHTML = '<h3>❤️ Mina Favoriter</h3>';
     
-    // Lägg till efter sökresultaten
+    // Lägg till före sökresultaten (så att favoriter alltid syns överst)
     const searchContainer = document.querySelector('.search-container');
-    if (searchContainer) {
+    const resultsSection = document.querySelector('.results-section');
+    if (searchContainer && resultsSection) {
+      searchContainer.insertBefore(favoritesSection, resultsSection);
+    } else if (searchContainer) {
       searchContainer.appendChild(favoritesSection);
     }
   }
@@ -166,7 +181,7 @@ function displayFavorites() {
       let favoritesHTML = '<h3>❤️ Mina Favoriter</h3><div class="favorites-grid">';
       
       favorites.forEach(fav => {
-        const file = fav.FileMetadata;
+        const file = fav.FileMetadatum;
         favoritesHTML += `
           <div class="favorite-item">
             <div class="favorite-header">
@@ -721,9 +736,23 @@ function addPDFEventListeners(articleElement) {
   }, 100);
 }
 
+// Global variable to prevent infinite loop
+let isRenderingGallery = false;
+
 // SOLID: Single Responsibility - Image gallery creation
 function createImageGallery(imagePath, metadata, allImages, currentIndex) {
-  console.log('createImageGallery called:', { imagePath, metadata, allImagesCount: allImages?.length, currentIndex });
+  // Guard condition to prevent infinite loop
+  if (isRenderingGallery) {
+    // Blocked: Already rendering gallery
+    return '';
+  }
+  
+  isRenderingGallery = true;
+  
+  // Reset flag after a short delay to allow next legitimate call
+  setTimeout(() => {
+    isRenderingGallery = false;
+  }, 100);
   
   // Fallback if allImages is undefined or empty
   if (!allImages || allImages.length === 0) {
@@ -1262,7 +1291,6 @@ async function performSearch(searchTerm) {
           // Get all JPG images for gallery navigation from the search results
           const allImages = searchData.filter(img => img.metadata.fileType === 'JPG');
           const currentIndex = allImages.findIndex(img => img.file === item.file);
-          console.log('JPG Gallery Debug:', { allImages: allImages.length, currentIndex, filename: item.file });
           downloadSection = createImageGallery(downloadPath, item.metadata, allImages, currentIndex);
         } else if (item.metadata.fileType === 'PDF' || item.file.toLowerCase().endsWith('.pdf')) {
           downloadSection = createPDFPreview(downloadPath, item.metadata);
@@ -1834,7 +1862,6 @@ for (let item of metadata) {
     // Get all JPG images for gallery navigation  
     const allImages = metadata.filter(img => img.metadata.fileType === 'JPG');
     const currentIndex = allImages.findIndex(img => img.file === item.file);
-    console.log('Main JPG Gallery Debug:', { allImages: allImages.length, currentIndex, filename: item.file });
     downloadSection = createImageGallery(downloadPath, item.metadata, allImages, currentIndex);
   } else if (item.metadata.fileType === 'PDF' || item.file.toLowerCase().endsWith('.pdf')) {
     downloadSection = createPDFPreview(downloadPath, item.metadata);
