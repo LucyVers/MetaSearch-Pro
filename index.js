@@ -795,7 +795,9 @@ function categorizeDocument(text, title, keywords) {
   return bestScore >= 2 ? bestCategory : 'Unknown';
 }
 
-// Create a REST route for getting the metadata
+// COMMENTED OUT - OLD SYSTEM: Create a REST route for getting the metadata (only PDF files)
+// This API is replaced by /api/database-metadata which handles all file types from database
+/*
 app.get('/api/metadata', async (_request, response) => {
 
   // Read all files in pdfs
@@ -1076,6 +1078,7 @@ app.get('/api/metadata', async (_request, response) => {
   response.json(metadataList);
 
 });
+*/
 
 // New endpoint to get metadata from database
 app.get('/api/database-metadata', async (request, response) => {
@@ -1185,6 +1188,9 @@ app.get('/api/database-metadata', async (request, response) => {
 // formatFileSize function already exists above, using that one
 
 // Create a REST route for searching PDF metadata
+// COMMENTED OUT - OLD SYSTEM: File-based search API (all file types from disk)
+// This API is replaced by /api/database-metadata which uses MySQL database instead of file system
+/*
 app.get('/api/search', async (request, response) => {
   
   // Get search query, filter parameters, and sorting parameters from URL parameters
@@ -1503,6 +1509,7 @@ app.get('/api/search', async (request, response) => {
   response.json(searchResults);
 
 });
+*/
 
 // GET endpoint to retrieve search history
 app.get('/api/search-history', (request, response) => {
