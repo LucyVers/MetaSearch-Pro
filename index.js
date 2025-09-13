@@ -507,7 +507,7 @@ function calculateRelevanceScore(metadata, searchQuery, searchOperator) {
     title: metadata.title || metadata.extractedTitle || '',
     author: metadata.author || metadata.enhancedAuthor || '',
     content: metadata.text || metadata.textSummary || '',
-    keywords: (metadata.keywords || []).join(' '),
+    keywords: typeof metadata.keywords === 'string' ? metadata.keywords : (metadata.keywords || []).join(' '),
     language: metadata.language || '',
     category: metadata.category || '',
     fileType: metadata.fileType || ''
@@ -1361,10 +1361,30 @@ app.get('/api/database-metadata', async (request, response) => {
   try {
     const fileType = request.query.fileType;
     const searchQuery = request.query.q;
+    const searchOperator = request.query.operator || 'contains'; // Add search operator support
     const isGPSSearch = request.query.gps === 'true';
     const latitude = parseFloat(request.query.latitude);
     const longitude = parseFloat(request.query.longitude);
     const gpsOperator = request.query.gpsOperator || 'equals';
+    
+    // Advanced filtering parameters (from old system)
+    const minSize = parseInt(request.query.minSize) || 0;
+    const maxSize = parseInt(request.query.maxSize) || Infinity;
+    const minDate = request.query.minDate ? new Date(request.query.minDate) : null;
+    const maxDate = request.query.maxDate ? new Date(request.query.maxDate) : null;
+    const sortBy = request.query.sortBy || 'relevance'; // relevance, title, size, date
+    const sortOrder = request.query.sortOrder || 'desc'; // asc, desc
+    
+    // Add search query to history (from old system logic)
+    if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
+      const trimmedQuery = searchQuery.trim();
+      if (!searchHistory.includes(trimmedQuery)) {
+        searchHistory.unshift(trimmedQuery); // Add to beginning
+        if (searchHistory.length > MAX_HISTORY_ITEMS) {
+          searchHistory = searchHistory.slice(0, MAX_HISTORY_ITEMS); // Keep only latest 10
+        }
+      }
+    }
     
     let whereClause = {};
     
@@ -1373,25 +1393,28 @@ app.get('/api/database-metadata', async (request, response) => {
       whereClause.fileType = fileType;
     }
     
-    // Search in title, author, keywords, description
-    if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
-      whereClause[Op.or] = [
-        { title: { [Op.like]: `%${searchQuery}%` } },
-        { author: { [Op.like]: `%${searchQuery}%` } },
-        { keywords: { [Op.like]: `%${searchQuery}%` } },
-        { description: { [Op.like]: `%${searchQuery}%` } }
-      ];
-    }
-    
+    // Get all results first, then apply search operators in post-processing
     const dbResults = await FileMetadata.findAll({
       where: whereClause,
       order: [['createdAt', 'DESC']]
     });
     
-    // Filter by GPS if specified (post-processing like old system)
+    // Filter by search query with operators (post-processing like old system)
     let filteredResults = dbResults;
-    if (isGPSSearch && latitude && longitude) {
+    if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
+      const searchTerm = searchQuery.toLowerCase().trim();
       filteredResults = dbResults.filter(dbItem => {
+        return applySearchOperator(dbItem.title, searchTerm, searchOperator) ||
+               applySearchOperator(dbItem.author, searchTerm, searchOperator) ||
+               applySearchOperator(dbItem.keywords, searchTerm, searchOperator) ||
+               applySearchOperator(dbItem.description, searchTerm, searchOperator) ||
+               applySearchOperator(dbItem.fileType, searchTerm, searchOperator);
+      });
+    }
+    
+    // Filter by GPS if specified (post-processing like old system)
+    if (isGPSSearch && latitude && longitude) {
+      filteredResults = filteredResults.filter(dbItem => {
         if (dbItem.gpsLatitude && dbItem.gpsLongitude) {
           return applyGPSSearchOperator(
             parseFloat(dbItem.gpsLatitude),
@@ -1404,15 +1427,46 @@ app.get('/api/database-metadata', async (request, response) => {
         return false;
       });
     }
+    
+    // Apply advanced filters (size and date) - post-processing like old system
+    if (minSize > 0 || maxSize < Infinity || minDate || maxDate) {
+      filteredResults = filteredResults.filter(dbItem => {
+        // Size filtering (convert bytes to KB like old system)
+        const fileSizeInKB = Math.round(dbItem.fileSize / 1024);
+        const matchesSizeFilter = fileSizeInKB >= minSize && fileSizeInKB <= maxSize;
+        
+        // Date filtering 
+        const itemDate = new Date(dbItem.creationDate);
+        const matchesDateFilter = (!minDate || itemDate >= minDate) && (!maxDate || itemDate <= maxDate);
+        
+        return matchesSizeFilter && matchesDateFilter;
+      });
+    }
 
-    // Transform database format to frontend-compatible format
+    // Transform database format to frontend-compatible format with relevance scores
     const transformedResults = filteredResults.map(dbItem => {
       // Convert to plain object
       const item = dbItem.toJSON();
       
+      // Create metadata object for relevance calculation
+      const metadataForRelevance = {
+        title: item.title,
+        author: item.author,
+        keywords: item.keywords,
+        textSummary: item.description || item.textSummary,
+        language: item.language,
+        category: item.category
+      };
+      
+      // Calculate relevance score if there's a search query
+      const relevanceScore = (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') 
+        ? calculateRelevanceScore(metadataForRelevance, searchQuery, searchOperator)
+        : 0;
+      
       // Create frontend-compatible structure
       return {
         file: item.filename,
+        relevanceScore: relevanceScore, // Add relevance score for sorting
         metadata: {
           fileType: item.fileType ? item.fileType.toUpperCase() : 'UNKNOWN',
           title: item.title,
@@ -1454,7 +1508,55 @@ app.get('/api/database-metadata', async (request, response) => {
       };
     });
     
-    response.json(transformedResults);
+    // Flexible sorting (from old system logic)
+    if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '' && sortBy === 'relevance') {
+      // If there's a search query and sortBy is relevance, prioritize relevance score
+      transformedResults.sort((a, b) => {
+        if (sortOrder === 'desc') {
+          return b.relevanceScore - a.relevanceScore;
+        } else {
+          return a.relevanceScore - b.relevanceScore;
+        }
+      });
+    } else {
+      // Sort by specified field (from old system)
+      transformedResults.sort((a, b) => {
+        let aValue, bValue;
+        
+        switch (sortBy) {
+          case 'title':
+            aValue = (a.metadata.title || '').toLowerCase();
+            bValue = (b.metadata.title || '').toLowerCase();
+            break;
+          case 'size':
+            // Parse file size (remove MB/KB and convert to number for comparison)
+            aValue = parseFloat(a.metadata.fileSize.replace(/[^\d.]/g, '')) || 0;
+            bValue = parseFloat(b.metadata.fileSize.replace(/[^\d.]/g, '')) || 0;
+            break;
+          case 'date':
+            aValue = new Date(a.metadata.createdDate);
+            bValue = new Date(b.metadata.createdDate);
+            break;
+          default: // 'relevance' or fallback
+            aValue = new Date(a.metadata.createdDate);
+            bValue = new Date(b.metadata.createdDate);
+        }
+        
+        if (sortOrder === 'desc') {
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+        } else {
+          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+        }
+      });
+    }
+    
+    // Remove relevanceScore from final response (keep it internal)
+    const finalResults = transformedResults.map(item => ({
+      file: item.file,
+      metadata: item.metadata
+    }));
+    
+    response.json(finalResults);
   } catch (error) {
     console.error('Error fetching from database:', error);
     response.status(500).json({ error: 'Database error' });
