@@ -802,7 +802,7 @@ main {
 .advanced-search-toggle {
   display: flex;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 0;
 }
 
 .advanced-toggle-btn {
