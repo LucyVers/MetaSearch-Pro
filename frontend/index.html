@@ -65,6 +65,53 @@
         <option value="greater_than">Större än</option>
         <option value="less_than">Mindre än</option>
       </select>
+
+      <!-- Avancerad sökning toggle-knapp -->
+      <div class="advanced-search-toggle">
+        <button type="button" id="advancedToggleBtn" class="advanced-toggle-btn">
+          🔧 Avancerat <span class="toggle-arrow">▼</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Avancerade filter (dolt som standard) -->
+    <div class="advanced-filters" id="advancedFilters" style="display: none;">
+      <div class="filter-section">
+        <h4 class="filter-title">📏 Filstorlek</h4>
+        <div class="size-filter-group">
+          <input type="number" id="minSizeInput" placeholder="Min (KB)" class="size-input" min="0">
+          <span class="filter-separator">-</span>
+          <input type="number" id="maxSizeInput" placeholder="Max (KB)" class="size-input" min="0">
+          <div class="preset-buttons">
+            <button type="button" class="preset-btn" data-size="small">📄 Små (&lt;1MB)</button>
+            <button type="button" class="preset-btn" data-size="large">📊 Stora (&gt;5MB)</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h4 class="filter-title">📅 Datum</h4>
+        <div class="date-filter-group">
+          <input type="date" id="minDateInput" class="date-input">
+          <span class="filter-separator">-</span>
+          <input type="date" id="maxDateInput" class="date-input">
+          <div class="preset-buttons">
+            <button type="button" class="preset-btn" data-date="month">📅 Senaste månaden</button>
+            <button type="button" class="preset-btn" data-date="year">🗓️ I år</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <h4 class="filter-title">🎯 Aktiva filter</h4>
+        <div class="active-filters" id="activeFilters">
+          <span class="no-filters">Inga aktiva filter</span>
+        </div>
+        <div class="filter-actions">
+          <button type="button" id="clearAllFilters" class="clear-filters-btn">🗑️ Rensa alla</button>
+          <button type="button" id="applyFilters" class="apply-filters-btn">✅ Tillämpa filter</button>
+        </div>
+      </div>
     </div>
     <div class="gps-search-controls" id="gpsSearchControls" style="display: none;">
       <div class="gps-input-group">

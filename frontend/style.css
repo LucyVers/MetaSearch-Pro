@@ -238,9 +238,42 @@ main {
   }
   
   .file-type-filter,
-  .search-operator {
+  .search-operator,
+  .advanced-toggle-btn {
     min-width: auto;
     width: 100%;
+  }
+
+  .advanced-filters {
+    margin-top: 15px;
+  }
+
+  .filter-section {
+    margin-bottom: 15px;
+  }
+
+  .size-filter-group,
+  .date-filter-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .preset-buttons {
+    gap: 8px;
+  }
+
+  .preset-btn {
+    flex: 1;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .active-filters {
+    margin-bottom: 15px;
+  }
+
+  .filter-actions {
+    gap: 10px;
   }
 }
 
@@ -750,7 +783,7 @@ main {
   background: var(--surface-color);
   color: var(--text-primary);
   cursor: pointer;
-  min-width: 150px;
+  min-width: 180px;
 }
 
 .search-operator:focus {
@@ -761,6 +794,288 @@ main {
 
 .search-operator:hover {
   border-color: var(--secondary-hover);
+}
+
+/* ===== AVANCERADE FILTER STILAR ===== */
+
+/* Avancerat toggle-knapp */
+.advanced-search-toggle {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.advanced-toggle-btn {
+  padding: 16px 24px;
+  font-size: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: var(--surface-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  min-width: 180px;
+
+  /* Normalisering för att matcha input/select */
+  box-sizing: border-box;
+  line-height: normal;
+  vertical-align: baseline;
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.advanced-toggle-btn:hover {
+  border-color: var(--secondary-hover);
+}
+
+.advanced-toggle-btn:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.advanced-toggle-btn:active {
+  animation: buttonPulse 0.2s ease-out;
+}
+
+.toggle-arrow {
+  transition: transform 0.3s ease;
+}
+
+.advanced-toggle-btn.expanded .toggle-arrow {
+  transform: rotate(180deg);
+}
+
+
+/* Avancerade filter container */
+.advanced-filters {
+  background: var(--surface-color);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  animation: filterSlideIn 0.4s ease-out;
+}
+
+@keyframes filterSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 500px;
+  }
+}
+
+.filter-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filter-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.filter-title {
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Storlek filter grupp */
+.size-filter-group,
+.date-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.size-input,
+.date-input {
+  flex: 1;
+  padding: 10px 15px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: var(--surface-color);
+  color: var(--text-primary);
+}
+
+.size-input:focus,
+.date-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  outline: none;
+}
+
+.filter-separator {
+  color: var(--text-secondary);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Preset knappar */
+.preset-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  background: var(--background-color);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.preset-btn:hover {
+  border-color: var(--primary-color);
+  background: rgba(139, 92, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.preset-btn:active {
+  animation: buttonPulse 0.2s ease-out;
+}
+
+.preset-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* Aktiva filter */
+.active-filters {
+  min-height: 40px;
+  padding: 15px;
+  background: var(--background-color);
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.no-filters {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.filter-chip {
+  background: var(--primary-color);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: chipSlideIn 0.3s ease-out;
+}
+
+@keyframes chipSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.filter-chip .remove-chip {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.filter-chip .remove-chip:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Filter actions */
+.filter-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.clear-filters-btn {
+  background: var(--error-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.clear-filters-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.apply-filters-btn {
+  background: var(--success-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.apply-filters-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+@keyframes buttonPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
 }
 
 .gps-search-controls {

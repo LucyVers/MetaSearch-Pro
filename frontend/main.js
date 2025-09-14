@@ -10,9 +10,28 @@ let searchResults = document.getElementById('searchResults');
 let searchHistory = document.getElementById('searchHistory');
 let mainContent = document.querySelector('main');
 
+// Advanced filters functionality
+let advancedToggleBtn = document.getElementById('advancedToggleBtn');
+let advancedFilters = document.getElementById('advancedFilters');
+let minSizeInput = document.getElementById('minSizeInput');
+let maxSizeInput = document.getElementById('maxSizeInput');
+let minDateInput = document.getElementById('minDateInput');
+let maxDateInput = document.getElementById('maxDateInput');
+let activeFiltersContainer = document.getElementById('activeFilters');
+let clearAllFiltersBtn = document.getElementById('clearAllFilters');
+let applyFiltersBtn = document.getElementById('applyFilters');
+
 // Favoriter-funktionalitet
 let favoritesSection = null;
 let userFavorites = new Set(); // Sparar favorit-fil-ID:n i minnet
+
+// Advanced filters state - måste deklareras tidigt för att undvika initialiseringsfel
+let activeAdvancedFilters = {
+  minSize: null,
+  maxSize: null,
+  minDate: null,
+  maxDate: null
+};
 
 // Function to load and display search history
 async function loadSearchHistory() {
@@ -83,7 +102,19 @@ async function toggleFavorite(filename) {
     console.log('toggleFavorite called with filename:', filename);
     const isFavorite = userFavorites.has(filename);
     console.log('isFavorite:', isFavorite);
-    
+
+    // Uppdatera UI OMEDELBART för bättre användarupplevelse
+    if (isFavorite) {
+      userFavorites.delete(filename);
+      updateFavoriteButton(filename, false);
+    } else {
+      userFavorites.add(filename);
+      updateFavoriteButton(filename, true);
+    }
+
+    // Uppdatera favoriter-sektionen omedelbart
+    displayFavorites();
+
     if (isFavorite) {
       // Ta bort från favoriter
       console.log('Removing favorite:', filename);
@@ -91,14 +122,23 @@ async function toggleFavorite(filename) {
         method: 'DELETE'
       });
       console.log('DELETE response status:', response.status);
-      
-      if (response.ok) {
-        userFavorites.delete(filename);
-        updateFavoriteButton(filename, false);
-        displayFavorites(); // Uppdatera favoriter-sektionen
-        console.log('Successfully removed favorite');
-      } else {
+
+      // Om API-anropet misslyckas, återställ UI
+      if (!response.ok) {
         console.error('Failed to remove favorite, status:', response.status);
+        // Återställ till föregående tillstånd
+        userFavorites.add(filename);
+        updateFavoriteButton(filename, true);
+        displayFavorites();
+
+        // Visa felmeddelande till användaren
+        if (response.status === 404) {
+          console.log('Favorite already removed - UI now synchronized');
+        } else {
+          alert('Kunde inte ta bort favorit. Försök igen.');
+        }
+      } else {
+        console.log('Successfully removed favorite');
       }
     } else {
       // Lägg till i favoriter
@@ -111,18 +151,24 @@ async function toggleFavorite(filename) {
         body: JSON.stringify({ filename: filename })
       });
       console.log('POST response status:', response.status);
-      
-      if (response.ok) {
-        userFavorites.add(filename);
-        updateFavoriteButton(filename, true);
-        displayFavorites(); // Uppdatera favoriter-sektionen
-        console.log('Successfully added favorite');
-      } else {
+
+      // Om API-anropet misslyckas, återställ UI
+      if (!response.ok) {
         console.error('Failed to add favorite, status:', response.status);
+        // Återställ till föregående tillstånd
+        userFavorites.delete(filename);
+        updateFavoriteButton(filename, false);
+        displayFavorites();
+        alert('Kunde inte lägga till favorit. Försök igen.');
+      } else {
+        console.log('Successfully added favorite');
       }
     }
   } catch (error) {
     console.error('Error toggling favorite:', error);
+    // Ladda om favoriter från servern för att säkerställa synkronisering
+    loadUserFavorites();
+    alert('Ett fel uppstod. Favoriter uppdateras från servern.');
   }
 }
 
@@ -139,16 +185,24 @@ function addFavoriteEventListeners(articleElement) {
 
 // SOLID: Single Responsibility - Uppdatera favoriter-knapp
 function updateFavoriteButton(filename, isFavorite) {
-  const button = document.querySelector(`[data-filename="${filename}"]`);
-  if (button) {
+  // Hitta ALLA instanser av denna fil-knapp (i sökresultat OCH huvudinnehåll)
+  const buttons = document.querySelectorAll(`[data-filename="${filename}"]`);
+
+  buttons.forEach(button => {
     const heartIcon = isFavorite ? '❤️' : '🤍';
     const buttonClass = isFavorite ? 'favorite-button active' : 'favorite-button';
     const title = isFavorite ? 'Ta bort från favoriter' : 'Lägg till i favoriter';
-    
+
     button.innerHTML = heartIcon;
     button.className = buttonClass;
     button.title = title;
-  }
+
+    // Visuell feedback för omedelbar respons
+    button.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+      button.style.transform = 'scale(1)';
+    }, 150);
+  });
 }
 
 // SOLID: Single Responsibility - Visa favoriter-sektion
@@ -1579,6 +1633,9 @@ document.getElementById('favoritesNavLink').addEventListener('click', function(e
 loadSearchHistory();
 loadUserFavorites(); // Ladda användarens favoriter
 
+// Initialize advanced filters functionality
+addAdvancedFilterEventListeners();
+
 // Read data from the database metadata (much faster!)
 let metadataRaw = await fetch('/api/database-metadata');
 // Convert from json to a js data structure
@@ -1903,4 +1960,316 @@ for (let item of metadata) {
   
   // Lägg till event listeners för favoriter-knapp
   addFavoriteEventListeners(article);
+}
+
+// ===== AVANCERADE FILTER FUNKTIONALITET =====
+
+// SOLID: Single Responsibility - Toggle advanced filters visibility
+function toggleAdvancedFilters() {
+  const isVisible = advancedFilters.style.display !== 'none';
+
+  if (isVisible) {
+    // Hide filters
+    advancedFilters.style.display = 'none';
+    advancedToggleBtn.classList.remove('expanded');
+  } else {
+    // Show filters
+    advancedFilters.style.display = 'block';
+    advancedToggleBtn.classList.add('expanded');
+  }
+}
+
+// SOLID: Single Responsibility - Update active filters display
+function updateActiveFiltersDisplay() {
+  const filters = [];
+
+  // Check for size filters
+  if (activeAdvancedFilters.minSize) {
+    filters.push(`Min storlek: ${activeAdvancedFilters.minSize} KB`);
+  }
+  if (activeAdvancedFilters.maxSize) {
+    filters.push(`Max storlek: ${activeAdvancedFilters.maxSize} KB`);
+  }
+
+  // Check for date filters
+  if (activeAdvancedFilters.minDate) {
+    filters.push(`Från datum: ${new Date(activeAdvancedFilters.minDate).toLocaleDateString('sv-SE')}`);
+  }
+  if (activeAdvancedFilters.maxDate) {
+    filters.push(`Till datum: ${new Date(activeAdvancedFilters.maxDate).toLocaleDateString('sv-SE')}`);
+  }
+
+  // Update display
+  if (filters.length === 0) {
+    activeFiltersContainer.innerHTML = '<span class="no-filters">Inga aktiva filter</span>';
+  } else {
+    const chipHTML = filters.map((filter, index) =>
+      `<div class="filter-chip">
+         ${filter}
+         <button class="remove-chip" data-filter-index="${index}" title="Ta bort filter">×</button>
+       </div>`
+    ).join('');
+    activeFiltersContainer.innerHTML = chipHTML;
+
+    // Add event listeners for remove buttons
+    const removeButtons = activeFiltersContainer.querySelectorAll('.remove-chip');
+    removeButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const index = parseInt(this.dataset.filterIndex);
+        removeFilterByIndex(index, filters);
+      });
+    });
+  }
+}
+
+// SOLID: Single Responsibility - Remove filter by index
+function removeFilterByIndex(index, currentFilters) {
+  const filterText = currentFilters[index];
+
+  if (filterText.includes('Min storlek')) {
+    activeAdvancedFilters.minSize = null;
+    minSizeInput.value = '';
+  } else if (filterText.includes('Max storlek')) {
+    activeAdvancedFilters.maxSize = null;
+    maxSizeInput.value = '';
+  } else if (filterText.includes('Från datum')) {
+    activeAdvancedFilters.minDate = null;
+    minDateInput.value = '';
+  } else if (filterText.includes('Till datum')) {
+    activeAdvancedFilters.maxDate = null;
+    maxDateInput.value = '';
+  }
+
+  updateActiveFiltersDisplay();
+  // Auto-apply filters after removal
+  applyAdvancedFilters();
+}
+
+// SOLID: Single Responsibility - Clear all advanced filters
+function clearAllAdvancedFilters() {
+  activeAdvancedFilters = {
+    minSize: null,
+    maxSize: null,
+    minDate: null,
+    maxDate: null
+  };
+
+  // Clear input fields
+  minSizeInput.value = '';
+  maxSizeInput.value = '';
+  minDateInput.value = '';
+  maxDateInput.value = '';
+
+  // Remove active state from preset buttons
+  const presetButtons = document.querySelectorAll('.preset-btn');
+  presetButtons.forEach(btn => btn.classList.remove('active'));
+
+  updateActiveFiltersDisplay();
+  // Perform search without advanced filters
+  performSearch(searchInput.value);
+}
+
+// SOLID: Single Responsibility - Apply advanced filters to search
+async function applyAdvancedFilters() {
+  // Update active filters from input fields
+  activeAdvancedFilters.minSize = minSizeInput.value ? parseInt(minSizeInput.value) : null;
+  activeAdvancedFilters.maxSize = maxSizeInput.value ? parseInt(maxSizeInput.value) : null;
+  activeAdvancedFilters.minDate = minDateInput.value || null;
+  activeAdvancedFilters.maxDate = maxDateInput.value || null;
+
+  updateActiveFiltersDisplay();
+
+  // Perform enhanced search with advanced filters
+  await performEnhancedSearch(searchInput.value);
+}
+
+// SOLID: Single Responsibility - Enhanced search with advanced filters
+async function performEnhancedSearch(searchTerm) {
+  const selectedFileType = fileTypeFilter.value;
+  const selectedOperator = searchOperator.value;
+
+  // Show loading animation
+  clearSearchResultsPreservingFavorites();
+  searchResults.innerHTML += '<div class="search-loading"><div class="loading"></div>Söker med avancerade filter...</div>';
+  mainContent.style.display = 'none';
+
+  try {
+    // Build URL with all filters
+    let url = `/api/database-metadata?q=${encodeURIComponent(searchTerm)}`;
+    if (selectedFileType !== 'all') {
+      url += `&fileType=${selectedFileType}`;
+    }
+    if (selectedOperator !== 'contains') {
+      url += `&operator=${selectedOperator}`;
+    }
+
+    // Add advanced filters to URL
+    if (activeAdvancedFilters.minSize) {
+      url += `&minSize=${activeAdvancedFilters.minSize}`;
+    }
+    if (activeAdvancedFilters.maxSize) {
+      url += `&maxSize=${activeAdvancedFilters.maxSize}`;
+    }
+    if (activeAdvancedFilters.minDate) {
+      url += `&minDate=${activeAdvancedFilters.minDate}`;
+    }
+    if (activeAdvancedFilters.maxDate) {
+      url += `&maxDate=${activeAdvancedFilters.maxDate}`;
+    }
+
+    const response = await fetch(url);
+    const searchData = await response.json();
+
+    // Display results
+    mainContent.style.display = 'none';
+
+    if (searchData.length === 0) {
+      clearSearchResultsPreservingFavorites();
+      searchResults.innerHTML += '<p>Inga filer hittades med de angivna filtren</p>';
+    } else {
+      const hasFilters = Object.values(activeAdvancedFilters).some(filter => filter !== null);
+      const filterInfo = hasFilters ? ' med avancerade filter' : '';
+
+      // Förbättrad text-hantering för att undvika tomma citattecken
+      let headerText;
+      if (searchTerm.trim() === '') {
+        // Om ingen sökterm - visa bara "Filtrerade resultat"
+        headerText = `<h3>Filtrerade resultat${filterInfo} (${searchData.length} filer)</h3>`;
+      } else {
+        // Om sökterm finns - visa "Sökresultat för..."
+        headerText = `<h3>Sökresultat för "${searchTerm}"${filterInfo} (${searchData.length} filer)</h3>`;
+      }
+
+      clearSearchResultsPreservingFavorites();
+      searchResults.innerHTML += headerText;
+
+      // Display results (reuse existing logic from performSearch)
+      for (let item of searchData) {
+        let article = document.createElement('article');
+
+        // Use existing display logic from performSearch function
+        // ... (reuse the article creation code)
+        // For now, let's create a simplified version
+        let fileTitle = item.metadata.title || item.metadata.extractedTitle || item.metadata.info?.Title || item.file;
+
+        let tableRows = [`<tr><td>File:</td><td>${item.file}</td></tr>`];
+        if (item.metadata.fileSize) {
+          tableRows.push(`<tr><td>Size:</td><td>${item.metadata.fileSize}</td></tr>`);
+        }
+
+        let fileIcon = '📄';
+        let downloadPath = '';
+        if (item.metadata.fileType === 'JPG') {
+          fileIcon = '🖼️';
+          downloadPath = `jpgs/${item.file}`;
+        } else if (item.metadata.fileType === 'MP3') {
+          fileIcon = '🎵';
+          downloadPath = `mp3s/${item.file}`;
+        } else if (item.metadata.fileType === 'PPT') {
+          fileIcon = '📊';
+          downloadPath = `ppts/${item.file}`;
+        } else {
+          fileIcon = '📄';
+          downloadPath = `pdfs/${item.file}`;
+        }
+
+        const favoriteButton = createFavoriteButton(item.file, userFavorites.has(item.file));
+
+        article.innerHTML = `
+          <div class="file-header">
+            <h3>${fileIcon} ${fileTitle}</h3>
+            ${favoriteButton}
+          </div>
+          <table>
+            ${tableRows.join('')}
+          </table>
+          <div class="download-section">
+            <a href="${downloadPath}" class="download-link">📥 Download</a>
+          </div>
+        `;
+
+        searchResults.appendChild(article);
+        addFavoriteEventListeners(article);
+      }
+    }
+  } catch (error) {
+    console.error('Enhanced search error:', error);
+    searchResults.innerHTML = `<p>Ett fel uppstod vid avancerad sökning: ${error.message}</p>`;
+  }
+}
+
+// SOLID: Single Responsibility - Handle preset button clicks
+function handlePresetButtons() {
+  const presetButtons = document.querySelectorAll('.preset-btn');
+
+  presetButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const sizePreset = this.dataset.size;
+      const datePreset = this.dataset.date;
+
+      // Remove active state from all preset buttons of the same type
+      if (sizePreset) {
+        document.querySelectorAll('[data-size]').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+
+        if (sizePreset === 'small') {
+          minSizeInput.value = '';
+          maxSizeInput.value = '1024'; // 1MB
+        } else if (sizePreset === 'large') {
+          minSizeInput.value = '5120'; // 5MB
+          maxSizeInput.value = '';
+        }
+      }
+
+      if (datePreset) {
+        document.querySelectorAll('[data-date]').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+
+        const now = new Date();
+        if (datePreset === 'month') {
+          const monthAgo = new Date(now);
+          monthAgo.setMonth(monthAgo.getMonth() - 1);
+          minDateInput.value = monthAgo.toISOString().split('T')[0];
+          maxDateInput.value = now.toISOString().split('T')[0];
+        } else if (datePreset === 'year') {
+          minDateInput.value = `${now.getFullYear()}-01-01`;
+          maxDateInput.value = now.toISOString().split('T')[0];
+        }
+      }
+
+      // Auto-apply filters after preset selection
+      applyAdvancedFilters();
+    });
+  });
+}
+
+// SOLID: Interface Segregation - Advanced filter event listeners
+function addAdvancedFilterEventListeners() {
+  // Toggle advanced filters
+  if (advancedToggleBtn) {
+    advancedToggleBtn.addEventListener('click', toggleAdvancedFilters);
+  }
+
+  // Clear all filters
+  if (clearAllFiltersBtn) {
+    clearAllFiltersBtn.addEventListener('click', clearAllAdvancedFilters);
+  }
+
+  // Apply filters
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener('click', applyAdvancedFilters);
+  }
+
+  // Input field listeners for auto-update
+  [minSizeInput, maxSizeInput, minDateInput, maxDateInput].forEach(input => {
+    if (input) {
+      input.addEventListener('change', updateActiveFiltersDisplay);
+    }
+  });
+
+  // Initialize preset button handlers
+  handlePresetButtons();
+
+  // Initialize active filters display
+  updateActiveFiltersDisplay();
 }
