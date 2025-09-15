@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - SONBERG STUDIO</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Favicon to avoid 404 errors -->
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+  <!-- Chart.js CDN for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <!-- SONBERG STUDIO Header -->
+  <header class="studio-header">
+    <div class="header-container">
+      <div class="logo">
+        <h1 class="logo-text">SONBERG STUDIO</h1>
+        <p class="logo-subtitle">Metadata Search Engine</p>
+      </div>
+      <nav class="main-nav">
+        <a href="index.html" class="nav-link">Hem</a>
+        <a href="index.html" class="nav-link">Sök</a>
+        <a href="dashboard.html" class="nav-link active">📊 Dashboard</a>
+        <a href="about.html" class="nav-link">Om oss</a>
+        <a href="blog.html" class="nav-link">Blogg</a>
+        <a href="contact.html" class="nav-link">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Dashboard innehåll -->
+  <main class="dashboard-container">
+    <div class="dashboard-content">
+      <h1 class="dashboard-title">📊 Enterprise Analytics Dashboard</h1>
+
+      <!-- Loading indicator -->
+      <div id="dashboardLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p>Laddar analytics-data...</p>
+      </div>
+
+      <!-- ROI Section - Most Important -->
+      <section class="dashboard-section roi-section" style="display: none;">
+        <h2 class="section-title">💰 Return on Investment (ROI)</h2>
+        <div class="roi-cards">
+          <div class="roi-card">
+            <div class="roi-number" id="roiTimeSaved">0</div>
+            <div class="roi-label">Timmar sparade/vecka</div>
+          </div>
+          <div class="roi-card">
+            <div class="roi-number" id="roiMoneySaved">0 kr</div>
+            <div class="roi-label">Pengar sparade/månad</div>
+          </div>
+          <div class="roi-card">
+            <div class="roi-number" id="roiEfficiency">0%</div>
+            <div class="roi-label">Effektivitetsökning</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <!-- File Type Distribution -->
+        <section class="dashboard-section chart-section">
+          <h2 class="section-title">📁 Filtypsfördelning</h2>
+          <div class="chart-container">
+            <canvas id="fileTypeChart"></canvas>
+          </div>
+          <div class="chart-stats">
+            <div class="stat-item">
+              <span class="stat-label">Total filer:</span>
+              <span class="stat-value" id="totalFiles">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Total storlek:</span>
+              <span class="stat-value" id="totalSize">0 MB</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Most Searched Files -->
+        <section class="dashboard-section chart-section">
+          <h2 class="section-title">🔍 Mest sökta kategorier</h2>
+          <div class="chart-container">
+            <canvas id="searchChart"></canvas>
+          </div>
+          <div class="search-stats">
+            <div class="stat-item">
+              <span class="stat-label">Totala sökningar:</span>
+              <span class="stat-value" id="totalSearches">0</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Storage Analytics -->
+        <section class="dashboard-section chart-section full-width">
+          <h2 class="section-title">💾 Storage Analytics</h2>
+          <div class="chart-container">
+            <canvas id="storageChart"></canvas>
+          </div>
+          <div class="storage-breakdown">
+            <div class="storage-item">
+              <span class="storage-type">PDF</span>
+              <span class="storage-bar"><div class="bar pdf-bar"></div></span>
+              <span class="storage-size" id="pdfStorage">0 MB</span>
+            </div>
+            <div class="storage-item">
+              <span class="storage-type">JPG</span>
+              <span class="storage-bar"><div class="bar jpg-bar"></div></span>
+              <span class="storage-size" id="jpgStorage">0 MB</span>
+            </div>
+            <div class="storage-item">
+              <span class="storage-type">MP3</span>
+              <span class="storage-bar"><div class="bar mp3-bar"></div></span>
+              <span class="storage-size" id="mp3Storage">0 MB</span>
+            </div>
+            <div class="storage-item">
+              <span class="storage-type">PPT</span>
+              <span class="storage-bar"><div class="bar ppt-bar"></div></span>
+              <span class="storage-size" id="pptStorage">0 MB</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- System Health Section -->
+      <section class="dashboard-section system-section" style="display: none;">
+        <h2 class="section-title">⚡ System Status</h2>
+        <div class="system-stats">
+          <div class="system-stat">
+            <div class="system-icon">🔥</div>
+            <div class="system-info">
+              <div class="system-label">Genomsnittlig responstid</div>
+              <div class="system-value" id="responseTime">0ms</div>
+            </div>
+          </div>
+          <div class="system-stat">
+            <div class="system-icon">📈</div>
+            <div class="system-info">
+              <div class="system-label">Uptime</div>
+              <div class="system-value" id="systemUptime">99.9%</div>
+            </div>
+          </div>
+          <div class="system-stat">
+            <div class="system-icon">💾</div>
+            <div class="system-info">
+              <div class="system-label">Databas status</div>
+              <div class="system-value system-healthy" id="databaseStatus">Healthy</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Business Insights -->
+      <section class="dashboard-section insights-section" style="display: none;">
+        <h2 class="section-title">💡 Business Insights</h2>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-icon">🎯</div>
+            <div class="insight-content">
+              <h3>Mest populära filtyp</h3>
+              <p id="popularFileType">PDF-dokument dominerar med 45% av alla sökningar</p>
+            </div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">📊</div>
+            <div class="insight-content">
+              <h3>Användningsmönster</h3>
+              <p id="usagePattern">Peak-användning sker 09:00-11:00 på vardagar</p>
+            </div>
+          </div>
+          <div class="insight-card">
+            <div class="insight-icon">🚀</div>
+            <div class="insight-content">
+              <h3>Optimeringsmöjlighet</h3>
+              <p id="optimization">Indexering av fler metadata-fält kan öka sökprecision med 25%</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- SONBERG STUDIO Footer -->
+  <footer class="studio-footer">
+    <div class="footer-container">
+      <div class="footer-section">
+        <h3>SONBERG STUDIO</h3>
+        <p>Enterprise Metadata Analytics Dashboard</p>
+      </div>
+      <div class="footer-section">
+        <h4>Tekniker</h4>
+        <p>Chart.js • MySQL Analytics • Real-time Data</p>
+      </div>
+      <div class="footer-section">
+        <h4>Kontakt</h4>
+        <p>Lucy Sonberg</p>
+        <a href="https://github.com/LucyVers/MetaSearch-Pro" target="_blank" class="footer-link">GitHub</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 SONBERG STUDIO. Alla rättigheter förbehållna.</p>
+    </div>
+  </footer>
+
+  <!-- Dashboard JavaScript -->
+  <script src="dashboard.js"></script>
+</body>
+
+</html>

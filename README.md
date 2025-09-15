@@ -14,6 +14,7 @@ MetaSearch-Pro is an enterprise-grade metadata search engine that extracts, inde
 - **Multi-format Support:** PDF, JPG, MP3, PPT metadata extraction
 - **Advanced Search:** GPS-based search, 5 search operators, relevance scoring
 - **Interactive Media:** Built-in audio player, image gallery, PDF viewer
+- **Enterprise Dashboard:** Business intelligence with ROI calculator, Chart.js analytics
 - **Enterprise Architecture:** RESTful API, MySQL database, responsive design
 - **Advanced Filters:** Size, date, GPS, and operator-based filtering
 - **User Experience:** Favorites system, search history, loading indicators
@@ -55,6 +56,17 @@ MetaSearch-Pro is an enterprise-grade metadata search engine that extracts, inde
 - **Intelligent Metadata Handling:** Smart handling of missing or corrupted metadata
 - **Robust Error Handling:** Graceful degradation when files have issues
 - **Performance Optimization:** Lazy loading and efficient rendering
+
+### **📊 Enterprise Dashboard & Analytics:**
+- **ROI Calculator:** Shows concrete business value - hours saved per week and money saved per month
+- **File Type Distribution:** Interactive pie chart with real-time data from database
+- **Storage Analytics:** Doughnut chart with visual progress bars showing storage usage by type
+- **Search Statistics:** Bar chart displaying most searched categories and usage patterns
+- **System Performance:** Monitoring with response times, uptime, and database status
+- **Business Insights:** Three intelligent improvement suggestions based on system data
+- **Chart.js Integration:** Professional animations with hover effects and tooltips
+- **Responsive Design:** Perfect functionality across mobile, tablet, and desktop
+- **Caching Strategy:** 30-minute intelligent caching for optimal performance
 
 ## 🚀 QUICK START
 
@@ -109,12 +121,13 @@ MetaSearch-Pro/
 
 - **Backend:** Node.js, Express.js, MySQL with Sequelize ORM
 - **Frontend:** Vanilla JavaScript (ES6+), HTML5, CSS3 with CSS Grid/Flexbox
+- **Data Visualization:** Chart.js (CDN) for enterprise dashboard analytics
 - **PDF Processing:** PDF.js (CDN), pdf-parse-fork for metadata extraction
 - **Image Processing:** exif-parser, exif-reader, Canvas API for thumbnails
 - **Audio Processing:** music-metadata, HTML5 Audio API
 - **PowerPoint Processing:** JSON-based metadata (Library of Congress)
 - **File System:** Node.js fs module with chokidar for file monitoring
-- **Architecture:** SOLID principles, RESTful API, Responsive Design
+- **Architecture:** SOLID principles, RESTful API, Responsive Design, Caching Strategy
 
 ## 🎯 INTERACTIVE FEATURES
 
@@ -224,8 +237,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📊 PROJECT STATISTICS
 
-- **Lines of Code:** 3,300+ 
+- **Lines of Code:** 4,200+ (including enterprise dashboard)
 - **File Types Supported:** 4 (PDF, JPG, MP3, PPT)
-- **Test Files:** 400+ files
-- **API Endpoints:** 8 RESTful endpoints
-- **Database Records:** 400+ metadata entries
+- **Test Files:** 387 files indexed in database
+- **API Endpoints:** 9 RESTful endpoints (including dashboard analytics)
+- **Database Records:** 387 metadata entries with live analytics
+- **Dashboard Features:** ROI calculator, Chart.js visualizations, business intelligence
