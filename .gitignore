@@ -13,6 +13,9 @@ frontend/jpgs/
 *.jpg
 *.jpeg
 *.png
+!docs/screenshots/*.png
+!docs/screenshots/*.jpg
+!docs/screenshots/*.jpeg
 
 # MP3 files and test data
 frontend/mp3s/
