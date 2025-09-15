@@ -6,6 +6,45 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-09-14 - UI/UX FÖRBÄTTRINGAR: KNAPPAR OCH AVANCERADE FILTER 🎨
+
+**UI-FOKUS:** Idag arbetade jag med att förbättra användargränssnittet och lade till avancerade filter-funktioner för en mer professionell upplevelse.
+
+**🎨 KNAPPSTYLING OCH ALIGNMENT:**
+- **Problem:** "Avancerat"-knappen hamnade 10px lägre än de andra knapparna
+- **Rotorsak:** `.advanced-search-toggle` hade `margin-top: 10px`
+- **Lösning:** Ändrade `margin-top` från `10px` till `0px`
+- **Resultat:** Alla tre knappar (Alla filtyper, Innehåller, Avancerat) hamnar nu på samma höjd
+
+**🔧 AVANCERADE FILTER-SYSTEM:**
+- **Lagt till:** Komplett avancerat filter-system med UI
+- **Funktioner:** 
+  - Filtyp-filter (PDF, JPG, MP3, PPT)
+  - Sökoperatorer (contains, equals, not_equals, greater_than, less_than)
+  - Storlek-filter med min/max värden
+  - Datum-filter för skapelse/modifiering
+  - GPS-baserad sökning med koordinater
+- **Frontend:** 47 nya rader HTML för filter-interface
+- **Backend:** 407 nya rader JavaScript för avancerad logik
+- **Styling:** 319 nya rader CSS för professionell design
+
+**🎯 DESIGN-FÖRBÄTTRINGAR:**
+- **Konsekvent knappbredd:** Alla knappar har nu samma `min-width`
+- **Renare design:** Tog bort skiftnyckel-ikon från "Avancerat"-knappen
+- **Visuell konsistens:** Alla knappar har samma padding, border-radius och font-size
+- **Hover-effekter:** Förbättrade interaktiva effekter
+
+**📊 TEKNISKA DETALJER:**
+- **Filer ändrade:** `frontend/index.html`, `frontend/main.js`, `frontend/style.css`
+- **Totalt:** 752 nya rader kod
+- **Funktionalitet:** Behåller all befintlig funktionalitet
+- **Kompatibilitet:** Fungerar med befintligt databas-system
+
+**🚀 RESULTAT:**
+Systemet har nu en professionell UI med avancerade filter-funktioner som gör det lättare för användare att hitta specifika filer baserat på olika kriterier.
+
+---
+
 ### 2025-09-13 - KRITISK SÖKBUG FIXAD! SYSTEMET NU FULLT FUNKTIONELLT 🔥
 
 **AKUT PROBLEM LÖST:** Jag har fixat en kritisk bug som gjorde att sökning på filtyper (pdf, jpg, mp3, ppt) bara gav 6 resultat istället för 100+ filer.
