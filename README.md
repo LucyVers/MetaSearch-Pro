@@ -231,6 +231,34 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 **Status:** Production Ready  
 **Course:** Metadata - Individual Project  
 
+## 📸 SCREENSHOTS
+
+### 📊 Enterprise Analytics Dashboard
+![Dashboard Overview](docs/screenshots/EnterpriseAnalyticsDashboard.png)
+*Complete dashboard view with ROI metrics, file type distribution, and business intelligence*
+
+### 💰 Business Intelligence & ROI
+![Business Insights](docs/screenshots/BusinessInsights.png)
+*ROI calculator showing time saved, efficiency improvements, and cost savings*
+
+### 📁 File Type Distribution
+![File Type Distribution](docs/screenshots/Filtypsfördelning.png)
+*Interactive pie chart displaying distribution of PDF, JPG, MP3, and PPT files*
+
+### 🔍 Search Analytics
+![Search Analytics](docs/screenshots/MestSöktakategorier.png)
+*Bar chart showing most searched categories and user behavior patterns*
+
+### 💾 Storage Analytics
+![Storage Analytics](docs/screenshots/StorageAnalytics.png)
+*Storage management with file size distribution and usage analytics*
+
+### ⚙️ System Status
+![System Status](docs/screenshots/SystemStatus.png)
+*System health monitoring with performance metrics and database status*
+
+> **📋 Detailed Screenshot Guide:** See [docs/screenshots/README.md](docs/screenshots/README.md) for comprehensive descriptions and portfolio usage recommendations.
+
 ## 🚀 LIVE DEMO
 
 [Demo Link] - *Coming Soon*
