@@ -1,9 +1,10 @@
 # MetaSearch-Pro - Enterprise Metadata Search Engine
 
-**Developer:** Lucy Privat  
+**Developer:** Lucy Sonberg  
 **Type:** Full-Stack Web Application  
 **Tech Stack:** Node.js, Express, MySQL, Vanilla JavaScript  
 **Status:** Production Ready  
+**Last Updated:** September 14 2025  
 
 ## 🎯 PROJECT OVERVIEW
 
@@ -11,9 +12,11 @@ MetaSearch-Pro is an enterprise-grade metadata search engine that extracts, inde
 
 ### **Key Features:**
 - **Multi-format Support:** PDF, JPG, MP3, PPT metadata extraction
-- **Advanced Search:** GPS-based search, fuzzy matching, relevance scoring
+- **Advanced Search:** GPS-based search, 5 search operators, relevance scoring
 - **Interactive Media:** Built-in audio player, image gallery, PDF viewer
 - **Enterprise Architecture:** RESTful API, MySQL database, responsive design
+- **Advanced Filters:** Size, date, GPS, and operator-based filtering
+- **User Experience:** Favorites system, search history, loading indicators
 - **Production Ready:** Error handling, performance optimization, security best practices
 
 ## ✨ CORE FEATURES
@@ -31,12 +34,18 @@ MetaSearch-Pro is an enterprise-grade metadata search engine that extracts, inde
 
 ### **🔍 Advanced Search Capabilities:**
 - **Multi-type Filtering:** Search specific file types (PDF, JPG, MP3, PPT)
-- **GPS-based Search:** Find JPG images by location coordinates
+- **5 Search Operators:** contains, equals, not_equals, greater_than, less_than
+- **GPS-based Search:** Find JPG images by location coordinates with 5 GPS operators
+- **Size & Date Filters:** Filter by file size (KB) and creation/modification dates
+- **Relevance Scoring:** Intelligent ranking of search results
+- **Search History:** Save and reuse previous searches
 - **Debounced Search:** Optimized search with intelligent delay
 - **Live Results:** Real-time search results with professional UI
 
 ### **🎨 Professional User Experience:**
-- **Modern Design:** Clean, responsive design with gradient theme
+- **Modern Design:** Clean, responsive design with CSS variables and professional styling
+- **Advanced UI Components:** Toggle buttons, filter panels, and interactive elements
+- **Favorites System:** Save and manage favorite files with database persistence
 - **Cross-device Compatibility:** Perfect functionality on all devices
 - **Keyboard Navigation:** Arrow keys for gallery and PDF navigation
 - **Accessibility:** Screen reader support and ARIA labels
@@ -204,9 +213,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👤 CONTACT
 
-**Developer:** Lucy Privat  
+**Developer:** Lucy Sonberg  
 **Project:** MetaSearch-Pro - Enterprise Metadata Search Engine  
 **Status:** Production Ready  
+**Course:** Metadata - Individual Project  
 
 ## 🚀 LIVE DEMO
 
