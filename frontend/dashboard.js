@@ -411,6 +411,14 @@ function showDashboardSections() {
                 section.style.opacity = '0';
                 section.style.transform = 'translateY(20px)';
 
+                // Special handling for charts-grid: show all chart-sections
+                if (sectionConfig.selector === '.charts-grid') {
+                    const chartSections = section.querySelectorAll('.chart-section');
+                    chartSections.forEach(chartSection => {
+                        chartSection.style.display = 'block';
+                    });
+                }
+
                 // Trigger animation
                 setTimeout(() => {
                     section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
