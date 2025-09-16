@@ -281,11 +281,57 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **Business Case:** "Professionella skärmdumpar för portfolio och demo-presentationer"
 - **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar proffsig presentation och attention to detail
 
+### **27. POWERPOINT-PREVIEW SYSTEM 📊**
+- [ ] **Slide thumbnails** - Visa första sliden som preview
+- [ ] **Slide navigation** - Bläddra genom alla slides
+- [ ] **Presentation metadata** - Extrahera speaker notes, slide titles
+- **Business Case:** "Kompletterar PDF/JPG preview-systemet"
+- **LIA/Konsult Värde:** ⭐⭐⭐ - Visar fullständighet i implementation
+
+### **28. SPRÅKSTANDARDISERING & KODKVALITET 🌐**
+- [ ] **Språkpolicy** - Bestäm engelska ELLER svenska för hela projektet (rekommenderar engelska för kod)
+- [ ] **Kodkommentarer** - Standardisera alla kommentarer till samma språk
+- [ ] **Dokumentation** - Uppdatera README, DOKUMENTATION.md till samma språk
+- [ ] **Variabelnamn** - Konsekvent namngivning (camelCase, snake_case, etc.)
+- [ ] **Code review** - Gå igenom all kod för konsistens
+- **Business Case:** "Professionell kodkvalitet och underhållbarhet"
+- **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar proffsig utvecklingsstandard
+
+### **29. KOMPLETT SYSTEMTESTING & KVALITETSSÄKRING 🧪**
+- [ ] **Funktionstest** - Testa alla features: sökning, favoriter, preview, dashboard
+- [ ] **Kravställning** - Stäm av mot originaluppgift - alla krav uppfyllda?
+- [ ] **Cross-browser testing** - Chrome, Firefox, Safari, Edge
+- [ ] **Mobile responsiveness** - Testa på olika skärmstorlekar
+- [ ] **Performance testing** - Laddningstider, API-responstider
+- [ ] **Error handling** - Testa felhantering och edge cases
+- **Business Case:** "Säkerställ att systemet fungerar perfekt i produktion"
+- **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar kvalitetssäkring och systemtänk
+
+### **30. SÄKERHET & BEST PRACTICES 🔒**
+- [ ] **Säkerhetsaudit** - Inga hårdkodade lösenord eller API-nycklar
+- [ ] **Input validation** - Sanera alla användarinputs
+- [ ] **SQL injection** - Kontrollera att Sequelize används säkert
+- [ ] **XSS protection** - Säker HTML-rendering
+- [ ] **CORS policy** - Korrekt konfiguration för API
+- [ ] **Environment variables** - Känsliga data i .env-filer
+- [ ] **Code cleanup** - Ta bort debug-kod, console.logs, kommenterade rader
+- [ ] **Error logging** - Professionell felhantering istället för console.error
+- **Business Case:** "Produktionssäker system utan säkerhetsrisker"
+- **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar säkerhetsmedvetenhet
+
+### **31. PROJEKTARKIV & FRAMTIDA UTVECKLING 📁**
+- [ ] **Arkivera enterprise-funktioner** - Flytta AI, team collaboration, security till separat arkiv
+- [ ] **Dokumentera arkiverade features** - Beskriv vad som kan utvecklas i framtiden
+- [ ] **Prioriterad roadmap** - Fokusera endast på uppgifter 25-31
+- [ ] **Projektavslut** - Markera projektet som komplett efter uppgift 31
+- **Business Case:** "Fokus på kärnfunktionalitet, arkivera framtida möjligheter"
+- **LIA/Konsult Värde:** ⭐⭐⭐⭐ - Visar projektledningskompetens
+
 ---
 
 ### **🔥 HÖG PRIORITET - ENTERPRISE FUNKTIONER (LIA/KONSULT IMPONERANDE)**
 
-### **27. AI-POWERED CONTENT ANALYSIS 🤖**
+### **ARKIVERAT - AI-POWERED CONTENT ANALYSIS 🤖**
 - [ ] **OpenAI integration** - Automatisk kategorisering av PDF-innehåll (rapport, kontrakt, manual)
 - [ ] **Sentiment analysis** - Analysera ton i dokument (positiv, neutral, negativ)
 - [ ] **Auto-summarization** - Skapa 2-3 menings sammanfattningar av PDF-filer
@@ -293,7 +339,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **Business Case:** "AI läser era dokument och kategoriserar automatiskt - sparar timmar av manuellt arbete"
 - **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar modern AI-stack och automation thinking
 
-### **28. TEAM COLLABORATION FEATURES 👥**
+### **ARKIVERAT - TEAM COLLABORATION FEATURES 👥**
 - [ ] **User management** - Registrering, inloggning, roller (Admin, Editor, Viewer)
 - [ ] **Shared favorites** - Teammedlemmar kan dela viktiga filer med varandra
 - [ ] **File comments** - Kommentera filer för teamkommunikation
@@ -301,7 +347,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **Business Case:** "Flera användare arbetar tillsammans - ökar teamproduktivitet"
 - **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar förståelse för enterprise workflow
 
-### **29. ENTERPRISE SECURITY & COMPLIANCE 🔒**
+### **ARKIVERAT - ENTERPRISE SECURITY & COMPLIANCE 🔒**
 - [ ] **Role-based access control** - Olika användare ser olika filer
 - [ ] **Audit trail** - Logga alla användareaktioner (GDPR-compliance)
 - [ ] **Data retention policies** - Automatisk rensning av gamla filer
@@ -311,9 +357,9 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 ---
 
-### **💼 MEDIUM PRIORITET - ANVÄNDBARA FUNKTIONER**
+### **💼 ARKIVERAT - MEDIUM PRIORITET - ANVÄNDBARA FUNKTIONER**
 
-### **30. ADVANCED FILE MANAGEMENT 📁**
+### **ARKIVERAT - ADVANCED FILE MANAGEMENT 📁**
 - [ ] **Bulk operations** - Markera flera filer och ta bort/flytta/tagga samtidigt
 - [ ] **Folder structure** - Organisera filer i mappar och undermappar
 - [ ] **File versioning** - Håll koll på olika versioner av samma dokument
@@ -321,7 +367,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **Business Case:** "Hantera tusentals filer effektivt med bulk-operationer"
 - **LIA/Konsult Värde:** ⭐⭐⭐⭐ - Visar skalbarhetstänk
 
-### **31. INTEGRATION CAPABILITIES 🔌**
+### **ARKIVERAT - INTEGRATION CAPABILITIES 🔌**
 - [ ] **SharePoint integration** - Synka filer från företagets SharePoint
 - [ ] **Google Drive API** - Importera metadata från Google Drive
 - [ ] **Dropbox Business API** - Anslut till företagets Dropbox
@@ -329,7 +375,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **Business Case:** "Integrera med befintliga system - no silos"
 - **LIA/Konsult Värde:** ⭐⭐⭐⭐ - Visar integrationskompetens
 
-### **32. PERFORMANCE OPTIMIZATION ⚡**
+### **ARKIVERAT - PERFORMANCE OPTIMIZATION ⚡**
 - [ ] **Redis caching** - Cacha sökresultat för snabbare respons
 - [ ] **Database indexing** - Optimera MySQL för miljontals filer
 - [ ] **CDN integration** - Snabbare filöverföringar globalt
@@ -337,7 +383,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **Business Case:** "Hantera miljontals filer utan prestandaförlust"
 - **LIA/Konsult Värde:** ⭐⭐⭐⭐ - Visar teknisk djupkunskap
 
-### **33. ETHICAL WEB SCRAPING MODULE 🌐**
+### **ARKIVERAT - ETHICAL WEB SCRAPING MODULE 🌐**
 - [ ] **Cheerio integration** - Extrahera metadata från webbsidor (titel, beskrivning, nyckelord)
 - [ ] **Robots.txt compliance** - Respektera webbplatsers scraping-policy automatiskt
 - [ ] **Rate limiting** - Begränsa requests per sekund för etisk scraping
@@ -349,39 +395,32 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - **Teknisk komplexitet:** Medium (Cheerio, fetch, error handling)
 - **Juridisk risk:** Medium (kräver disclaimer och compliance)
 
-### **34. POWERPOINT-PREVIEW SYSTEM**
-- [ ] **Slide thumbnails** - Visa första sliden som preview
-- [ ] **Slide navigation** - Bläddra genom alla slides
-- [ ] **Presentation metadata** - Extrahera speaker notes, slide titles
-- **Business Case:** "Kompletterar PDF/JPG preview-systemet"
-- **LIA/Konsult Värde:** ⭐⭐⭐ - Visar fullständighet i implementation
-
 ---
 
-### **🔧 LÅG PRIORITET - NICE-TO-HAVE**
+### **🔧 ARKIVERAT - LÅG PRIORITET - NICE-TO-HAVE**
 
-### **35. MOBILE APP & PWA 📱**
+### **ARKIVERAT - MOBILE APP & PWA 📱**
 - [ ] **Progressive Web App** - Fungerar offline, installeras som app
 - [ ] **React Native** - Native mobile app för iOS/Android
 - [ ] **Mobile-optimized search** - Touch-friendly gränssnitt
 - **Business Case:** "Sök filer från telefonen, även offline"
 - **LIA/Konsult Värde:** ⭐⭐ - Nice-to-have men inte kritiskt
 
-### **36. THEMING & CUSTOMIZATION 🎨**
+### **ARKIVERAT - THEMING & CUSTOMIZATION 🎨**
 - [ ] **Brand customization** - Kundlogga, företagsfärger
 - [ ] **Dark/Light mode** - Användare väljer tema
 - [ ] **Custom CSS** - Företag kan anpassa utseendet
 - **Business Case:** "Matcha ert företags grafiska profil"
 - **LIA/Konsult Värde:** ⭐⭐ - Visar UX-tänk men är kosmetiskt
 
-### **37. GEODATA-UTÖKNING**
+### **ARKIVERAT - GEODATA-UTÖKNING**
 - [ ] **Geocoding-funktion** - Koordinater → "Stockholm, Sweden"
 - [ ] **Interaktiv världskarta** - Visa alla filer som prickar på karta
 - [ ] **Radie-sökning** - "Filer inom 10km från Stockholm"
 - **Business Case:** "Geografisk visualisering för globala företag"
 - **LIA/Konsult Värde:** ⭐⭐ - GPS fungerar redan, detta är bonus
 
-### **38. SÖKHISTORIK & PERSONALISERING**
+### **ARKIVERAT - SÖKHISTORIK & PERSONALISERING**
 - [ ] **Sökhistorik** - Spara och återanvänd tidigare sökningar
 - [ ] **Personalized dashboard** - Anpassat för varje användare
 - [ ] **Smart recommendations** - "Filer du kanske gillar"
