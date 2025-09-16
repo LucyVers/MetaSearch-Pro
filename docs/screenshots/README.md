@@ -40,17 +40,53 @@ This guide provides detailed descriptions of all screenshots for the MetaSearch 
 **Portfolio Value:** ⭐⭐⭐⭐ - Shows system monitoring and performance optimization skills
 **Technical Features:** Real-time system metrics, database monitoring, performance tracking
 
+## 🔍 Search Functionality Screenshots
+
+### 7. searchFunctionality.png
+**Purpose:** Search functionality demonstration with advanced filters
+**Description:** Shows the main search interface with file type filters, search operators, and advanced search options
+**Portfolio Value:** ⭐⭐⭐⭐⭐ - Demonstrates core application functionality and user interface design
+**Technical Features:** Real-time search, file type filtering, advanced search operators, responsive design
+
+## 📄 File Preview System Screenshots
+
+### 8. PDF1.png
+**Purpose:** PDF preview system demonstration
+**Description:** Shows PDF file preview functionality with embedded viewer and metadata display
+**Portfolio Value:** ⭐⭐⭐⭐ - Demonstrates file handling and preview capabilities
+**Technical Features:** PDF.js integration, metadata extraction, file preview system
+
+### 9. PDF2.png
+**Purpose:** PDF preview system with multiple files
+**Description:** Shows PDF preview system handling multiple files with navigation and metadata
+**Portfolio Value:** ⭐⭐⭐⭐ - Shows scalability and multi-file handling capabilities
+**Technical Features:** Multi-file support, navigation system, metadata display
+
+### 10. PDF3.png
+**Purpose:** PDF preview system with search integration
+**Description:** Shows PDF preview integrated with search results and file management
+**Portfolio Value:** ⭐⭐⭐⭐ - Demonstrates integrated workflow and user experience
+**Technical Features:** Search integration, file management, seamless user experience
+
 ## 🎯 Portfolio Usage
 
 ### For Job Applications:
 - **EnterpriseAnalyticsDashboard.png** - Use as main showcase image
 - **BusinessInsights.png** - Highlight business value and ROI calculations
+- **searchFunctionality.png** - Show core application functionality
 - **Filtypsfördelning.png** - Show data visualization skills
 
 ### For Technical Presentations:
 - **SystemStatus.png** - Demonstrate system monitoring capabilities
 - **StorageAnalytics.png** - Show storage optimization and analytics
 - **MestSöktakategorier.png** - Highlight user behavior analysis
+- **PDF1-3.png** - Demonstrate file handling and preview capabilities
+
+### For Portfolio Showcase:
+- **searchFunctionality.png** - Core search functionality with advanced filters
+- **PDF1.png** - PDF preview system demonstration
+- **PDF2.png** - Multi-file handling capabilities
+- **PDF3.png** - Integrated workflow and user experience
 
 ### For Documentation:
 - All images can be used in README.md, documentation, and project presentations
