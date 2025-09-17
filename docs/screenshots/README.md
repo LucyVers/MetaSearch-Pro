@@ -57,7 +57,28 @@ This guide provides detailed descriptions of all screenshots for the MetaSearch 
 
 ## 📄 File Preview System Screenshots
 
-### 8. PDF1.png
+### 8. Bild1.png
+![Image Gallery Normal View](Bild1.png)
+**Purpose:** Image Gallery system demonstration - normal view
+**Description:** Shows complete metadata for yellow-leaves.jpg including file info, dimensions (2414 x 1814), camera (Apple iPhone 15 Pro), and location (42.035038, -70.938020). Image Gallery section displays thumbnail preview with "Open in Gallery" button.
+**Portfolio Value:** ⭐⭐⭐⭐ - Demonstrates metadata extraction and gallery functionality
+**Technical Features:** EXIF metadata parsing, image preview, gallery system, GPS coordinate handling
+
+### 9. Bild2.png
+![Image Gallery Preview](Bild2.png)
+**Purpose:** Image Gallery system demonstration - gallery preview
+**Description:** Shows expanded Image Gallery view with larger preview of yellow-leaves.jpg. Displays metadata summary (dimensions, camera, date) and provides "Open in Gallery" button for full-screen view.
+**Portfolio Value:** ⭐⭐⭐⭐ - Shows interactive gallery and user experience design
+**Technical Features:** Interactive preview, metadata display, lightbox integration
+
+### 10. Bild3.png
+![Image Gallery Bug](Bild3.png)
+**Purpose:** Image Gallery system bug documentation
+**Description:** Shows chopped-up.jpg missing Image Gallery section due to isRenderingGallery flag issue. Only metadata is displayed without preview or gallery functionality.
+**Portfolio Value:** ⭐⭐⭐⭐ - Demonstrates debugging and issue documentation
+**Technical Features:** Bug identification, metadata display, gallery system architecture
+
+### 11. PDF1.png
 ![PDF Preview System](PDF1.png)
 **Purpose:** PDF preview system demonstration
 **Description:** Shows PDF preview with three info buttons: "2 sidor" (2 pages), "141.92 KB" (file size), "PDF 1.3" (version). Main preview area shows "SUCCESS STORY" document with "An Entrepreneurial Heart Beats for Every BY Business" title. Bottom buttons: "Öppna PDF Viewer" (solid purple) and "Ladda ner PDF" (outlined purple).

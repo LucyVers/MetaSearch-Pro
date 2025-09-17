@@ -790,24 +790,8 @@ function addPDFEventListeners(articleElement) {
   }, 100);
 }
 
-// Global variable to prevent infinite loop
-let isRenderingGallery = false;
-
 // SOLID: Single Responsibility - Image gallery creation
 function createImageGallery(imagePath, metadata, allImages, currentIndex) {
-  // Guard condition to prevent infinite loop
-  if (isRenderingGallery) {
-    // Blocked: Already rendering gallery
-    return '';
-  }
-  
-  isRenderingGallery = true;
-  
-  // Reset flag after a short delay to allow next legitimate call
-  setTimeout(() => {
-    isRenderingGallery = false;
-  }, 100);
-  
   // Fallback if allImages is undefined or empty
   if (!allImages || allImages.length === 0) {
     allImages = [{ file: imagePath.split('/').pop(), metadata: metadata }];
