@@ -6,6 +6,53 @@
 
 ## SENASTE ÄNDRINGAR (NYAST FÖRST)
 
+### 2025-09-18 - POWERPOINT PREVIEW SYSTEM FÖRSÖK 📊
+
+**BESLUT:** PowerPoint-preview system implementeras INTE - behåller nuvarande enkla lösning.
+
+**🔍 VAD JAG FÖRSÖKTE:**
+- Implementera PowerPoint-preview system liknande PDF och JPG
+- Skapa thumbnail-rendering för PowerPoint-filer
+- Lägga till slide-navigation och viewer-funktionalitet
+
+**❌ TEKNISKA UTMANINGAR:**
+1. **Första försöket - nodejs-pptx:**
+   - Biblioteket är för Node.js, inte webbläsare
+   - Fel: "Failed to resolve module specifier"
+   - Laddade inte korrekt i frontend
+   - **Lärdom:** Behöver kontrollera bibliotekets kompatibilitet med webbläsare
+
+2. **Andra försöket - PPTXjs:**
+   - Försökte använda jQuery-baserat bibliotek
+   - Fel: "pptxToHtml is not a function"
+   - Komplicerade beroenden (jQuery, fullscreen, jszip, filereader)
+   - Biblioteket laddade inte korrekt från CDN
+   - **Lärdom:** PowerPoint-rendering i webbläsare är mycket mer komplext än PDF/JPG
+
+3. **Tredje försöket - XLSX:**
+   - Fel bibliotek för PowerPoint (XLSX är för Excel)
+   - **Lärdom:** Behöver vara mer noggrann med biblioteksval och planering
+
+**⏰ TIDSPRESS:**
+- Projektet ska redovisas imorgon
+- 2+ timmar spenderade på komplicerade lösningar
+- Risk att förstöra fungerande system
+
+**✅ SLUTLIG BESLUT:**
+- Behåller nuvarande enkla lösning: metadata + download-knapp
+- PowerPoint-filer visar korrekt metadata och kan laddas ner
+- Systemet fungerar stabilt och är redo för presentation
+- PowerPoint-preview kan implementeras i framtiden med mer tid
+- **Pragmatiskt beslut:** Bättre att ha fungerande system än riskera att förstöra det
+
+**📝 FRAMTIDA MÖJLIGHETER:**
+- Enkel statisk thumbnail (placeholder-bild)
+- Extern PowerPoint-viewer integration
+- Server-side PowerPoint-till-bild konvertering
+- Kräver mer tid och planering än tillgängligt nu
+
+**🔒 SÄKERHET:** Inga ändringar gjordes - systemet återställdes till fungerande tillstånd.
+
 ### 2025-09-17 - BILDGALLERI RENDERING FIX 🖼️
 
 **SÄKERHETSÅTGÄRDER FÖRE ÄNDRING:**
