@@ -3,10 +3,10 @@
 **Developer:** Lucy Sonberg  
 **Type:** Full-Stack Web Application  
 **Tech Stack:** Node.js, Express, MySQL, Vanilla JavaScript  
-**Status:** Production Ready  
+**Status:** Ready  
 **Last Updated:** September 14 2025  
 
-## 🎯 PROJECT OVERVIEW
+## PROJECT OVERVIEW
 
 MetaSearch-Pro is an enterprise-grade metadata search engine that extracts, indexes, and searches metadata from multiple file types. Built with modern web technologies, it provides instant search capabilities across PDF documents, JPG images, MP3 audio files, and PowerPoint presentations.
 
@@ -33,7 +33,7 @@ MetaSearch-Pro is an enterprise-grade metadata search engine that extracts, inde
 - **Image Gallery with Lightbox:** Full-screen viewing with zoom and keyboard navigation
 - **PDF Preview System:** Thumbnail generation and full-screen PDF viewer with page navigation
 
-### **🔍 Advanced Search Capabilities:**
+### **Advanced Search Capabilities:**
 - **Multi-type Filtering:** Search specific file types (PDF, JPG, MP3, PPT)
 - **5 Search Operators:** contains, equals, not_equals, greater_than, less_than
 - **GPS-based Search:** Find JPG images by location coordinates with 5 GPS operators
@@ -57,7 +57,7 @@ MetaSearch-Pro is an enterprise-grade metadata search engine that extracts, inde
 - **Robust Error Handling:** Graceful degradation when files have issues
 - **Performance Optimization:** Lazy loading and efficient rendering
 
-### **📊 Enterprise Dashboard & Analytics:**
+### **Enterprise Dashboard & Analytics:**
 - **ROI Calculator:** Shows concrete business value - hours saved per week and money saved per month
 - **File Type Distribution:** Interactive pie chart with real-time data from database
 - **Storage Analytics:** Doughnut chart with visual progress bars showing storage usage by type
@@ -92,27 +92,77 @@ open http://localhost:3000
 
 > **Note:** For testing and evaluation instructions, see [docs/teacher-instructions.md](docs/teacher-instructions.md)
 
+## API ENDPOINTS
+
+### **Core Search & Metadata:**
+- `GET /api/database-metadata` - Get all metadata with filtering
+- `GET /api/search-history` - Get user search history
+- `GET /api/favorites` - Get user favorites
+- `POST /api/favorites` - Add file to favorites
+- `DELETE /api/favorites/:filename` - Remove file from favorites
+
+### **Dashboard Analytics:**
+- `GET /api/dashboard-analytics` - Get business intelligence data
+
+### **Example API Usage:**
+```javascript
+// Get all metadata
+fetch('/api/database-metadata')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Search with filters
+fetch('/api/database-metadata?search=health&fileType=PDF')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Add to favorites
+fetch('/api/favorites', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ filename: 'document.pdf' })
+});
+```
+
 ## 📁 PROJECT STRUCTURE
 
 ```
 MetaSearch-Pro/
 ├── index.js                    # Express.js backend server
 ├── models.js                   # MySQL database models (Sequelize ORM)
+├── database.js                 # MySQL database connection
 ├── package.json               # Project configuration and dependencies
+├── package-lock.json          # Dependency lock file
+├── credentials-example.json   # Database credentials template
+├── convert-csv-to-json.js     # CSV to JSON conversion utility
+├── GIT-BRANCHING-GUIDE.md     # Git workflow guide
+├── todo.md                    # Project task management
 ├── data/
-│   └── ppt-metadata.json     # PowerPoint metadata (1001 records)
+│   ├── ppt-metadata.json     # PowerPoint metadata (1001 records)
+│   └── _lcwa_gov_powerpoint_metadata.csv  # CSV metadata
 ├── frontend/
-│   ├── index.html            # Main web application with PDF.js CDN
+│   ├── index.html            # Main web application
 │   ├── main.js              # Frontend logic (SOLID principles)
 │   ├── style.css            # Professional styling and responsive design
 │   ├── about.html           # About page
+│   ├── blog.html            # Blog section
 │   ├── contact.html         # Contact page
+│   ├── contact.js           # Contact form handling
+│   ├── dashboard.html       # Analytics dashboard
+│   ├── dashboard.js         # Dashboard functionality
 │   ├── pdfs/                # PDF files (Git ignored)
 │   ├── jpgs/                # JPG images (Git ignored)
 │   ├── mp3s/                # MP3 audio files (Git ignored)
 │   └── ppts/                # PowerPoint files (Git ignored)
 ├── docs/
-│   └── teacher-instructions.md  # Testing and evaluation guide
+│   ├── teacher-instructions.md  # Testing and evaluation guide
+│   └── screenshots/         # Project screenshots and documentation
+├── projektuppgift/          # Project assignment and blog posts
+│   ├── README.md            # Blog section overview
+│   ├── uppgift.md           # Original project assignment
+│   ├── metadata-och-webbanalys.md  # Professional blog post
+│   ├── semantisk-webb-mikrodata.md  # Technical blog post
+│   └── webbanalys-for-foretag.md   # Business blog post
 ├── DOKUMENTATION.md          # Detailed project documentation
 └── README.md                 # This file - project overview
 ```
@@ -129,7 +179,7 @@ MetaSearch-Pro/
 - **File System:** Node.js fs module with chokidar for file monitoring
 - **Architecture:** SOLID principles, RESTful API, Responsive Design, Caching Strategy
 
-## 🎯 INTERACTIVE FEATURES
+## INTERACTIVE FEATURES
 
 ### **🎵 MP3 PLAYER:**
 - **HTML5 Audio API:** Professional audio player with custom controls
@@ -137,7 +187,7 @@ MetaSearch-Pro/
 - **Playback Controls:** Play/pause, speed control, progress bar
 - **Responsive Design:** Adapts to screen size
 
-### **📸 IMAGE GALLERY WITH LIGHTBOX:**
+### **IMAGE GALLERY WITH LIGHTBOX:**
 - **Full-screen Viewing:** Professional lightbox experience
 - **Zoom Functionality:** Built-in zoom for detail viewing
 - **Keyboard Navigation:** Arrow keys for navigation between images
@@ -149,9 +199,9 @@ MetaSearch-Pro/
 - **Full-screen Viewer:** Professional PDF viewer with zoom controls
 - **Page Navigation:** ◀ Previous / Next ▶ buttons
 - **Keyboard Support:** Arrow keys for page navigation
-- **Zoom Controls:** 🔍+ 🔍- for in/out zooming
+- **Zoom Controls:** + and - for in/out zooming
 
-## 📊 EXTRACTED METADATA
+## EXTRACTED METADATA
 
 ### **PDF Files:**
 - **Title:** From PDF metadata or extracted from text
@@ -194,7 +244,7 @@ MetaSearch-Pro/
 
 ## 💼 BUSINESS VALUE & ROI
 
-### **🎯 PROBLEMS SOLVED:**
+### **PROBLEMS SOLVED:**
 - **Time Constraints:** Manual file management takes hours per day
 - **Information Loss:** Important documents get lost in archives
 - **Inefficient Search:** "Where is the March contract?" = 2 hours of searching
@@ -202,9 +252,9 @@ MetaSearch-Pro/
 
 ### **✅ SOLUTIONS:**
 - **⚡ Instant Search:** 2 hours → 30 seconds
-- **🔍 Complete Overview:** All documents indexed and searchable
+- **Complete Overview:** All documents indexed and searchable
 - **🤝 Secure Sharing:** Controlled access to metadata
-- **📊 Proactive Insights:** Automatic categorization and tagging
+- **Proactive Insights:** Automatic categorization and tagging
 
 ### **💰 ROI CALCULATION:**
 ```
@@ -220,20 +270,17 @@ Company with 10,000 documents:
 - **AI Integration:** Automatic categorization and summaries
 
 
-## 📝 LICENSE
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 👤 CONTACT
 
 **Developer:** Lucy Sonberg  
 **Project:** MetaSearch-Pro - Enterprise Metadata Search Engine  
-**Status:** Production Ready  
+**Status:** Ready  
 **Course:** Metadata - Individual Project  
 
-## 📸 SCREENSHOTS
+## SCREENSHOTS
 
-### 📊 Enterprise Analytics Dashboard
+### Enterprise Analytics Dashboard
 ![Dashboard Overview](docs/screenshots/EnterpriseAnalyticsDashboard.png)
 *Complete dashboard view with ROI metrics, file type distribution, and business intelligence*
 
@@ -245,27 +292,23 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ![File Type Distribution](docs/screenshots/Filtypsfördelning.png)
 *Interactive pie chart displaying distribution of PDF, JPG, MP3, and PPT files*
 
-### 🔍 Search Analytics
+### Search Analytics
 ![Search Analytics](docs/screenshots/MestSöktakategorier.png)
 *Bar chart showing most searched categories and user behavior patterns*
 
-### 💾 Storage Analytics
-![Storage Analytics](docs/screenshots/StorageAnalytics.png)
+### Storage Analytics
+![Storage Analytics](docs/screenshots/Storage.png)
 *Storage management with file size distribution and usage analytics*
 
 ### ⚙️ System Status
 ![System Status](docs/screenshots/SystemStatus.png)
 *System health monitoring with performance metrics and database status*
 
-> **📋 Detailed Screenshot Guide:** See [docs/screenshots/README.md](docs/screenshots/README.md) for comprehensive descriptions and portfolio usage recommendations.
+> **Detailed Screenshot Guide:** See [docs/screenshots/README.md](docs/screenshots/README.md) for comprehensive descriptions and portfolio usage recommendations.
 
-## 🚀 LIVE DEMO
 
-[Demo Link] - *Coming Soon*
+## PROJECT STATISTICS
 
-## 📊 PROJECT STATISTICS
-
-- **Lines of Code:** 4,200+ (including enterprise dashboard)
 - **File Types Supported:** 4 (PDF, JPG, MP3, PPT)
 - **Test Files:** 387 files indexed in database
 - **API Endpoints:** 9 RESTful endpoints (including dashboard analytics)

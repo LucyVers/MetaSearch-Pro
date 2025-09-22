@@ -1,20 +1,20 @@
-/* SONBERG STUDIO - Modern lila färgschema */
+/* SONBERG STUDIO - Modern purple color scheme */
 :root {
-  --primary-color: #8B5CF6;      /* Vibrerande lila */
-  --primary-hover: #7C3AED;      /* Mörkare lila vid hover */
-  --secondary-color: #A78BFA;    /* Ljusare lila */
-  --secondary-hover: #8B5CF6;    /* Mörkare vid hover */
-  --background-color: #F3F4F6;   /* Ljus grå bakgrund */
-  --surface-color: #ffffff;      /* Vit yta */
-  --text-primary: #1F2937;       /* Mörk grå text */
-  --text-secondary: #6B7280;     /* Ljusare grå text */
-  --border-color: #E5E7EB;       /* Ljus grå border */
-  --success-color: #10b981;      /* Grön för framgång */
-  --warning-color: #f59e0b;      /* Orange för varning */
-  --error-color: #ef4444;        /* Röd för fel */
+  --primary-color: #8B5CF6;      /* Vibrant purple */
+  --primary-hover: #7C3AED;      /* Darker purple on hover */
+  --secondary-color: #A78BFA;    /* Lighter purple */
+  --secondary-hover: #8B5CF6;    /* Darker on hover */
+  --background-color: #F3F4F6;   /* Light gray background */
+  --surface-color: #ffffff;      /* White surface */
+  --text-primary: #1F2937;       /* Dark gray text */
+  --text-secondary: #6B7280;     /* Lighter gray text */
+  --border-color: #E5E7EB;       /* Light gray border */
+  --success-color: #10b981;      /* Green for success */
+  --warning-color: #f59e0b;      /* Orange for warning */
+  --error-color: #ef4444;        /* Red for error */
   
-  /* SONBERG STUDIO specifika färger */
-  --studio-accent: #C084FC;      /* Ljus lila accent */
+  /* SONBERG STUDIO specific colors */
+  --studio-accent: #C084FC;      /* Light purple accent */
   --studio-gradient: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
   --studio-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.1), 0 2px 4px -1px rgba(139, 92, 246, 0.06);
 }
@@ -27,7 +27,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  /* Förbättrad text-rendering för skarpare text */
+  /* Improved text-rendering for sharper text */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -193,7 +193,7 @@ main {
   font-size: 0.9rem;
 }
 
-/* Responsiv design för SONBERG STUDIO */
+/* Responsive design for SONBERG STUDIO */
 @media (max-width: 768px) {
   .header-container {
     flex-direction: column;
@@ -601,7 +601,7 @@ main {
   margin-bottom: 0.5rem;
 }
 
-/* ===== FORMULÄR BEKRÄFTELSE ===== */
+/* ===== FORM CONFIRMATION ===== */
 .confirmation-message {
   position: fixed;
   top: 50%;
@@ -655,7 +655,7 @@ main {
   transform: translateY(-1px);
 }
 
-/* ===== RESPONSIVE DESIGN FÖR ABOUT/CONTACT ===== */
+/* ===== RESPONSIVE DESIGN FOR ABOUT/CONTACT ===== */
 @media (max-width: 768px) {
   .about-container,
   .contact-container {
@@ -817,7 +817,7 @@ main {
   cursor: pointer;
   min-width: 180px;
 
-  /* Normalisering för att matcha input/select */
+  /* Normalization to match input/select */
   box-sizing: border-box;
   line-height: normal;
   vertical-align: baseline;
@@ -1765,7 +1765,7 @@ h3 {
   transform: translateY(-2px);
 }
 
-/* Responsive design för blog */
+/* Responsive design for blog */
 @media (max-width: 1400px) {
   .blog-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -2309,7 +2309,7 @@ h3 {
   margin: 0 0 0.5rem 0;
   font-weight: 600;
   text-align: center; /* Centrera titel */
-  word-wrap: break-word; /* Bryt långa filnamn */
+  word-wrap: break-word; /* Break long filenames */
   overflow-wrap: break-word;
   hyphens: auto;
   max-width: 100%;
@@ -2845,7 +2845,7 @@ h3 {
   border: 1px solid var(--border-color);
 }
 
-/* Responsiv design för favoriter */
+/* Responsive design for favorites */
 @media (max-width: 768px) {
   .file-header {
     flex-direction: column;

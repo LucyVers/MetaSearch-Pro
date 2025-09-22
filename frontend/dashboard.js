@@ -1,15 +1,4 @@
-/**
- * DASHBOARD.JS - Enterprise Analytics Dashboard
- *
- * This script handles:
- * - Chart.js integration for data visualization
- * - ROI calculations and display
- * - Real-time data loading from /api/dashboard-analytics
- * - Responsive design and animations
- *
- * Author: Lucy Sonberg - SONBERG STUDIO
- * Date: September 2025
- */
+// Dashboard analytics with Chart.js integration
 
 // Global variables for charts and data
 let fileTypeChart = null;
@@ -22,10 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDashboardData();
 });
 
-/**
- * Load dashboard data from API endpoint
- * Implements caching and error handling
- */
+// Load dashboard data with caching
 async function loadDashboardData() {
     try {
         showLoadingState();
@@ -50,9 +36,7 @@ async function loadDashboardData() {
     }
 }
 
-/**
- * Initialize all dashboard components
- */
+// Initialize dashboard components
 async function initializeDashboard() {
     // Display ROI metrics (most important section)
     displayROIMetrics();
@@ -72,9 +56,7 @@ async function initializeDashboard() {
     showDashboardSections();
 }
 
-/**
- * Display ROI metrics - The most important business data
- */
+// Display ROI metrics
 function displayROIMetrics() {
     const roi = dashboardData.roiMetrics;
 
@@ -84,9 +66,7 @@ function displayROIMetrics() {
     animateNumber('roiEfficiency', 0, roi.efficiencyIncrease, '%');
 }
 
-/**
- * Initialize File Type Distribution Pie Chart
- */
+// Initialize file type chart
 function initializeFileTypeChart() {
     const ctx = document.getElementById('fileTypeChart').getContext('2d');
 
@@ -151,9 +131,7 @@ function initializeFileTypeChart() {
     document.getElementById('totalSize').textContent = dashboardData.summary.totalSize;
 }
 
-/**
- * Initialize Search Statistics Bar Chart
- */
+// Initialize search statistics chart
 function initializeSearchChart() {
     const ctx = document.getElementById('searchChart').getContext('2d');
 
@@ -227,9 +205,7 @@ function initializeSearchChart() {
     document.getElementById('totalSearches').textContent = totalSearches;
 }
 
-/**
- * Initialize Storage Analytics Chart
- */
+// Initialize storage analytics chart
 function initializeStorageChart() {
     const ctx = document.getElementById('storageChart').getContext('2d');
 
@@ -285,9 +261,7 @@ function initializeStorageChart() {
     updateStorageBreakdown();
 }
 
-/**
- * Update storage breakdown visual bars
- */
+// Update storage breakdown bars
 function updateStorageBreakdown() {
     const totalSize = dashboardData.summary.totalSizeBytes;
 
@@ -307,9 +281,7 @@ function updateStorageBreakdown() {
     });
 }
 
-/**
- * Display system performance statistics
- */
+// Display system performance
 function displaySystemStats() {
     const perf = dashboardData.performance;
 
@@ -318,9 +290,7 @@ function displaySystemStats() {
     document.getElementById('databaseStatus').textContent = perf.databaseStatus;
 }
 
-/**
- * Display business insights
- */
+// Display business insights
 function displayBusinessInsights() {
     const insights = dashboardData.insights;
 
@@ -344,9 +314,7 @@ function displayBusinessInsights() {
     });
 }
 
-/**
- * Animate numbers for visual impact
- */
+// Animate numbers
 function animateNumber(elementId, start, end, suffix = '') {
     const element = document.getElementById(elementId);
     if (!element) return;
@@ -367,9 +335,7 @@ function animateNumber(elementId, start, end, suffix = '') {
     }, stepTime);
 }
 
-/**
- * Show loading state
- */
+// Show loading state
 function showLoadingState() {
     document.getElementById('dashboardLoading').style.display = 'flex';
     // Hide all sections
@@ -383,16 +349,12 @@ function showLoadingState() {
     }
 }
 
-/**
- * Hide loading state and show dashboard sections
- */
+// Hide loading state
 function hideLoadingState() {
     document.getElementById('dashboardLoading').style.display = 'none';
 }
 
-/**
- * Show dashboard sections with smooth animations
- */
+// Show dashboard sections
 function showDashboardSections() {
     const sections = [
         { selector: '.roi-section', display: 'block' },
@@ -428,9 +390,7 @@ function showDashboardSections() {
     });
 }
 
-/**
- * Show error state
- */
+// Show error state
 function showErrorState(errorMessage) {
     document.getElementById('dashboardLoading').innerHTML = `
         <div class="error-container">
@@ -442,9 +402,7 @@ function showErrorState(errorMessage) {
     `;
 }
 
-/**
- * Refresh dashboard data
- */
+// Refresh dashboard data
 function refreshDashboard() {
 
     // Destroy existing charts
@@ -456,17 +414,13 @@ function refreshDashboard() {
     loadDashboardData();
 }
 
-/**
- * Export dashboard data as PDF (future enhancement)
- */
+// Export dashboard data (future)
 function exportDashboard() {
     alert('Export-funktionen kommer snart! Detta är en placeholder för framtida utveckling.');
 }
 
-// Make functions available globally for HTML onclick handlers
+// Global functions for HTML onclick
 window.refreshDashboard = refreshDashboard;
 window.exportDashboard = exportDashboard;
 
-/**
- * Console info for developers
- */
+// Console info

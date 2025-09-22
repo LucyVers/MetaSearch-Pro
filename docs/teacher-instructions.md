@@ -37,72 +37,31 @@ npm start
 ### **A. GRUNDLÄGGANDE SÖKFUNKTION**
 
 #### **Test 1: Enkel sökning**
-1. Skriv "PDF" i sökfältet
-2. **Förväntat resultat:** Visar alla PDF-filer (100 st)
-3. **Verifiera:** Varje resultat visar filnamn, storlek, författare
-
-#### **Test 2: Filtypsfiltrering**
-1. Välj "Bilder" i dropdown-menyn
-2. **Förväntat resultat:** Visar endast JPG-filer (100 st)
-3. **Verifiera:** Alla resultat är bildfiler med EXIF-data
-
-#### **Test 3: Kombinerad sökning**
-1. Välj "Ljudfiler" i dropdown
-2. Skriv "music" i sökfältet
-3. **Förväntat resultat:** Filtrerade MP3-resultat
+1. Skriv "PDF" i sökfältet → Visar PDF-filer
+2. Välj "Bilder" i dropdown → Visar JPG-filer
+3. Kombinera: Välj "Ljudfiler" + skriv "music" → Filtrerade MP3-resultat
 
 ### **B. AVANCERAD SÖKNING**
 
-#### **Test 4: Sökoperatorer**
-1. Klicka på "Avancerat" för att öppna avancerade filter
-2. Välj "Större än" i operator-dropdown
-3. Skriv "1000000" i sökfältet (filer större än 1MB)
-4. **Förväntat resultat:** Endast stora filer visas
-
-#### **Test 5: Geografisk sökning**
-1. Välj "Bilder" i dropdown
-2. Klicka på "Avancerat" för att öppna GPS-filter
-3. Ange GPS-koordinater (t.ex. 59.3293, 18.0686 för Stockholm)
-4. **Förväntat resultat:** Visar bilder med GPS-koordinater
-
-#### **Test 6: Storlek och datum-filter**
-1. Klicka på "Avancerat"
-2. Använd storlek-filter: Min 100KB, Max 500KB
-3. Använd datum-filter: "Senaste månaden"
-4. **Förväntat resultat:** Filtrerade resultat baserat på kriterier
+#### **Test 2: Avancerad sökning**
+1. Klicka "Avancerat" → Välj "Större än" + skriv "1000000" → Stora filer
+2. Välj "Bilder" + GPS-koordinater (38.615535, -0.065393) → Hittar DSC00042.JPG
+3. Välj "Bilder" + GPS-koordinater (42.035038, -70.938020) → Hittar yellow-leaves.jpg
+4. Använd storlek/datum-filter → Filtrerade resultat
 
 ### **C. MEDIA-FUNKTIONER**
 
-#### **Test 7: Bildgalleri**
-1. Välj "Bilder" och klicka på en bild
-2. **Förväntat resultat:** Lightbox öppnas med zoom och navigation
-3. **Verifiera:** EXIF-data visas (kamera, datum, GPS)
-
-#### **Test 8: MP3-spelare**
-1. Välj "Ljudfiler" och klicka på en låt
-2. **Förväntat resultat:** Inbyggd spelare med 30-sekunders förhandsvisning
-
-#### **Test 9: PDF-preview**
-1. Välj "Dokument" och klicka på en PDF
-2. **Förväntat resultat:** PDF-viewer med zoom och sidnavigation
+#### **Test 3: Media-funktioner**
+1. Klicka på bild → Lightbox med EXIF-data
+2. Klicka på MP3 → Inbyggd spelare (30s preview)
+3. Klicka på PDF → PDF-viewer med navigation
 
 ### **D. FAVORITER-SYSTEM**
 
-#### **Test 10: Lägg till favoriter**
-1. Klicka på hjärtat (❤️) bredvid valfri fil
-2. **Förväntat resultat:** Hjärtat blir rött, filen sparas som favorit
-
-#### **Test 11: Visa favoriter**
-1. Klicka på "Mina Favoriter" i navigationen
-2. **Förväntat resultat:** Alla favoriter visas i grid-layout
-
-### **E. SÖKHISTORIK**
-
-#### **Test 12: Sökhistorik**
-1. Gör flera sökningar (t.ex. "test", "africa", "music")
-2. **Förväntat resultat:** Tidigare sökningar visas som klickbara knappar
-3. Klicka på en tidigare sökning
-4. **Förväntat resultat:** Sökningen körs igen automatiskt
+#### **Test 4: Favoriter & historik**
+1. Klicka hjärtat (❤️) → Sparas som favorit
+2. Klicka "Mina Favoriter" → Visar alla favoriter
+3. Gör flera sökningar → Tidigare sökningar visas som klickbara knappar
 
 ---
 
@@ -115,8 +74,8 @@ npm start
 - **Totalt:** 360 filer med omfattande metadata
 - **GPS-aktiverade:** 80 JPG-filer med korrekta koordinater
 
-### **Google Drive-länk:**
-Alla testfiler finns tillgängliga via delningslänk för nedladdning och granskning.
+### **Testfiler:**
+Alla testfiler har du redan tillgång till, jag har använd materialet du delade med oss
 
 ---
 
@@ -138,21 +97,15 @@ Alla testfiler finns tillgängliga via delningslänk för nedladdning och gransk
 ✅ **Favoriter-system** - Spara och hantera favoritfiler  
 ✅ **Sökhistorik** - Återanvänd tidigare sökningar  
 
-### **ÖVERKURS (14 EXTRA FUNKTIONER)**
+### **ÖVERKURS (EXTRA FUNKTIONER)**
 ✅ **5 Sökoperatorer** - contains, equals, not_equals, greater_than, less_than  
-✅ **GPS-sökning** - 5 GPS-operatorer för geografisk sökning  
+✅ **GPS-sökning** - Geografisk sökning med koordinater  
 ✅ **Relevans-poäng** - Intelligent ranking av sökresultat  
 ✅ **Avancerade filter** - Storlek, datum, GPS med professionell UI  
 ✅ **Favoriter-system** - Databas-persisterad favorithantering  
 ✅ **Sökhistorik** - Automatisk sparning av tidigare sökningar  
-✅ **Loading-indikatorer** - Visuell feedback under sökning  
 ✅ **Modern UI/UX** - CSS-variabler, hover-effekter, responsiv design  
-✅ **Performance-optimering** - Snabb sökning med textSummary  
-✅ **Robust felhantering** - Graceful degradation vid problem  
-✅ **Automatisk synkronisering** - Uppdaterar databas vid filändringar  
-✅ **GPS-validering** - Kontrollerar giltiga koordinater  
-✅ **Geografisk sortering** - Sorterar efter avstånd från sökpunkt  
-✅ **Modulär arkitektur** - Clean code med separation of concerns 
+✅ **Performance-optimering** - Snabb sökning och robust felhantering 
 
 ---
 
@@ -165,22 +118,14 @@ Alla testfiler finns tillgängliga via delningslänk för nedladdning och gransk
 - **Metadata-bibliotek:** pdf-parse, exif-reader, node-id3, officegen
 
 ### **API-endpoints:**
-- `GET /api/metadata` - Hämta alla metadata
-- `GET /api/database-metadata` - Avancerad sökning med operatorer
-- `GET /api/search` - Grundläggande sökfunktion
+- `GET /api/database-metadata` - Hämta metadata med sökfilter
 - `GET /api/favorites` - Hämta favoriter
 - `POST /api/favorites` - Lägg till favorit
-- `DELETE /api/favorites/:id` - Ta bort favorit
+- `DELETE /api/favorites/:filename` - Ta bort favorit
 - `GET /api/search-history` - Hämta sökhistorik
-- `GET /api/file/:filename` - Hämta specifik fil
 
 ### **Databasstruktur:**
-```sql
-FileMetadata:
-- id, filename, fileType, fileSize
-- title, author, description
-- metadata (JSON), createdAt, updatedAt
-```
+- **FileMetadata:** id, filename, fileType, fileSize, title, author, metadata (JSON)
 
 ---
 
@@ -219,24 +164,13 @@ npm install
 
 ## 📊 PROJEKTSTATISTIK
 
-### **Kodstatistik:**
-- **Backend:** ~2,000 rader JavaScript
-- **Frontend:** ~3,000 rader JavaScript + CSS
-- **Totalt:** ~5,000 rader kod
-- **Dokumentation:** 2,128 rader detaljerad dokumentation
-
 ### **Funktioner implementerade:**
-- ✅ Metadata-extraktion för 4 filtyper (JPG, MP3, PPT)
-- ✅ 5 Sökoperatorer (contains, equals, not_equals, greater_than, less_than)
-- ✅ GPS-sökning med 5 operatorer
-- ✅ Avancerade filter (storlek, datum, GPS)
-- ✅ Relevans-poäng och intelligent sortering
-- ✅ Favoriter-system med databas-persistens
-- ✅ Sökhistorik med automatisk sparning
+- ✅ Metadata-extraktion för 4 filtyper (PDF, JPG, MP3, PPT)
+- ✅ 5 Sökoperatorer och GPS-sökning
+- ✅ Avancerade filter och relevans-sortering
+- ✅ Favoriter-system och sökhistorik
 - ✅ Interaktiva media-funktioner
-- ✅ Responsiv webbdesign med CSS-variabler
-- ✅ Professionell UI/UX med loading-indikatorer
-- ✅ Performance-optimering och robust felhantering
+- ✅ Responsiv webbdesign
 
 ---
 
@@ -261,9 +195,9 @@ npm install
 ## 📞 KONTAKT
 
 **Student:** Lucy Sonberg  
-**Email:** [Studentens email]  
-**GitHub:** [GitHub-länk]  
-**Projektlänk:** [Live demo-länk]  
+**Email:** lucyxrdeveloper@gmail.com  
+**GitHub:** https://github.com/lucyprivat/MetaSearch-Pro  
+**Projekt:** MetaSearch-Pro - Metadata-sökmotor
 
 ---
 

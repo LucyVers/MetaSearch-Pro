@@ -1,124 +1,124 @@
-# Blog-Sektion - Metadata och Webbanalys
+# Blog Section - Metadata and Web Analytics
 
-## 📝 **Om Blogginläggen**
+## 📝 **About the Blog Posts**
 
-Denna mapp innehåller 3 professionella blogginlägg skapade för att demonstrera expertis inom metadata och webbanalys. Artiklarna är designade för att attrahera potentiella kunder, LIA-praktikplatser och konsultuppdrag.
+This folder contains 3 professional blog posts created to demonstrate expertise in metadata and web analytics. The articles are designed to attract potential clients, internship opportunities, and consulting assignments.
 
-## 🎯 **Syfte och Målgrupp**
+## 🎯 **Purpose and Target Audience**
 
-### **Huvudmål:**
-- **Demonstrera expertis** inom metadata och webbanalys
-- **Attrahera potentiella kunder** för konsultuppdrag
-- **Visa kompetens** för LIA-praktikplatser
-- **Bygga professionell online-närvaro**
+### **Main Goals:**
+- **Demonstrate expertise** in metadata and web analytics
+- **Attract potential clients** for consulting assignments
+- **Show competence** for internship opportunities
+- **Build professional online presence**
 
-### **Målgrupp:**
-- **Företag** som behöver metadata-lösningar
-- **Rekryterare** som söker webbutvecklare
-- **LIA-praktikplatser** inom IT/webbutveckling
-- **Konsultbolag** som behöver metadata-experter
+### **Target Audience:**
+- **Companies** that need metadata solutions
+- **Recruiters** looking for web developers
+- **Internship opportunities** in IT/web development
+- **Consulting companies** that need metadata experts
 
-## 📚 **Blogginlägg Översikt**
+## 📚 **Blog Posts Overview**
 
 ### **1. metadata-och-webbanalys.md**
-**Tema:** Grundläggande metadata för företag
-**Lärandemål:** 1-5 (Kunskaper)
-**Innehåll:**
-- Vad är metadata och varför är det viktigt
-- Praktiska exempel från mitt projekt
-- Hur jag kan hjälpa företag
-- Teknisk expertis och metoder
+**Theme:** Basic metadata for companies
+**Learning Objectives:** 1-5 (Knowledge)
+**Content:**
+- What is metadata and why it's important
+- Practical examples from my project
+- How I can help companies
+- Technical expertise and methods
 
 ### **2. semantisk-webb-mikrodata.md**
-**Tema:** Semantisk webb och SEO
-**Lärandemål:** 4, 8 (Semantisk webb, HTML implementation)
-**Innehåll:**
-- Vad är semantisk webb
-- Mikrodata och Schema.org
-- Rich snippets och sökmotoroptimering
-- Domänstrukturer och taxonomier
+**Theme:** Semantic web and SEO
+**Learning Objectives:** 4, 8 (Semantic web, HTML implementation)
+**Content:**
+- What is semantic web
+- Microdata and Schema.org
+- Rich snippets and search engine optimization
+- Domain structures and taxonomies
 
 ### **3. webbanalys-for-foretag.md**
-**Tema:** Praktisk webbanalys
-**Lärandemål:** 5, 9 (Webbanalys metoder och verktyg)
-**Innehåll:**
-- Viktiga webbanalys-mätvärden
-- Verktyg och metoder
-- A/B-testning och optimering
-- Prediktiv analys och AI
+**Theme:** Practical web analytics
+**Learning Objectives:** 5, 9 (Web analytics methods and tools)
+**Content:**
+- Important web analytics metrics
+- Tools and methods
+- A/B testing and optimization
+- Predictive analysis and AI
 
-## 🔗 **Koppling till Kursens Lärandemål**
+## 🔗 **Connection to Course Learning Objectives**
 
-### **Kunskaper (1-5):**
-- ✅ **Grunderna i metadata** - Artikel 1
-- ✅ **Effektiva informationssökningar** - Artikel 1
-- ✅ **Metadata-extraktion** - Artikel 1
-- ✅ **Semantisk webb** - Artikel 2
-- ✅ **Webbanalys metoder** - Artikel 3
+### **Knowledge (1-5):**
+- ✅ **Basics of metadata** - Article 1
+- ✅ **Effective information searches** - Article 1
+- ✅ **Metadata extraction** - Article 1
+- ✅ **Semantic web** - Article 2
+- ✅ **Web analytics methods** - Article 3
 
-### **Färdigheter (6-10):**
-- ✅ **Planera metadata** - Artikel 1
-- ✅ **Extrahera och analysera** - Artikel 1
-- ✅ **Semantisk HTML** - Artikel 2
-- ✅ **Webbanalys verktyg** - Artikel 3
-- ✅ **Informationssökningar** - Artikel 1
+### **Skills (6-10):**
+- ✅ **Plan metadata** - Article 1
+- ✅ **Extract and analyze** - Article 1
+- ✅ **Semantic HTML** - Article 2
+- ✅ **Web analytics tools** - Article 3
+- ✅ **Information searches** - Article 1
 
-### **Kompetenser (11-12):**
-- ✅ **Strategiska metadataprojekt** - Alla artiklar
-- ✅ **Öppna webben** - Artikel 2 (SEO)
+### **Competencies (11-12):**
+- ✅ **Strategic metadata projects** - All articles
+- ✅ **Open web** - Article 2 (SEO)
 
-## 💼 **Professionell Användning**
+## 💼 **Professional Usage**
 
-### **För LinkedIn:**
-- Dela artiklarna som posts
-- Visa expertis inom området
-- Attrahera rekryterare och kunder
-- Bygga professionellt nätverk
+### **For LinkedIn:**
+- Share articles as posts
+- Show expertise in the field
+- Attract recruiters and clients
+- Build professional network
 
-### **För Portfolio:**
-- Lägg till som blogg-sektion
-- Visa djup kunskap
-- Demontera praktisk erfarenhet
-- Stödja konsulttjänster
+### **For Portfolio:**
+- Add as blog section
+- Show deep knowledge
+- Demonstrate practical experience
+- Support consulting services
 
-### **För LIA-sökningar:**
-- Visa relevant kompetens
-- Demontera förståelse för företagsbehov
-- Visa kommunikationsförmåga
-- Stödja tekniska färdigheter
+### **For Internship Applications:**
+- Show relevant competence
+- Demonstrate understanding of business needs
+- Show communication skills
+- Support technical skills
 
-## 🚀 **Framtida Utveckling**
+## 🚀 **Future Development**
 
-### **Kort sikt:**
-- [ ] Lägg till blogg-sektion på webbplatsen
-- [ ] SEO-optimera artiklarna
-- [ ] Dela på LinkedIn och GitHub
+### **Short term:**
+- [ ] Add blog section to website
+- [ ] SEO-optimize articles
+- [ ] Share on LinkedIn and GitHub
 
-### **Lång sikt:**
-- [ ] Skapa video-versioner av artiklarna
-- [ ] Utveckla till webinar-serier
-- [ ] Skapa e-bok baserad på artiklarna
-- [ ] Utveckla till konsultkurser
+### **Long term:**
+- [ ] Create video versions of articles
+- [ ] Develop into webinar series
+- [ ] Create e-book based on articles
+- [ ] Develop into consulting courses
 
-## 📊 **Mätvärden för Framgång**
+## 📊 **Success Metrics**
 
 ### **Engagement:**
-- Antal visningar på LinkedIn
-- Kommentarer och delningar
-- Kontaktförfrågningar via artiklarna
+- Number of views on LinkedIn
+- Comments and shares
+- Contact requests via articles
 
-### **Professionell utveckling:**
-- LIA-praktikplatser som nämner artiklarna
-- Konsultuppdrag från artiklarna
-- Nätverkskontakter via LinkedIn
+### **Professional development:**
+- Internship opportunities that mention articles
+- Consulting assignments from articles
+- Network contacts via LinkedIn
 
-### **Teknisk kompetens:**
-- Feedback från Thomas, klasskamrater - lämna omdöme?
-- Förbättringar i kodkvalitet
-- Utveckling av nya projekt
+### **Technical competence:**
+- Feedback from Thomas, classmates - leave review?
+- Improvements in code quality
+- Development of new projects
 
 ---
 
-**Skapad av:** Lucy Sonberg - Sonberg Studio  
-**Datum:** 2025-08-30  
-**Syfte:** Professionell portfolio och expertis-demonstration
+**Created by:** Lucy Sonberg - Sonberg Studio  
+**Date:** 2025-08-30  
+**Purpose:** Professional portfolio and expertise demonstration

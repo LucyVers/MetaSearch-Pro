@@ -32,8 +32,8 @@ This guide provides detailed descriptions of all screenshots for the MetaSearch 
 **Portfolio Value:** ⭐⭐⭐⭐ - Shows understanding of user behavior and search analytics
 **Technical Features:** Chart.js bar chart, interactive tooltips, search history tracking, user behavior analysis
 
-### 5. StorageAnalytics.png
-![Storage Analytics](StorageAnalytics.png)
+### 5. Storage.png
+![Storage Analytics](Storage.png)
 **Purpose:** Storage management and file size analytics
 **Description:** Interactive donut chart with highlighted PPT segment (60.56 MB). Storage breakdown legend shows: PDF (157.84 MB), JPG (585.94 KB), MP3 (976.56 KB), PPT (60.56 MB). Color-coded progress bars with precise file size data for each file type.
 **Portfolio Value:** ⭐⭐⭐⭐ - Demonstrates system monitoring and storage optimization
@@ -125,7 +125,7 @@ This guide provides detailed descriptions of all screenshots for the MetaSearch 
 
 ### For Technical Presentations:
 - **SystemStatus.png** - Demonstrate system monitoring capabilities
-- **StorageAnalytics.png** - Show storage optimization and analytics
+- **Storage.png** - Show storage optimization and analytics
 - **MestSöktakategorier.png** - Highlight user behavior analysis
 - **PDF1-3.png** - Demonstrate file handling and preview capabilities
 - **MP3_1-2.png** - Demonstrate audio file handling and preview capabilities

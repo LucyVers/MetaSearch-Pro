@@ -387,7 +387,7 @@ let app = express();
 // Middleware to handle JSON requests (needed for favorites API)
 app.use(express.json());
 
-// Helper function to parse PDF dates
+// Parse PDF dates
 function parsePDFDate(dateString) {
   if (!dateString) return null;
   
@@ -415,7 +415,7 @@ function parsePDFDate(dateString) {
   }
 }
 
-// Helper function to parse PPT dates
+// Parse PPT dates
 function parsePPTDate(dateString) {
   if (!dateString || dateString === "-" || dateString.trim() === "") {
     return null;
@@ -436,7 +436,7 @@ function parsePPTDate(dateString) {
   }
 }
 
-// Helper function to extract author from text content
+// Extract author from text
 function extractAuthorFromText(text, existingAuthor) {
   if (existingAuthor && existingAuthor.trim() !== '') {
     return existingAuthor;
@@ -808,7 +808,7 @@ function extractPPTMetadata(filePath) {
   }
 }
 
-// Helper function to format file size
+// Format file size
 function formatFileSize(bytes) {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -817,7 +817,7 @@ function formatFileSize(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// Helper function to extract date from filename
+// Extract date from filename
 function extractDateFromFilename(filename) {
   // Look for date patterns in filename like YYYY-MM-DD, YYYYMMDD, etc.
   const datePatterns = [
@@ -1066,290 +1066,6 @@ function categorizeDocument(text, title, keywords) {
   return bestScore >= 2 ? bestCategory : 'Unknown';
 }
 
-// COMMENTED OUT - OLD SYSTEM: Create a REST route for getting the metadata (only PDF files)
-// This API is replaced by /api/database-metadata which handles all file types from database
-/*
-app.get('/api/metadata', async (_request, response) => {
-
-  // Read all files in pdfs
-  let files = fs
-    // Read all files in the folder pdfs
-    .readdirSync('./frontend/pdfs')
-    // Only keep files that ends with .pdf in my list
-    .filter(x => x.endsWith('.pdf'));
-
-  // Create a new array for metadata
-  let metadataList = [];
-
-  // Loop through the files
-  for (let file of files) {
-    // Get the meta data from PDF file
-    let data = await pdfParse(fs.readFileSync('./frontend/pdfs/' + file));
-    
-    // OPTION A: Extract title from text if PDF title is missing
-    let extractedTitle = data.info.Title;
-    if (!extractedTitle || extractedTitle.trim() === '') {
-      // Take first line of text as title
-      let firstLine = data.text.split('\n')[0];
-      // Clean up extra whitespace and special characters
-      extractedTitle = firstLine.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
-      // If first line is too short, take first sentence
-      if (extractedTitle.length < 10) {
-        let firstSentence = data.text.split('.')[0];
-        extractedTitle = firstSentence.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
-      }
-    }
-    
-    // ENHANCED AUTHOR EXTRACTION
-    let enhancedAuthor = extractAuthorFromText(data.text, data.info.Author);
-    
-    // ENHANCED DATE EXTRACTION
-    let createdDate = parsePDFDate(data.info.CreationDate);
-    let modifiedDate = parsePDFDate(data.info.ModDate);
-    
-    // Try to extract date from filename if no date found
-    if (!createdDate) {
-      createdDate = extractDateFromFilename(file);
-    }
-    
-    // OPTION B: Add file size
-    let filePath = './frontend/pdfs/' + file;
-    let fileStats = fs.statSync(filePath);
-    let fileSizeInBytes = fileStats.size;
-    let fileSizeInKB = Math.round(fileSizeInBytes / 1024);
-    let fileSizeInMB = Math.round(fileSizeInBytes / (1024 * 1024) * 100) / 100;
-    
-    // Format file size
-    let formattedFileSize;
-    if (fileSizeInMB >= 1) {
-      formattedFileSize = fileSizeInMB + ' MB';
-    } else {
-      formattedFileSize = fileSizeInKB + ' KB';
-    }
-    
-    // OPTION C: Add PDF version
-    let pdfVersion = data.info.PDFFormatVersion || 'Unknown';
-    
-    // ADVANCED METADATA EXTRACTION - STEP 1: TEXT SUMMARY
-    let textSummary = '';
-    if (data.text && data.text.trim().length > 0) {
-      // Clean the text: remove extra whitespace, newlines, and special characters
-      let cleanText = data.text
-        .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-        .replace(/\n+/g, ' ') // Replace newlines with spaces
-        .trim();
-      
-      // Only create summary if we have meaningful text (more than 10 characters)
-      if (cleanText.length > 10) {
-        // Extract first 200 characters as summary
-        textSummary = cleanText.substring(0, 200);
-        
-        // Add ellipsis if text was truncated
-        if (cleanText.length > 200) {
-          textSummary += '...';
-        }
-      } else if (cleanText.length > 0) {
-        // For very short text, use it as is
-        textSummary = cleanText;
-      }
-      // If cleanText is empty or very short, textSummary remains empty
-    }
-    
-    // If no text summary was created, try to create one from available metadata
-    if (!textSummary || textSummary.trim() === '') {
-      let fallbackSummary = '';
-      
-      // Try to create summary from title and author
-      if (data.info.Title && data.info.Title.trim() !== '') {
-        fallbackSummary = data.info.Title.trim();
-      }
-      
-      if (data.info.Author && data.info.Author.trim() !== '') {
-        if (fallbackSummary) {
-          fallbackSummary += ' - ';
-        }
-        fallbackSummary += data.info.Author.trim();
-      }
-      
-      // If we have a fallback summary, use it
-      if (fallbackSummary && fallbackSummary.length > 0) {
-        textSummary = fallbackSummary.substring(0, 200);
-        if (fallbackSummary.length > 200) {
-          textSummary += '...';
-        }
-      }
-    }
-    
-    // ADVANCED METADATA EXTRACTION - STEP 2: KEYWORD EXTRACTION
-    let keywords = '';
-    if (data.text && data.text.trim().length > 0) {
-      keywords = extractKeywords(data.text).join(' ');
-    }
-    
-    // ADVANCED METADATA EXTRACTION - STEP 3: LANGUAGE DETECTION
-    let language = detectLanguage(data.text);
-    
-    // ADVANCED METADATA EXTRACTION - STEP 4: AUTOMATIC CATEGORIZATION
-    let category = categorizeDocument(data.text, data.info.Title, keywords);
-    
-    // Create enhanced metadata with all new fields
-    let enhancedMetadata = {
-      ...data,
-      extractedTitle: extractedTitle,
-      enhancedAuthor: enhancedAuthor,
-      fileSize: formattedFileSize,
-      fileSizeBytes: fileSizeInBytes,
-      pdfVersion: pdfVersion,
-      createdDate: createdDate,
-      modifiedDate: modifiedDate,
-      textSummary: textSummary, // Add the new text summary
-      keywords: keywords, // Add the new keywords
-      language: language, // Add the new language
-      category: category // Add the new category
-    };
-    
-    // Add the filename and the enhanced metadata to our meta data list
-    metadataList.push({ file, metadata: enhancedMetadata });
-    
-    // Save to database
-    const dbMetadata = {
-      filename: file,
-      filepath: './frontend/pdfs/' + file,
-      fileType: 'pdf',
-      fileSize: fileSizeInBytes,
-      title: extractedTitle,
-      author: enhancedAuthor,
-      creationDate: createdDate,
-      modificationDate: modifiedDate,
-      keywords: keywords,
-      description: textSummary,
-      category: category,
-      language: language,
-      pdfVersion: pdfVersion,
-      pageCount: data.numpages || null
-    };
-    
-    await saveMetadataToDatabase(dbMetadata);
-  }
-
-  // PROCESS JPG FILES
-  try {
-    let jpgFiles = fs
-      .readdirSync('./frontend/jpgs')
-      .filter(x => x.toLowerCase().endsWith('.jpg') || x.toLowerCase().endsWith('.jpeg') || x.toLowerCase().endsWith('.png'));
-
-    for (let file of jpgFiles) {
-      let jpgMetadata = extractJPGMetadata('./frontend/jpgs/' + file);
-      metadataList.push({ file, metadata: jpgMetadata });
-      
-      // Save to database
-      const dbMetadata = {
-        filename: file,
-        filepath: './frontend/jpgs/' + file,
-        fileType: 'jpg',
-        fileSize: jpgMetadata.fileSizeBytes || 0,
-        title: jpgMetadata.title,
-        author: jpgMetadata.photographer,
-        creationDate: jpgMetadata.photoDate,
-        modificationDate: jpgMetadata.modifiedDate,
-        keywords: jpgMetadata.keywords ? jpgMetadata.keywords.join(', ') : '',
-        description: jpgMetadata.description,
-        category: jpgMetadata.category,
-        language: jpgMetadata.language,
-        dimensions: jpgMetadata.dimensions,
-        camera: jpgMetadata.camera,
-        photoDate: jpgMetadata.photoDate,
-        photographer: jpgMetadata.photographer,
-        location: jpgMetadata.location ? JSON.stringify(jpgMetadata.location) : null,
-        gpsLatitude: jpgMetadata.location?.latitude || null,
-        gpsLongitude: jpgMetadata.location?.longitude || null
-      };
-      
-      await saveMetadataToDatabase(dbMetadata);
-    }
-  } catch (error) {
-    console.error('Error processing JPG files:', error);
-  }
-
-  // PROCESS MP3 FILES
-  try {
-    let mp3Files = fs
-      .readdirSync('./frontend/mp3s')
-      .filter(x => x.toLowerCase().endsWith('.mp3') || x.toLowerCase().endsWith('.wav') || x.toLowerCase().endsWith('.flac'));
-
-    for (let file of mp3Files) {
-      let mp3Metadata = await extractMP3Metadata('./frontend/mp3s/' + file);
-      metadataList.push({ file, metadata: mp3Metadata });
-      
-      // Save to database
-      const dbMetadata = {
-        filename: file,
-        filepath: './frontend/mp3s/' + file,
-        fileType: 'mp3',
-        fileSize: mp3Metadata.fileSizeBytes || 0,
-        title: mp3Metadata.title,
-        author: mp3Metadata.artist,
-        creationDate: mp3Metadata.createdDate,
-        modificationDate: mp3Metadata.modifiedDate,
-        keywords: mp3Metadata.keywords ? mp3Metadata.keywords.join(', ') : '',
-        description: mp3Metadata.description,
-        category: mp3Metadata.category,
-        language: mp3Metadata.language,
-        artist: mp3Metadata.artist,
-        album: mp3Metadata.album,
-        duration: mp3Metadata.duration,
-        genre: mp3Metadata.genre,
-        year: mp3Metadata.year
-      };
-      
-      await saveMetadataToDatabase(dbMetadata);
-    }
-  } catch (error) {
-    console.error('Error processing MP3 files:', error);
-  }
-
-  // PROCESS PPT FILES
-  try {
-    let pptFiles = fs
-      .readdirSync('./frontend/ppts')
-      .filter(x => x.toLowerCase().endsWith('.ppt') || x.toLowerCase().endsWith('.pptx'));
-
-    for (let file of pptFiles) {
-      let pptMetadata = extractPPTMetadata('./frontend/ppts/' + file);
-      metadataList.push({ file, metadata: pptMetadata });
-      
-      // Save to database
-      const dbMetadata = {
-        filename: file,
-        filepath: './frontend/ppts/' + file,
-        fileType: 'ppt',
-        fileSize: pptMetadata.fileSizeBytes || 0,
-        title: pptMetadata.title,
-        author: pptMetadata.author,
-        creationDate: pptMetadata.createdDate,
-        modificationDate: pptMetadata.modifiedDate,
-        keywords: pptMetadata.keywords ? pptMetadata.keywords.join(', ') : '',
-        description: pptMetadata.description,
-        category: pptMetadata.category,
-        language: pptMetadata.language,
-        slideCount: pptMetadata.slides,
-        wordCount: pptMetadata.words,
-        company: pptMetadata.company,
-        revision: pptMetadata.revision
-      };
-      
-      await saveMetadataToDatabase(dbMetadata);
-    }
-  } catch (error) {
-    console.error('Error processing PPT files:', error);
-  }
-
-  // Send the meta data as a response to the request
-  // (to our web browser)
-  response.json(metadataList);
-
-});
-*/
 
 // New endpoint to get metadata from database
 app.get('/api/database-metadata', async (request, response) => {
@@ -1561,328 +1277,6 @@ app.get('/api/database-metadata', async (request, response) => {
 // formatFileSize function already exists above, using that one
 
 // Create a REST route for searching PDF metadata
-// COMMENTED OUT - OLD SYSTEM: File-based search API (all file types from disk)
-// This API is replaced by /api/database-metadata which uses MySQL database instead of file system
-/*
-app.get('/api/search', async (request, response) => {
-  
-  // Get search query, filter parameters, and sorting parameters from URL parameters
-  let searchQuery = request.query.q;
-  const fileType = request.query.type; // New: file type filter
-  const searchOperator = request.query.operator || 'contains'; // New: search operator
-      const isGPSSearch = request.query.gps === 'true'; // GPS search flag
-  const latitude = parseFloat(request.query.latitude); // New: GPS latitude
-  const longitude = parseFloat(request.query.longitude); // New: GPS longitude
-  const gpsOperator = request.query.gpsOperator || 'equals'; // New: GPS operator
-  const minSize = parseInt(request.query.minSize) || 0;
-  const maxSize = parseInt(request.query.maxSize) || Infinity;
-  const minDate = request.query.minDate ? new Date(request.query.minDate) : null;
-  const maxDate = request.query.maxDate ? new Date(request.query.maxDate) : null;
-  const sortBy = request.query.sortBy || 'title'; // title, size, date
-  const sortOrder = request.query.sortOrder || 'asc'; // asc, desc
-  
-  // If no search query provided but file type filter is active, show all files of that type
-  if (!searchQuery || (typeof searchQuery === 'string' && searchQuery.trim() === '')) {
-    // If no file type filter, return empty results
-    if (!request.query.type) {
-      response.json([]);
-      return;
-    }
-    // If file type filter is active, we'll show all files of that type (handled below)
-  }
-
-  // Add search query to history (if it's not already there)
-  if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
-    const trimmedQuery = searchQuery.trim();
-    if (!searchHistory.includes(trimmedQuery)) {
-      searchHistory.unshift(trimmedQuery); // Add to beginning
-      if (searchHistory.length > MAX_HISTORY_ITEMS) {
-        searchHistory = searchHistory.slice(0, MAX_HISTORY_ITEMS); // Keep only latest 10
-      }
-    }
-  }
-  
-  // Convert search query to lowercase for case-insensitive search
-  if (searchQuery && typeof searchQuery === 'string' && searchQuery.trim() !== '') {
-    searchQuery = searchQuery.toLowerCase().trim();
-  }
-  
-  // Get ALL metadata from all file types
-  let allMetadata = [];
-  
-  // PROCESS PDF FILES
-  try {
-    let pdfFiles = fs
-      .readdirSync('./frontend/pdfs')
-      .filter(x => x.toLowerCase().endsWith('.pdf'));
-
-    for (let file of pdfFiles) {
-      let data = await pdfParse(fs.readFileSync('./frontend/pdfs/' + file));
-      
-      // Extract title from text if PDF title is missing
-      let extractedTitle = data.info.Title;
-      if (!extractedTitle || extractedTitle.trim() === '') {
-        let firstLine = data.text.split('\n')[0];
-        extractedTitle = firstLine.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
-        if (extractedTitle.length < 10) {
-          let firstSentence = data.text.split('.')[0];
-          extractedTitle = firstSentence.trim().replace(/[^\w\s-]/g, '').substring(0, 100);
-        }
-      }
-      
-      let enhancedAuthor = extractAuthorFromText(data.text, data.info.Author);
-      let createdDate = parsePDFDate(data.info.CreationDate);
-      let modifiedDate = parsePDFDate(data.info.ModDate);
-      
-      if (!createdDate) {
-        createdDate = extractDateFromFilename(file);
-      }
-      
-      let filePath = './frontend/pdfs/' + file;
-      let fileStats = fs.statSync(filePath);
-      let fileSizeInBytes = fileStats.size;
-      let fileSizeInKB = Math.round(fileSizeInBytes / 1024);
-      let fileSizeInMB = Math.round(fileSizeInBytes / (1024 * 1024) * 100) / 100;
-      
-      let formattedFileSize;
-      if (fileSizeInMB >= 1) {
-        formattedFileSize = fileSizeInMB + ' MB';
-      } else {
-        formattedFileSize = fileSizeInKB + ' KB';
-      }
-      
-      let pdfVersion = data.info.PDFFormatVersion || 'Unknown';
-      
-      // Text summary
-      let textSummary = '';
-      if (data.text && data.text.trim().length > 0) {
-        let cleanText = data.text
-          .replace(/\s+/g, ' ')
-          .replace(/\n+/g, ' ')
-          .trim();
-        
-        if (cleanText.length > 10) {
-          textSummary = cleanText.substring(0, 200) + (cleanText.length > 200 ? '...' : '');
-        }
-      }
-      
-      // Keywords extraction
-      let keywords = extractKeywords(data.text).join(' ');
-      
-      // Language detection
-      let language = detectLanguage(data.text);
-      
-      // Category detection
-      let category = categorizeDocument(data.text, data.info.Subject, data.info.Keywords);
-      
-      let pdfMetadata = {
-        filename: file,
-        fileType: 'PDF',
-        fileSize: formattedFileSize,
-        fileSizeBytes: fileSizeInBytes,
-        title: extractedTitle,
-        author: enhancedAuthor,
-        createdDate: createdDate,
-        modifiedDate: modifiedDate,
-        keywords: keywords,
-        language: language,
-        category: category,
-        numpages: data.numpages,
-        numrender: data.numrender,
-        info: data.info,
-        metadata: data.metadata,
-        text: data.text,
-        version: data.version,
-        extractedTitle: extractedTitle,
-        enhancedAuthor: enhancedAuthor,
-        fileSize: formattedFileSize,
-        fileSizeBytes: fileSizeInBytes,
-        pdfVersion: pdfVersion,
-        createdDate: createdDate,
-        modifiedDate: modifiedDate,
-        textSummary: textSummary,
-        keywords: keywords,
-        language: language,
-        category: category
-      };
-      
-      allMetadata.push({ file, metadata: pdfMetadata });
-    }
-  } catch (error) {
-    console.error('Error processing PDF files for search:', error);
-  }
-  
-  // PROCESS JPG FILES
-  try {
-    let jpgFiles = fs
-      .readdirSync('./frontend/jpgs')
-      .filter(x => x.toLowerCase().endsWith('.jpg') || x.toLowerCase().endsWith('.jpeg') || x.toLowerCase().endsWith('.png'));
-
-    for (let file of jpgFiles) {
-      let jpgMetadata = extractJPGMetadata('./frontend/jpgs/' + file);
-      allMetadata.push({ file, metadata: jpgMetadata });
-    }
-  } catch (error) {
-    console.error('Error processing JPG files for search:', error);
-  }
-  
-  // PROCESS MP3 FILES
-  try {
-    let mp3Files = fs
-      .readdirSync('./frontend/mp3s')
-      .filter(x => x.toLowerCase().endsWith('.mp3') || x.toLowerCase().endsWith('.wav') || x.toLowerCase().endsWith('.flac'));
-
-    for (let file of mp3Files) {
-      let mp3Metadata = await extractMP3Metadata('./frontend/mp3s/' + file);
-      allMetadata.push({ file, metadata: mp3Metadata });
-    }
-  } catch (error) {
-    console.error('Error processing MP3 files for search:', error);
-  }
-  
-  // PROCESS PPT FILES
-  try {
-    let pptFiles = fs
-      .readdirSync('./frontend/ppts')
-      .filter(x => x.toLowerCase().endsWith('.ppt') || x.toLowerCase().endsWith('.pptx'));
-
-    for (let file of pptFiles) {
-      let pptMetadata = extractPPTMetadata('./frontend/ppts/' + file);
-      allMetadata.push({ file, metadata: pptMetadata });
-    }
-  } catch (error) {
-    console.error('Error processing PPT files for search:', error);
-  }
-  
-  // Create a new array for search results
-  let searchResults = [];
-
-  // Loop through ALL metadata and search in all file types
-  for (let item of allMetadata) {
-    let file = item.file;
-    let metadata = item.metadata;
-    
-    // ADVANCED SEARCH LOGIC: Check if search query matches any field using operators
-    const title = metadata.title || metadata.extractedTitle || '';
-    const author = metadata.author || metadata.enhancedAuthor || '';
-    const content = metadata.text || metadata.textSummary || '';
-    const keywords = (metadata.keywords || []).join(' ');
-    const language = metadata.language || '';
-    const category = metadata.category || '';
-    const fileType = metadata.fileType || '';
-    
-    // GPS SEARCH LOGIC: Check if GPS coordinates match
-    let matchesGPSSearch = true;
-      if (isGPSSearch && (metadata.fileType === 'jpg' || metadata.fileType === 'JPG')) {
-        let locationData = null;
-        try {
-          // Try to parse location from JSON string (database format)
-          if (metadata.location && typeof metadata.location === 'string') {
-            locationData = JSON.parse(metadata.location);
-          } else if (metadata.location && typeof metadata.location === 'object') {
-            locationData = metadata.location;
-          }
-        } catch (e) {
-          // If parsing fails, try direct access
-          locationData = metadata.location;
-        }
-        
-        if (locationData && (latitude || longitude)) {
-          const fileLat = locationData.latitude || locationData.lat;
-          const fileLon = locationData.longitude || locationData.lon;
-          matchesGPSSearch = applyGPSSearchOperator(fileLat, fileLon, latitude, longitude, gpsOperator);
-        } else {
-          matchesGPSSearch = false; // No GPS data available
-        }
-      }
-    
-    // If no search query, match everything (for file type filtering only)
-            const matchesSearch = !searchQuery || (typeof searchQuery === 'string' && searchQuery.trim() === '') || 
-                         applySearchOperator(title, searchQuery, searchOperator) || 
-                         applySearchOperator(author, searchQuery, searchOperator) || 
-                         applySearchOperator(content, searchQuery, searchOperator) || 
-                         applySearchOperator(keywords, searchQuery, searchOperator) || 
-                         applySearchOperator(language, searchQuery, searchOperator) || 
-                         applySearchOperator(category, searchQuery, searchOperator) || 
-                         applySearchOperator(fileType, searchQuery, searchOperator);
-    
-    // FILTER LOGIC: Check file type, size and date filters
-    const currentFileType = (metadata.fileType || '').toLowerCase();
-    const requestedFileType = request.query.type;
-    const matchesFileTypeFilter = !requestedFileType || currentFileType === requestedFileType.toLowerCase();
-    
-    // Debug logging for file type filtering
-    if (requestedFileType) {
-      console.log(`File: ${file}, Current: ${currentFileType}, Requested: ${requestedFileType}, Matches: ${matchesFileTypeFilter}`);
-    }
-    
-    const fileSizeInKB = metadata.fileSizeBytes ? Math.round(metadata.fileSizeBytes / 1024) : 0;
-    const matchesSizeFilter = fileSizeInKB >= minSize && fileSizeInKB <= maxSize;
-    
-    const matchesDateFilter = !minDate || !maxDate || (metadata.createdDate && metadata.createdDate >= minDate && metadata.createdDate <= maxDate);
-    
-    if (matchesSearch && matchesGPSSearch && matchesFileTypeFilter && matchesSizeFilter && matchesDateFilter) {
-      // Calculate relevance score for this file
-      const relevanceScore = calculateRelevanceScore(metadata, searchQuery, searchOperator);
-      
-      // Add matching file to search results with relevance score
-      searchResults.push({ 
-        file, 
-        metadata: metadata, 
-        relevanceScore: relevanceScore 
-      });
-    }
-  }
-
-  // Debug: Log final results count
-  
-  
-  // SORT THE SEARCH RESULTS
-  searchResults.sort((a, b) => {
-    // If there's a search query, prioritize relevance score
-    if (searchQuery && searchQuery.trim() !== '') {
-      const aRelevance = a.relevanceScore || 0;
-      const bRelevance = b.relevanceScore || 0;
-      
-      // Sort by relevance score (highest first)
-      if (aRelevance !== bRelevance) {
-        return bRelevance - aRelevance;
-      }
-    }
-    
-    // Fallback to existing sorting logic
-    let aValue, bValue;
-    
-    switch (sortBy) {
-      case 'title':
-        aValue = (a.metadata.extractedTitle || '').toLowerCase();
-        bValue = (b.metadata.extractedTitle || '').toLowerCase();
-        break;
-      case 'size':
-        aValue = a.metadata.fileSizeBytes || 0;
-        bValue = b.metadata.fileSizeBytes || 0;
-        break;
-      case 'date':
-        aValue = a.metadata.createdDate ? new Date(a.metadata.createdDate).getTime() : 0;
-        bValue = b.metadata.createdDate ? new Date(b.metadata.createdDate).getTime() : 0;
-        break;
-      default:
-        aValue = (a.metadata.extractedTitle || '').toLowerCase();
-        bValue = (b.metadata.extractedTitle || '').toLowerCase();
-    }
-    
-    if (sortOrder === 'desc') {
-      return bValue > aValue ? 1 : bValue < aValue ? -1 : 0;
-    } else {
-      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-    }
-  });
-
-  // Send the sorted search results as a response
-  response.json(searchResults);
-
-});
-*/
 
 // GET endpoint to retrieve search history
 app.get('/api/search-history', (request, response) => {
@@ -2092,9 +1486,7 @@ app.get('/api/dashboard-analytics', async (request, response) => {
   }
 });
 
-// Helper function to format file sizes (using existing function)
-
-// Helper function to calculate ROI metrics
+// Calculate ROI metrics
 function calculateROIMetrics(totalFiles) {
   // Business calculations based on enterprise scenarios
   const averageManualSearchTime = 15; // minutes per file search
@@ -2114,7 +1506,7 @@ function calculateROIMetrics(totalFiles) {
   };
 }
 
-// Helper function to generate business insights
+// Generate business insights
 function generateBusinessInsights(fileTypeStats, totalFiles) {
   const insights = [];
 
@@ -2160,13 +1552,18 @@ app.use(express.static('frontend'));
 
 // Start the webserver on port 3000
 app.listen(3000, async () => {
+  console.log('🚀 MetaSearch-Pro server startad på http://localhost:3000');
+  console.log('📊 Dashboard: http://localhost:3000/dashboard.html');
+  console.log('🔍 Sökning: http://localhost:3000/index.html');
   
   // Synkronisera databasen med nya Favorites-tabellen
   try {
     await syncDatabase();
+    console.log('✅ Databas synkroniserad');
     
     // Synkronisera filsystem med databas (User Story 2)
     await populateMetadataDatabase();
+    console.log('✅ Metadata-databas uppdaterad');
   } catch (error) {
     console.error('❌ Fel vid databassynkronisering:', error);
   }

@@ -1,4 +1,4 @@
-// Search functionality
+// Search
 let searchInput = document.getElementById('searchInput');
 let fileTypeFilter = document.getElementById('fileTypeFilter');
 let searchOperator = document.getElementById('searchOperator');
@@ -10,7 +10,7 @@ let searchResults = document.getElementById('searchResults');
 let searchHistory = document.getElementById('searchHistory');
 let mainContent = document.querySelector('main');
 
-// Advanced filters functionality
+// Advanced filters
 let advancedToggleBtn = document.getElementById('advancedToggleBtn');
 let advancedFilters = document.getElementById('advancedFilters');
 let minSizeInput = document.getElementById('minSizeInput');
@@ -21,7 +21,7 @@ let activeFiltersContainer = document.getElementById('activeFilters');
 let clearAllFiltersBtn = document.getElementById('clearAllFilters');
 let applyFiltersBtn = document.getElementById('applyFilters');
 
-// Favorites functionality
+// Favorites
 let favoritesSection = null;
 let userFavorites = new Set(); // Store favorite file IDs in memory
 
@@ -108,7 +108,6 @@ async function toggleFavorite(filename) {
       updateFavoriteButton(filename, true);
     }
 
- omedelbart
     displayFavorites();
 
     if (isFavorite) {
@@ -384,9 +383,9 @@ function createPDFPreview(pdfPath, metadata) {
       <div class="pdf-info">
         <h4>📄 ${pdfTitle}</h4>
         <div class="pdf-metadata">
-          ${metadata.numpages ? `<span class="metadata-item">📑 ${metadata.numpages} sidor</span>` : ''}
-          ${metadata.fileSize ? `<span class="metadata-item">📏 ${metadata.fileSize}</span>` : ''}
-          ${metadata.pdfVersion && metadata.pdfVersion !== 'Unknown' ? `<span class="metadata-item">📋 PDF ${metadata.pdfVersion}</span>` : ''}
+          ${metadata.numpages ? `<span class="metadata-item">${metadata.numpages} sidor</span>` : ''}
+          ${metadata.fileSize ? `<span class="metadata-item">${metadata.fileSize}</span>` : ''}
+          ${metadata.pdfVersion && metadata.pdfVersion !== 'Unknown' ? `<span class="metadata-item">PDF ${metadata.pdfVersion}</span>` : ''}
         </div>
       </div>
       <div class="pdf-thumbnail">
@@ -440,8 +439,8 @@ function openPDFViewer(pdfPath, metadata) {
       </div>
       <div class="pdf-viewer-footer">
         <div class="pdf-info-row">
-          ${metadata.numpages ? `<span>📑 ${metadata.numpages} sidor</span>` : ''}
-          ${metadata.fileSize ? `<span>📏 ${metadata.fileSize}</span>` : ''}
+          ${metadata.numpages ? `<span>${metadata.numpages} sidor</span>` : ''}
+          ${metadata.fileSize ? `<span>${metadata.fileSize}</span>` : ''}
           ${metadata.author || metadata.enhancedAuthor ? `<span>👤 ${metadata.author || metadata.enhancedAuthor}</span>` : ''}
         </div>
       </div>
@@ -712,7 +711,7 @@ function addPDFEventListeners(articleElement) {
   });
 
   // Extra cleanup: Remove any large text nodes anywhere in the article for PDF files
-  // This handles cases where extracted PDF text leaks outside the container
+  // Handle PDF text overflow
   const walker = document.createTreeWalker(
     articleElement,
     NodeFilter.SHOW_TEXT,
@@ -801,14 +800,14 @@ function createImageGallery(imagePath, metadata, allImages, currentIndex) {
       <div class="image-preview">
         <img src="${imagePath}" alt="${metadata.title || metadata.filename}" class="gallery-thumbnail" loading="lazy">
         <button class="open-lightbox-btn" data-gallery-id="${galleryId}" data-image-index="${currentIndex}">
-          📸 Open in Gallery
+          Open in Gallery
         </button>
       </div>
     </div>
   `;
 }
 
-// SOLID: Single Responsibility - Handle lightbox functionality
+// Handle lightbox
 function handleLightboxEvents(articleElement, allImages, currentIndex) {
   const openBtn = articleElement.querySelector('.open-lightbox-btn');
   if (openBtn) {
@@ -954,7 +953,7 @@ function closeLightbox() {
   }
 }
 
-// Helper function to clear search results while preserving favorites section
+// Clear search results
 function clearSearchResultsPreservingFavorites() {
   const favoritesSectionElement = document.querySelector('.favorites-section');
   if (favoritesSectionElement) {
@@ -1595,7 +1594,7 @@ document.getElementById('favoritesNavLink').addEventListener('click', function(e
 loadSearchHistory();
 loadUserFavorites(); // Load user favorites
 
-// Initialize advanced filters functionality
+// Initialize advanced filters
 addAdvancedFilterEventListeners();
 
 // Read data from the database metadata (much faster!)

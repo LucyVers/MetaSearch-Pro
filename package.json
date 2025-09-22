@@ -1,18 +1,25 @@
 {
   "name": "MetaSearch-Pro",
   "version": "1.0.0",
-  "description": "PDF metadata extraction web app built with Node.js and Express. Extracts titles, file sizes, PDF versions, and handles dates robustly. Features download links and professional UI with progressive disclosure. Great for learning metadata extraction and REST API development.",
+  "description": "Enterprise metadata search engine supporting PDF, JPG, MP3, and PPT files. Features advanced search operators, GPS search, favorites system, interactive media previews, and business intelligence dashboard. Built with Node.js, Express, MySQL, and modern web technologies.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "pdf",
     "metadata",
-    "extraction",
+    "search-engine",
+    "enterprise",
     "nodejs",
     "express",
-    "web-app"
+    "mysql",
+    "pdf",
+    "jpg",
+    "mp3",
+    "ppt",
+    "gps-search",
+    "dashboard",
+    "analytics"
   ],
   "author": "Lucy Sonberg",
   "license": "UNLICENSED",
