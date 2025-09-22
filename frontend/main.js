@@ -21,11 +21,11 @@ let activeFiltersContainer = document.getElementById('activeFilters');
 let clearAllFiltersBtn = document.getElementById('clearAllFilters');
 let applyFiltersBtn = document.getElementById('applyFilters');
 
-// Favoriter-funktionalitet
+// Favorites functionality
 let favoritesSection = null;
-let userFavorites = new Set(); // Sparar favorit-fil-ID:n i minnet
+let userFavorites = new Set(); // Store favorite file IDs in memory
 
-// Advanced filters state - måste deklareras tidigt för att undvika initialiseringsfel
+// Advanced filters state - must be declared early to avoid initialization errors
 let activeAdvancedFilters = {
   minSize: null,
   maxSize: null,
@@ -33,7 +33,7 @@ let activeAdvancedFilters = {
   maxDate: null
 };
 
-// Function to load and display search history
+// Load and display search history
 async function loadSearchHistory() {
   try {
     const response = await fetch('/api/search-history');
@@ -62,26 +62,24 @@ async function loadSearchHistory() {
 
 // === FAVORITER FUNKTIONALITET ===
 
-// SOLID: Single Responsibility - Ladda användarens favoriter
+// SOLID: Single Responsibility - Load user favorites
 async function loadUserFavorites() {
   try {
     const response = await fetch('/api/favorites');
     const favorites = await response.json();
     
-    // Uppdatera lokalt minne
     userFavorites.clear();
     favorites.forEach(fav => {
       userFavorites.add(fav.FileMetadatum.filename);
     });
     
-    // Uppdatera favoriter-sektionen
     displayFavorites();
   } catch (error) {
     console.error('Error loading favorites:', error);
   }
 }
 
-// SOLID: Single Responsibility - Skapa favoriter-knapp
+// SOLID: Single Responsibility - Create favorite button
 function createFavoriteButton(filename, isFavorite = false) {
   const heartIcon = isFavorite ? '❤️' : '🤍';
   const buttonClass = isFavorite ? 'favorite-button active' : 'favorite-button';
@@ -96,12 +94,12 @@ function createFavoriteButton(filename, isFavorite = false) {
   `;
 }
 
-// SOLID: Single Responsibility - Växla favorit-status
+// SOLID: Single Responsibility - Toggle favorite status
 async function toggleFavorite(filename) {
   try {
     const isFavorite = userFavorites.has(filename);
 
-    // Uppdatera UI OMEDELBART för bättre användarupplevelse
+    // Update UI immediately for better user experience
     if (isFavorite) {
       userFavorites.delete(filename);
       updateFavoriteButton(filename, false);
@@ -110,24 +108,24 @@ async function toggleFavorite(filename) {
       updateFavoriteButton(filename, true);
     }
 
-    // Uppdatera favoriter-sektionen omedelbart
+ omedelbart
     displayFavorites();
 
     if (isFavorite) {
-      // Ta bort från favoriter
+      // Remove from favorites
       const response = await fetch(`/api/favorites/${encodeURIComponent(filename)}`, {
         method: 'DELETE'
       });
 
-      // Om API-anropet misslyckas, återställ UI
+      // If API call fails, restore UI
       if (!response.ok) {
         console.error('Failed to remove favorite, status:', response.status);
-        // Återställ till föregående tillstånd
+        // Restore to previous state
         userFavorites.add(filename);
         updateFavoriteButton(filename, true);
         displayFavorites();
 
-        // Visa felmeddelande till användaren
+        // Show error message to user
         if (response.status === 404) {
         } else {
           alert('Kunde inte ta bort favorit. Försök igen.');
@@ -135,7 +133,7 @@ async function toggleFavorite(filename) {
       } else {
       }
     } else {
-      // Lägg till i favoriter
+      // Add to favorites
       const response = await fetch('/api/favorites', {
         method: 'POST',
         headers: {
@@ -144,10 +142,10 @@ async function toggleFavorite(filename) {
         body: JSON.stringify({ filename: filename })
       });
 
-      // Om API-anropet misslyckas, återställ UI
+      // If API call fails, restore UI
       if (!response.ok) {
         console.error('Failed to add favorite, status:', response.status);
-        // Återställ till föregående tillstånd
+        // Restore to previous state
         userFavorites.delete(filename);
         updateFavoriteButton(filename, false);
         displayFavorites();
@@ -157,13 +155,13 @@ async function toggleFavorite(filename) {
     }
   } catch (error) {
     console.error('Error toggling favorite:', error);
-    // Ladda om favoriter från servern för att säkerställa synkronisering
+    // Reload favorites from server to ensure synchronization
     loadUserFavorites();
     alert('Ett fel uppstod. Favoriter uppdateras från servern.');
   }
 }
 
-// SOLID: Single Responsibility - Lägg till event listeners för favoriter-knappar
+// SOLID: Single Responsibility - Add event listeners for favorite buttons
 function addFavoriteEventListeners(articleElement) {
   const favoriteButton = articleElement.querySelector('.favorite-button');
   if (favoriteButton) {
@@ -176,7 +174,7 @@ function addFavoriteEventListeners(articleElement) {
 
 // SOLID: Single Responsibility - Uppdatera favoriter-knapp
 function updateFavoriteButton(filename, isFavorite) {
-  // Hitta ALLA instanser av denna fil-knapp (i sökresultat OCH huvudinnehåll)
+  // Find ALL instances of this file button (in search results AND main content)
   const buttons = document.querySelectorAll(`[data-filename="${filename}"]`);
 
   buttons.forEach(button => {
@@ -188,7 +186,7 @@ function updateFavoriteButton(filename, isFavorite) {
     button.className = buttonClass;
     button.title = title;
 
-    // Visuell feedback för omedelbar respons
+    // Visual feedback for immediate response
     button.style.transform = 'scale(1.1)';
     setTimeout(() => {
       button.style.transform = 'scale(1)';
@@ -199,12 +197,11 @@ function updateFavoriteButton(filename, isFavorite) {
 // SOLID: Single Responsibility - Visa favoriter-sektion
 function displayFavorites() {
   if (!favoritesSection) {
-    // Skapa favoriter-sektion om den inte finns
     favoritesSection = document.createElement('section');
     favoritesSection.className = 'favorites-section';
     favoritesSection.innerHTML = '<h3>❤️ Mina Favoriter</h3>';
     
-    // Lägg till före sökresultaten (så att favoriter alltid syns överst)
+    // Add before search results (so favorites are always visible at top)
     const searchContainer = document.querySelector('.search-container');
     const resultsSection = document.querySelector('.results-section');
     if (searchContainer && resultsSection) {
@@ -214,7 +211,7 @@ function displayFavorites() {
     }
   }
   
-  // Hämta favoriter från API
+  // Fetch favorites from API
   fetch('/api/favorites')
     .then(response => response.json())
     .then(favorites => {
@@ -246,7 +243,7 @@ function displayFavorites() {
       favoritesHTML += '</div>';
       favoritesSection.innerHTML = favoritesHTML;
       
-      // Lägg till event listeners för ta bort-knapparna
+      // Add event listeners for remove buttons
       const removeButtons = favoritesSection.querySelectorAll('.remove-favorite');
       removeButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -1013,10 +1010,10 @@ async function performSearch(searchTerm) {
       clearSearchResultsPreservingFavorites();
       searchResults.innerHTML += '<p>Inga filer hittades för "' + searchTerm + '"</p>';
     } else {
-      // Anpassa rubriken baserat på om det är sökning eller filtrering
+      // Adapt header based on whether it's search or filtering
       let headerText;
       if (searchTerm.trim() === '') {
-        // Om ingen sökterm, visa bara filtyp
+        // If no search term, show only file type
         const fileTypeName = selectedFileType === 'all' ? 'filer' : 
                            selectedFileType === 'ppt' ? 'PowerPoint-filer' :
                            selectedFileType === 'pdf' ? 'PDF-filer' :
@@ -1024,7 +1021,7 @@ async function performSearch(searchTerm) {
                            selectedFileType === 'mp3' ? 'ljudfiler' : 'filer';
         headerText = `<h3>Visar ${searchData.length} ${fileTypeName}</h3>`;
       } else {
-        // Om sökning, visa sökresultat
+        // If searching, show search results
         headerText = `<h3>Sökresultat för "${searchTerm}" (${searchData.length} filer)</h3>`;
       }
       clearSearchResultsPreservingFavorites();
@@ -1284,7 +1281,6 @@ async function performSearch(searchTerm) {
           }
         }
         
-        // add content to the article
         // Get file type icon
         let fileIcon = '📄'; // Default
         let downloadText = 'Download';
@@ -1327,7 +1323,7 @@ async function performSearch(searchTerm) {
           `;
         }
         
-        // Skapa favoriter-knapp - använd filnamnet som identifierare
+        // Create favorite button - use filename as identifier
         const favoriteButton = createFavoriteButton(item.file, userFavorites.has(item.file));
         
         article.innerHTML = `
@@ -1354,7 +1350,7 @@ async function performSearch(searchTerm) {
           addPDFEventListeners(article);
         }
         
-        // Lägg till event listeners för favoriter-knapp
+        // Add event listeners for favorite button
         addFavoriteEventListeners(article);
       }
     }
@@ -1597,7 +1593,7 @@ document.getElementById('favoritesNavLink').addEventListener('click', function(e
 
 // Load search history when page loads
 loadSearchHistory();
-loadUserFavorites(); // Ladda användarens favoriter
+loadUserFavorites(); // Load user favorites
 
 // Initialize advanced filters functionality
 addAdvancedFilterEventListeners();
@@ -1896,10 +1892,9 @@ for (let item of metadata) {
     `;
   }
   
-  // Skapa favoriter-knapp - använd filnamnet som identifierare
+  // Create favorite button - use filename as identifier
   const favoriteButton = createFavoriteButton(item.file, userFavorites.has(item.file));
   
-  // add content to the article
   article.innerHTML = `
     <div class="file-header">
       <h3>${fileIcon} ${fileTitle}</h3>
@@ -1924,7 +1919,7 @@ for (let item of metadata) {
     addPDFEventListeners(article);
   }
   
-  // Lägg till event listeners för favoriter-knapp
+  // Add event listeners for favorite button
   addFavoriteEventListeners(article);
 }
 
@@ -2096,13 +2091,13 @@ async function performEnhancedSearch(searchTerm) {
       const hasFilters = Object.values(activeAdvancedFilters).some(filter => filter !== null);
       const filterInfo = hasFilters ? ' med avancerade filter' : '';
 
-      // Förbättrad text-hantering för att undvika tomma citattecken
+      // Improved text handling to avoid empty quotes
       let headerText;
       if (searchTerm.trim() === '') {
-        // Om ingen sökterm - visa bara "Filtrerade resultat"
+        // If no search term - show only "Filtered results"
         headerText = `<h3>Filtrerade resultat${filterInfo} (${searchData.length} filer)</h3>`;
       } else {
-        // Om sökterm finns - visa "Sökresultat för..."
+        // If search term exists - show "Search results for..."
         headerText = `<h3>Sökresultat för "${searchTerm}"${filterInfo} (${searchData.length} filer)</h3>`;
       }
 

@@ -61,6 +61,14 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 ## ✅ SLUTFÖRDA FUNKTIONER (KRONOLOGISK ORDNING - NYAST FÖRST)
 
+ ### **27. SÄKERHET & BEST PRACTICES 🔒**
+- ✅ **Säkerhetsaudit** - Inga hårdkodade lösenord eller API-nycklar
+- ✅ **SQL injection** - Kontrollera att Sequelize används säkert
+- ✅ **CORS policy** - Korrekt konfiguration för API - DOKUMENTERAD, INGEN ÅTERGÄRD
+- ✅ **Environment variables** - Känsliga data i .env-filer - KONTROLLERAD
+- ✅ **Code cleanup** - Ta bort debug-kod, console.logs
+- ✅ **Comment standardization** - Standardisera kommentarer
+
 ### **26. KRITISKA BUGGAR EFTER REDOVISNING - ALLA FIXADE! 
 - ✅ **file_size_bug** - "Size: 0 Bytes" visas för många filer
 - ✅ **gps_search_bug** - GPS-sökning fungerar inte korrekt - visar alla filer istället för filtrerade 
@@ -284,15 +292,17 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 
 ---
 
+## 📦 ARKIVERADE UPPGIFTER (FÖR FRAMTIDA UTVECKLING)
 
-## 📋 KVARVARANDE UPPGIFTER
-
-### **26. JPG I DONUT-DIAGRAMMET (MEN DET ÄR INTE KRITISKT) 🍩**
+### **26. JPG I DONUT-DIAGRAMMET (INTE KRITISKT) 🍩**
 - [ ] **Fixa JPG-visning** - JPG-filer visas inte i Storage Analytics donut-diagrammet på grund av för liten storlek
 - [ ] **Teknisk lösning** - Implementera minimum threshold eller alternativ visualisering för små filtyper
 - [ ] **Testa lösning** - Verifiera att alla filtyper syns tydligt i donut-diagrammet
-- **Business Case:** "Komplett visualisering av alla filtyper i dashboard"
-- **LIA/Konsult Värde:** ⭐⭐⭐ - Visar attention to detail men är inte kritiskt för demo
+
+---
+
+## 📋 KVARVARANDE UPPGIFTER
+
 
 ### **27. SPRÅKSTANDARDISERING & KODKVALITET 🌐**
 - [ ] **Språkpolicy** - Bestäm engelska ELLER svenska för hela projektet (rekommenderar engelska för kod)
@@ -300,8 +310,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [ ] **Dokumentation** - Uppdatera README, DOKUMENTATION.md till samma språk
 - [ ] **Variabelnamn** - Konsekvent namngivning (camelCase, snake_case, etc.)
 - [ ] **Code review** - Gå igenom all kod för konsistens
-- **Business Case:** "Professionell kodkvalitet och underhållbarhet"
-- **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar proffsig utvecklingsstandard
+
 
 ### **28. KOMPLETT SYSTEMTESTING & KVALITETSSÄKRING 🧪**
 - [ ] **Funktionstest** - Testa alla features: sökning, favoriter, preview, dashboard
@@ -309,16 +318,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 - [ ] **Cross-browser testing** - Chrome, Firefox, Safari, Edge
 - [ ] **Performance testing** - Laddningstider, API-responstider
 - [ ] **Error handling** - Testa felhantering och edge cases
-- **Business Case:** "Säkerställ att systemet fungerar perfekt i produktion"
-- **LIA/Konsult Värde:** ⭐⭐⭐⭐⭐ - Visar kvalitetssäkring och systemtänk
 
-### **29. SÄKERHET & BEST PRACTICES 🔒**
-- ✅ **Säkerhetsaudit** - Inga hårdkodade lösenord eller API-nycklar
-- ✅ **SQL injection** - Kontrollera att Sequelize används säkert - KONTROLLERAD (2025-09-22)
-- ✅ **CORS policy** - Korrekt konfiguration för API - DOKUMENTERAD, INGEN ÅTERGÄRD
-- ✅ **Environment variables** - Känsliga data i .env-filer - KONTROLLERAD
-- ✅ **Code cleanup** - Ta bort debug-kod, console.logs
-- [ ] **Comment standardization** - Standardisera kommentarer: ta bort överdriven kommentering,sam emojs, behåll endast nödvändiga kommentarer på engelska för konsekvens. 
 
 ---
 
@@ -338,6 +338,7 @@ Bygga en sökmotor som arbetar med metadata för olika filtyper (foton, PDF-file
 ✅ UI-problem med animationer och läsbarhet fixade
 
 **Projektet demonstrerar avancerad fullstack-utveckling och är komplett!**
+**Återstående uppgifter är arkiverade för framtida utveckling.**
 
 ---
 

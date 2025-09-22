@@ -171,7 +171,7 @@ async function cleanupMissingFiles() {
 }
 
 // SOLID: Single Responsibility - Populate database with metadata from filesystem  
-// User Story 2: Extrahera metadata från mappar och spara i databas
+// User Story 2: Extract metadata from folders and save to database
 async function populateMetadataDatabase() {
   try {
     
@@ -384,7 +384,7 @@ async function populateMetadataDatabase() {
 // Create a web server, store in the variable app
 let app = express();
 
-// Middleware för att hantera JSON requests (behövs för favorites API)
+// Middleware to handle JSON requests (needed for favorites API)
 app.use(express.json());
 
 // Helper function to parse PDF dates
@@ -1896,14 +1896,14 @@ app.get('/api/favorites', async (request, response) => {
   try {
     const userId = request.query.userId || 'default';
     
-    // Hämta alla favoriter för användaren med filmetadata
+    // Fetch all favorites for user with file metadata
     const favorites = await Favorites.findAll({
       where: { userId: userId },
       include: [{
         model: FileMetadata,
         attributes: ['id', 'filename', 'fileType', 'title', 'author', 'fileSize', 'createdAt']
       }],
-      order: [['createdAt', 'DESC']] // Nyaste först
+      order: [['createdAt', 'DESC']] // Newest first
     });
     
     response.json(favorites);
@@ -1922,7 +1922,7 @@ app.post('/api/favorites', async (request, response) => {
       return response.status(400).json({ error: 'filename krävs' });
     }
     
-    // Hitta filen baserat på filnamn
+    // Find file based on filename
     const fileExists = await FileMetadata.findOne({
       where: { filename: filename }
     });
@@ -1931,7 +1931,6 @@ app.post('/api/favorites', async (request, response) => {
       return response.status(404).json({ error: 'Filen hittades inte' });
     }
     
-    // Skapa ny favorit med filens ID
     const favorite = await Favorites.create({
       fileId: fileExists.id,
       userId: userId,
@@ -1955,7 +1954,7 @@ app.delete('/api/favorites/:filename', async (request, response) => {
     const { filename } = request.params;
     const userId = request.query.userId || 'default';
     
-    // Hitta filen baserat på filnamn
+    // Find file based on filename
     const file = await FileMetadata.findOne({
       where: { filename: filename }
     });
@@ -1964,7 +1963,6 @@ app.delete('/api/favorites/:filename', async (request, response) => {
       return response.status(404).json({ error: 'Filen hittades inte' });
     }
     
-    // Ta bort favoriten
     const deleted = await Favorites.destroy({
       where: {
         fileId: file.id,

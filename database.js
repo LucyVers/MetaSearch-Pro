@@ -2,11 +2,10 @@ import { Sequelize } from 'sequelize';
 import fs from 'fs';
 import path from 'path';
 
-// Läs credentials från JSON-fil
+// Read credentials from JSON file
 const credentialsPath = path.join(process.cwd(), 'credentials.json');
 const credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
 
-// Skapa Sequelize-instans
 const sequelize = new Sequelize(
   credentials.database,
   credentials.username,
@@ -15,7 +14,7 @@ const sequelize = new Sequelize(
     host: credentials.host,
     port: credentials.port,
     dialect: 'mysql',
-    logging: false, // Stäng av SQL-loggar i konsolen
+    logging: false, // Turn off SQL logs in console
     pool: {
       max: 5,
       min: 0,

@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import sequelize from './database.js';
 
-// Gemensam modell för alla filtyper
+// Common model for all file types
 const FileMetadata = sequelize.define('FileMetadata', {
   id: {
     type: DataTypes.INTEGER,
@@ -57,7 +57,7 @@ const FileMetadata = sequelize.define('FileMetadata', {
     allowNull: true
   },
   
-  // PDF-specifika fält
+  // PDF-specific fields
   pdfVersion: {
     type: DataTypes.STRING(20),
     allowNull: true
@@ -67,7 +67,7 @@ const FileMetadata = sequelize.define('FileMetadata', {
     allowNull: true
   },
   
-  // JPG-specifika fält
+  // JPG-specific fields
   dimensions: {
     type: DataTypes.STRING(50),
     allowNull: true
@@ -97,7 +97,7 @@ const FileMetadata = sequelize.define('FileMetadata', {
     allowNull: true
   },
   
-  // MP3-specifika fält
+  // MP3-specific fields
   artist: {
     type: DataTypes.STRING(255),
     allowNull: true
@@ -119,7 +119,7 @@ const FileMetadata = sequelize.define('FileMetadata', {
     allowNull: true
   },
   
-  // PPT-specifika fält
+  // PPT-specific fields
   slideCount: {
     type: DataTypes.INTEGER,
     allowNull: true
@@ -138,7 +138,7 @@ const FileMetadata = sequelize.define('FileMetadata', {
   }
 }, {
   tableName: 'file_metadata',
-  timestamps: true, // Lägger till createdAt och updatedAt
+  timestamps: true, // Adds createdAt and updatedAt
   indexes: [
     {
       fields: ['fileType']
@@ -155,7 +155,6 @@ const FileMetadata = sequelize.define('FileMetadata', {
   ]
 });
 
-// Skapa tabeller i databasen
 async function syncDatabase() {
   try {
     await sequelize.sync({ force: false }); // force: false = skapa bara om de inte finns
@@ -166,7 +165,7 @@ async function syncDatabase() {
   }
 }
 
-// Favorites-modell för att spara användarens favoritfiler
+// Favorites model to save user favorite files
 const Favorites = sequelize.define('Favorites', {
   id: {
     type: DataTypes.INTEGER,
@@ -184,7 +183,7 @@ const Favorites = sequelize.define('Favorites', {
   userId: {
     type: DataTypes.STRING(100),
     allowNull: false,
-    defaultValue: 'default' // För framtida multi-user support
+    defaultValue: 'default' // For future multi-user support
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -203,7 +202,7 @@ const Favorites = sequelize.define('Favorites', {
     },
     {
       fields: ['fileId', 'userId'],
-      unique: true // En användare kan bara ha en favorit per fil
+      unique: true // One user can only have one favorite per file
     }
   ]
 });

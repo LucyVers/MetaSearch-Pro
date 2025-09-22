@@ -1,4 +1,4 @@
-// Kontaktformulär hantering
+// Contact form handling
 document.addEventListener('DOMContentLoaded', function() {
   const contactForm = document.getElementById('contactForm');
   
@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     contactForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Hämta formulärdata
+      // Get form data
       const formData = new FormData(contactForm);
       const name = formData.get('name');
       const email = formData.get('email');
@@ -14,17 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
       const service = formData.get('service');
       const message = formData.get('message');
       
-      // Visa bekräftelse
+      // Show confirmation
       showConfirmation(name, email, service);
       
-      // Återställ formuläret
+      // Reset form
       contactForm.reset();
     });
   }
 });
 
 function showConfirmation(name, email, service) {
-  // Skapa bekräftelsemeddelande
+  // Create confirmation message
   const confirmation = document.createElement('div');
   confirmation.className = 'confirmation-message';
   confirmation.innerHTML = `
@@ -35,7 +35,7 @@ function showConfirmation(name, email, service) {
     <button onclick="this.parentElement.remove()" class="close-btn">Stäng</button>
   `;
   
-  // Lägg till på sidan
+  // Add to page
   document.body.appendChild(confirmation);
   
   // Ta bort efter 10 sekunder
