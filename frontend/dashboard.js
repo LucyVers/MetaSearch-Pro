@@ -19,7 +19,6 @@ let dashboardData = null;
 
 // Initialize dashboard when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Dashboard initializing...');
     loadDashboardData();
 });
 
@@ -39,7 +38,6 @@ async function loadDashboardData() {
         }
 
         dashboardData = await response.json();
-        console.log('📊 Dashboard data loaded:', dashboardData);
 
         // Initialize all dashboard components
         await initializeDashboard();
@@ -448,7 +446,6 @@ function showErrorState(errorMessage) {
  * Refresh dashboard data
  */
 function refreshDashboard() {
-    console.log('🔄 Refreshing dashboard data...');
 
     // Destroy existing charts
     if (fileTypeChart) fileTypeChart.destroy();
@@ -463,7 +460,6 @@ function refreshDashboard() {
  * Export dashboard data as PDF (future enhancement)
  */
 function exportDashboard() {
-    console.log('📄 Dashboard export feature coming soon...');
     alert('Export-funktionen kommer snart! Detta är en placeholder för framtida utveckling.');
 }
 
@@ -474,6 +470,3 @@ window.exportDashboard = exportDashboard;
 /**
  * Console info for developers
  */
-console.log('🎯 Dashboard.js loaded successfully');
-console.log('📊 Enterprise Analytics Dashboard - SONBERG STUDIO');
-console.log('🔗 API Endpoint: /api/dashboard-analytics');

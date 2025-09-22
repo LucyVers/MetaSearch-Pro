@@ -159,7 +159,6 @@ const FileMetadata = sequelize.define('FileMetadata', {
 async function syncDatabase() {
   try {
     await sequelize.sync({ force: false }); // force: false = skapa bara om de inte finns
-    console.log('✅ Databastabeller synkroniserade!');
     return true;
   } catch (error) {
     console.error('❌ Fel vid synkronisering av databas:', error.message);

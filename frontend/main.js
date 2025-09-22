@@ -99,9 +99,7 @@ function createFavoriteButton(filename, isFavorite = false) {
 // SOLID: Single Responsibility - Växla favorit-status
 async function toggleFavorite(filename) {
   try {
-    console.log('toggleFavorite called with filename:', filename);
     const isFavorite = userFavorites.has(filename);
-    console.log('isFavorite:', isFavorite);
 
     // Uppdatera UI OMEDELBART för bättre användarupplevelse
     if (isFavorite) {
@@ -117,11 +115,9 @@ async function toggleFavorite(filename) {
 
     if (isFavorite) {
       // Ta bort från favoriter
-      console.log('Removing favorite:', filename);
       const response = await fetch(`/api/favorites/${encodeURIComponent(filename)}`, {
         method: 'DELETE'
       });
-      console.log('DELETE response status:', response.status);
 
       // Om API-anropet misslyckas, återställ UI
       if (!response.ok) {
@@ -133,16 +129,13 @@ async function toggleFavorite(filename) {
 
         // Visa felmeddelande till användaren
         if (response.status === 404) {
-          console.log('Favorite already removed - UI now synchronized');
         } else {
           alert('Kunde inte ta bort favorit. Försök igen.');
         }
       } else {
-        console.log('Successfully removed favorite');
       }
     } else {
       // Lägg till i favoriter
-      console.log('Adding favorite:', filename);
       const response = await fetch('/api/favorites', {
         method: 'POST',
         headers: {
@@ -150,7 +143,6 @@ async function toggleFavorite(filename) {
         },
         body: JSON.stringify({ filename: filename })
       });
-      console.log('POST response status:', response.status);
 
       // Om API-anropet misslyckas, återställ UI
       if (!response.ok) {
@@ -161,7 +153,6 @@ async function toggleFavorite(filename) {
         displayFavorites();
         alert('Kunde inte lägga till favorit. Försök igen.');
       } else {
-        console.log('Successfully added favorite');
       }
     }
   } catch (error) {
@@ -676,8 +667,6 @@ function addPDFEventListeners(articleElement) {
   pdfButtons.forEach(button => {
     button.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log('PDF Viewer button clicked!'); // Debug log
-      console.log('pdfjsLib available:', typeof pdfjsLib !== 'undefined'); // Debug log
       
       // Check if PDF.js is loaded
       if (typeof pdfjsLib === 'undefined') {
@@ -688,7 +677,6 @@ function addPDFEventListeners(articleElement) {
       }
       
       const pdfPath = button.dataset.pdfPath;
-      console.log('Raw metadata string:', button.dataset.metadata); // Debug log
       
       let metadata;
       try {
@@ -702,7 +690,6 @@ function addPDFEventListeners(articleElement) {
         return;
       }
       
-      console.log('Opening PDF:', pdfPath, metadata); // Debug log
       openPDFViewer(pdfPath, metadata);
     });
   });
@@ -1395,7 +1382,6 @@ searchInput.addEventListener('input', function() {
 
 // Function to perform GPS search
 async function performGPSSearch() {
-  
   const latitude = latitudeInput.value;
   const longitude = longitudeInput.value;
   const selectedGpsOperator = gpsOperator.value;
@@ -1415,8 +1401,7 @@ async function performGPSSearch() {
   
   try {
     // Call database GPS search API for JPG files
-    let url = `/api/database-metadata?fileType=jpg`;
-    // Note: GPS filtering will need to be implemented in the database endpoint
+    let url = `/api/database-metadata?fileType=jpg&gps=true`;
     if (latitude) url += `&latitude=${latitude}`;
     if (longitude) url += `&longitude=${longitude}`;
     if (selectedGpsOperator) url += `&gpsOperator=${selectedGpsOperator}`;
@@ -1560,7 +1545,6 @@ fileTypeFilter.addEventListener('change', function() {
 
 // Add event listeners for GPS inputs
 latitudeInput.addEventListener('input', function() {
-  console.log('Latitude input changed:', this.value);
   if (fileTypeFilter.value === 'jpg' && (this.value || longitudeInput.value)) {
     
     performGPSSearch();
@@ -1568,7 +1552,6 @@ latitudeInput.addEventListener('input', function() {
 });
 
 longitudeInput.addEventListener('input', function() {
-  console.log('Longitude input changed:', this.value);
   if (fileTypeFilter.value === 'jpg' && (this.value || latitudeInput.value)) {
     
     performGPSSearch();
@@ -1576,7 +1559,6 @@ longitudeInput.addEventListener('input', function() {
 });
 
 gpsOperator.addEventListener('change', function() {
-  console.log('GPS operator changed:', this.value);
   if (fileTypeFilter.value === 'jpg' && (latitudeInput.value || longitudeInput.value)) {
     
     performGPSSearch();

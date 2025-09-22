@@ -9,7 +9,6 @@ const lines = csvContent.split('\n');
 const headerLine = lines[0];
 const headers = headerLine.split('\t').map(h => h.replace(/\x00/g, '').trim());
 
-console.log('Headers found:', headers);
 
 // Parse data rows
 const results = [];
@@ -44,17 +43,6 @@ for (let i = 1; i < lines.length; i++) {
   results.push(cleanData);
 }
 
-console.log(`Converted ${results.length} PowerPoint records to JSON`);
 
 // Save to JSON file
 fs.writeFileSync('./data/ppt-metadata.json', JSON.stringify(results, null, 2));
-console.log('JSON file saved as: data/ppt-metadata.json');
-
-// Show first few records
-console.log('\nFirst 3 records:');
-results.slice(0, 3).forEach((record, index) => {
-  console.log(`\n${index + 1}. ${record.title}`);
-  console.log(`   Company: ${record.company}`);
-  console.log(`   Slides: ${record.slide_count}`);
-  console.log(`   File: ${record.digest}.ppt`);
-});

@@ -51,7 +51,7 @@ main {
   position: sticky;
   top: 0;
   z-index: 1000;
-  animation: headerGlow 3s ease-in-out infinite alternate;
+  animation: headerGlow 6s ease-in-out 1;
 }
 
 @keyframes headerGlow {
@@ -82,12 +82,12 @@ main {
   letter-spacing: 3px;
   text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
   color: #ffffff;
-  animation: logoPulse 2s ease-in-out infinite;
+  animation: logoPulse 4s ease-in-out 1;
 }
 
 @keyframes logoPulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  50% { transform: scale(1.02); }
 }
 
 .logo-subtitle {
@@ -1721,8 +1721,9 @@ h3 {
   font-size: 1.1rem;
   margin-bottom: 2rem;
   opacity: 1;
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .cta-buttons {

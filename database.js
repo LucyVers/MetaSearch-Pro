@@ -29,7 +29,6 @@ const sequelize = new Sequelize(
 export async function testConnection() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Databasanslutning lyckades!');
     return true;
   } catch (error) {
     console.error('❌ Kunde inte ansluta till databasen:', error.message);

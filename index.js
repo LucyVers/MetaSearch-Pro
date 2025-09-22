@@ -20,9 +20,7 @@ let pptMetadata = [];
 try {
   const pptMetadataContent = fs.readFileSync('./data/ppt-metadata.json', 'utf8');
   pptMetadata = JSON.parse(pptMetadataContent);
-  console.log(`Loaded ${pptMetadata.length} PowerPoint metadata records`);
 } catch (error) {
-  console.log('No PowerPoint metadata found, will create empty array');
   pptMetadata = [];
 }
 
@@ -133,11 +131,9 @@ async function saveMetadataToDatabase(metadata) {
     if (existingFile) {
       // Update existing record
       await existingFile.update(metadata);
-      console.log(`📝 Uppdaterade metadata för: ${metadata.filename}`);
     } else {
       // Create new record
       await FileMetadata.create(metadata);
-      console.log(`💾 Sparade ny metadata för: ${metadata.filename}`);
     }
     
     return true;
@@ -150,7 +146,6 @@ async function saveMetadataToDatabase(metadata) {
 // SOLID: Single Responsibility - Database cleanup for missing files
 async function cleanupMissingFiles() {
   try {
-    console.log('🧹 Rensar databas från poster för saknade filer...');
     
     const allFiles = await FileMetadata.findAll();
     let removedCount = 0;
@@ -165,11 +160,9 @@ async function cleanupMissingFiles() {
         // File doesn't exist, remove from database
         await fileRecord.destroy();
         removedCount++;
-        console.log(`🗑️ Raderade databas-post för saknad fil: ${fileRecord.filename}`);
       }
     }
     
-    console.log(`🧹 Cleanup klar! Raderade ${removedCount} poster för saknade filer.`);
     return true;
   } catch (error) {
     console.error('❌ Fel vid cleanup av saknade filer:', error.message);
@@ -181,7 +174,6 @@ async function cleanupMissingFiles() {
 // User Story 2: Extrahera metadata från mappar och spara i databas
 async function populateMetadataDatabase() {
   try {
-    console.log('🔄 Synkroniserar filsystem med databas...');
     
     // First cleanup missing files
     await cleanupMissingFiles();
@@ -190,7 +182,6 @@ async function populateMetadataDatabase() {
     
     // PROCESS PDF FILES
     try {
-      console.log('📄 Bearbetar PDF-filer...');
       let pdfFiles = fs
         .readdirSync('./frontend/pdfs')
         .filter(x => x.toLowerCase().endsWith('.pdf'));
@@ -267,14 +258,12 @@ async function populateMetadataDatabase() {
         totalProcessed++;
       }
       
-      console.log(`📄 Bearbetade ${pdfFiles.length} PDF-filer`);
     } catch (error) {
       console.error('❌ Fel vid bearbetning av PDF-filer:', error.message);
     }
 
     // PROCESS JPG FILES
     try {
-      console.log('🖼️ Bearbetar JPG-filer...');
       let jpgFiles = fs
         .readdirSync('./frontend/jpgs')
         .filter(x => x.toLowerCase().endsWith('.jpg') || x.toLowerCase().endsWith('.jpeg') || x.toLowerCase().endsWith('.png'));
@@ -307,14 +296,12 @@ async function populateMetadataDatabase() {
         totalProcessed++;
       }
       
-      console.log(`🖼️ Bearbetade ${jpgFiles.length} JPG-filer`);
     } catch (error) {
       console.error('❌ Fel vid bearbetning av JPG-filer:', error.message);
     }
 
     // PROCESS MP3 FILES
     try {
-      console.log('🎵 Bearbetar MP3-filer...');
       let mp3Files = fs
         .readdirSync('./frontend/mp3s')
         .filter(x => x.toLowerCase().endsWith('.mp3') || x.toLowerCase().endsWith('.wav') || x.toLowerCase().endsWith('.flac'));
@@ -346,14 +333,12 @@ async function populateMetadataDatabase() {
         totalProcessed++;
       }
       
-      console.log(`🎵 Bearbetade ${mp3Files.length} MP3-filer`);
     } catch (error) {
       console.error('❌ Fel vid bearbetning av MP3-filer:', error.message);
     }
 
     // PROCESS PPT FILES
     try {
-      console.log('📊 Bearbetar PPT-filer...');
       let pptFiles = fs
         .readdirSync('./frontend/ppts')
         .filter(x => x.toLowerCase().endsWith('.ppt') || x.toLowerCase().endsWith('.pptx'));
@@ -385,12 +370,10 @@ async function populateMetadataDatabase() {
         totalProcessed++;
       }
       
-      console.log(`📊 Bearbetade ${pptFiles.length} PPT-filer`);
     } catch (error) {
       console.error('❌ Fel vid bearbetning av PPT-filer:', error.message);
     }
 
-    console.log(`✅ Filsystem-databas synkronisering klar! Totalt bearbetade ${totalProcessed} filer.`);
     return true;
   } catch (error) {
     console.error('❌ Fel vid populering av metadata-databas:', error.message);
@@ -584,14 +567,17 @@ function extractJPGMetadata(filePath) {
     try {
       exifData = ExifParser.create(buffer).parse();
     } catch (exifError) {
-      console.log(`No EXIF data found in ${filePath}:`, exifError.message);
     }
+    
+    // Get file size in bytes
+    const fileSizeInBytes = fs.statSync(filePath).size;
     
     // Initialize metadata object using common structure
     const metadata = {
       filename: filePath.split('/').pop(),
       fileType: 'JPG',
-      fileSize: formatFileSize(fs.statSync(filePath).size),
+      fileSize: formatFileSize(fileSizeInBytes),
+      fileSizeBytes: fileSizeInBytes,
       title: 'JPG Image',
       author: null,
       createdDate: null,
@@ -679,11 +665,15 @@ async function extractMP3Metadata(filePath) {
     // Parse MP3 file metadata - use the correct async API
     const metadata = await parseFile(filePath);
     
+    // Get file size in bytes
+    const fileSizeInBytes = fs.statSync(filePath).size;
+    
     // Initialize metadata object using common structure
     const mp3Metadata = {
       filename: filePath.split('/').pop(),
       fileType: 'MP3',
-      fileSize: formatFileSize(fs.statSync(filePath).size),
+      fileSize: formatFileSize(fileSizeInBytes),
+      fileSizeBytes: fileSizeInBytes,
       title: metadata.common.title || 'Unknown Title',
       author: metadata.common.artist || null,
       createdDate: null,
@@ -702,10 +692,12 @@ async function extractMP3Metadata(filePath) {
     return mp3Metadata;
   } catch (error) {
     console.error(`Error extracting MP3 metadata from ${filePath}:`, error);
+    const fileSizeInBytes = fs.statSync(filePath).size;
     return {
       filename: filePath.split('/').pop(),
       fileType: 'MP3',
-      fileSize: formatFileSize(fs.statSync(filePath).size),
+      fileSize: formatFileSize(fileSizeInBytes),
+      fileSizeBytes: fileSizeInBytes,
       title: 'MP3 Audio File',
       author: null,
       createdDate: null,
@@ -760,6 +752,7 @@ function extractPPTMetadata(filePath) {
       filename: filename,
       fileType: 'PPT',
       fileSize: formatFileSize(fileSizeInBytes),
+      fileSizeBytes: fileSizeInBytes,
       title: betterTitle,
       author: metadata ? metadata.company : null,
       createdDate: metadata && metadata.creation_date ? parsePPTDate(metadata.creation_date) : null,
@@ -793,10 +786,12 @@ function extractPPTMetadata(filePath) {
   } catch (error) {
     console.error(`Error extracting PPT metadata from ${filePath}:`, error);
     const filename = filePath.split('/').pop();
+    const fileSizeInBytes = fs.statSync(filePath).size;
     return {
       filename: filename,
       fileType: 'PPT',
-      fileSize: formatFileSize(fs.statSync(filePath).size),
+      fileSize: formatFileSize(fileSizeInBytes),
+      fileSizeBytes: fileSizeInBytes,
       title: `PowerPoint Presentation - ${filename.replace('.ppt', '')}`,
       author: null,
       createdDate: null,
@@ -2167,12 +2162,10 @@ app.use(express.static('frontend'));
 
 // Start the webserver on port 3000
 app.listen(3000, async () => {
-  console.log('Server listening on http://localhost:3000');
   
   // Synkronisera databasen med nya Favorites-tabellen
   try {
     await syncDatabase();
-    console.log('✅ Databas synkroniserad med Favorites-tabellen!');
     
     // Synkronisera filsystem med databas (User Story 2)
     await populateMetadataDatabase();
