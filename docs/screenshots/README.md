@@ -162,4 +162,4 @@ These screenshots complement the main MetaSearch Pro application by:
 ---
 
 *Generated for MetaSearch Pro - Professional Metadata Search Engine*
-*Last Updated: January 2025*
+*Last Updated: September 2025*
