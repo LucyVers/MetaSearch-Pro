@@ -3,7 +3,7 @@
 **Developer:** Lucy Sonberg  
 **Type:** Full-Stack Web Application  
 **Tech Stack:** Node.js, Express, MySQL, Vanilla JavaScript  
-**Status:** Ready  
+**Status:** Ready 2025 
 **Last Updated:** September 14 2025  
 
 ## PROJECT OVERVIEW
